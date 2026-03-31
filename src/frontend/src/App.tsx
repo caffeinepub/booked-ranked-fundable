@@ -14,6 +14,7 @@ import AuditPage from "./pages/AuditPage";
 import CarpetCleaningPage from "./pages/CarpetCleaningPage";
 import ChatWidgetPage from "./pages/ChatWidgetPage";
 import DashboardPage from "./pages/DashboardPage";
+import DemoPage from "./pages/DemoPage";
 import FreeAuditPage from "./pages/FreeAuditPage";
 import FundabilityPage from "./pages/FundabilityPage";
 import HVACPage from "./pages/HVACPage";
@@ -76,6 +77,12 @@ const freeAuditRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/free-audit",
   component: FreeAuditPage,
+});
+
+const demoRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/demo",
+  component: DemoPage,
 });
 
 const whyUsRoute = createRoute({
@@ -252,6 +259,7 @@ const routeTree = rootRoute.addChildren([
   indexRoute,
   loginRoute,
   freeAuditRoute,
+  demoRoute,
   whyUsRoute,
   // Marketing / niche pages
   plumbingRoute,

@@ -135,6 +135,13 @@ export default function PublicNav() {
             >
               Free Audit
             </Link>
+            <Link
+              to="/demo"
+              data-ocid="nav.live_demo.link"
+              className="text-sm font-medium text-indigo-400 hover:text-indigo-300 px-3 py-2 rounded-lg hover:bg-indigo-500/10 transition-colors"
+            >
+              Live Demo
+            </Link>
           </div>
 
           {/* Desktop Right */}
@@ -280,6 +287,17 @@ export default function PublicNav() {
                 >
                   <span className="text-sm font-medium text-white">
                     Free Audit
+                  </span>
+                </Link>
+
+                <Link
+                  to="/demo"
+                  onClick={closeMobile}
+                  data-ocid="nav.mobile_live_demo.link"
+                  className="flex items-center px-3 py-2.5 rounded-lg hover:bg-indigo-500/10 transition-colors"
+                >
+                  <span className="text-sm font-medium text-indigo-400">
+                    Live Demo
                   </span>
                 </Link>
 
