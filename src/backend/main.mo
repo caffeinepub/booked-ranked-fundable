@@ -7,14 +7,14 @@ import Order "mo:core/Order";
 import Text "mo:core/Text";
 import Time "mo:core/Time";
 import Option "mo:core/Option";
+
 import MixinAuthorization "authorization/MixinAuthorization";
 import AccessControl "authorization/access-control";
 import Outcall "http-outcalls/outcall";
 
-
+// Apply state migration.
 
 actor {
-  // Types
   type TenantId = Text;
 
   type Lead = {

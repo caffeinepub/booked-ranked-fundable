@@ -20,6 +20,13 @@ export interface TenantEntry {
   website: string;
   address: string;
   type: string;
+  // Phone number provisioning fields
+  assignedPhoneNumber?: string;
+  phoneNumberType?: "new" | "port" | "forward" | null;
+  phoneNumberStatus?: "active" | "pending" | "not_assigned";
+  areaCode?: string;
+  portingNumber?: string;
+  forwardingFromNumber?: string;
 }
 
 export interface Notification {
@@ -74,6 +81,19 @@ const DEMO_NOTIFICATIONS: Notification[] = [
   },
 ];
 
+export interface ListingConfig {
+  googleUrl: string;
+  yelpUrl: string;
+  facebookUrl: string;
+  bingUrl: string;
+}
+
+export interface AiProviderConfig {
+  provider: string;
+  apiKey: string;
+  model: string;
+}
+
 interface AppContextType {
   currentTenantId: string;
   setCurrentTenantId: (id: string) => void;
@@ -90,6 +110,20 @@ interface AppContextType {
   tenants: TenantEntry[];
   addTenant: (tenant: TenantEntry) => void;
   deleteTenant: (id: string) => void;
+  updateTenantPhone: (
+    tenantId: string,
+    fields: Partial<
+      Pick<
+        TenantEntry,
+        | "assignedPhoneNumber"
+        | "phoneNumberType"
+        | "phoneNumberStatus"
+        | "areaCode"
+        | "portingNumber"
+        | "forwardingFromNumber"
+      >
+    >,
+  ) => void;
   auditOverrides: Record<string, number>;
   fundabilityOverrides: Record<string, number>;
   setAuditOverride: (tenantId: string, score: number) => void;
@@ -97,6 +131,18 @@ interface AppContextType {
   notifications: Notification[];
   markAllRead: () => void;
   markRead: (id: string) => void;
+  // AI Panel
+  aiPanelOpen: boolean;
+  setAiPanelOpen: (v: boolean) => void;
+  // Social Media
+  socialMediaEnabled: Record<string, boolean>;
+  setSocialMediaEnabledForTenant: (tenantId: string, enabled: boolean) => void;
+  // AI Provider
+  aiProviderConfig: AiProviderConfig;
+  setAiProviderConfig: (config: AiProviderConfig) => void;
+  // Listing configs
+  listingConfigs: Record<string, ListingConfig>;
+  setListingConfig: (tenantId: string, config: ListingConfig) => void;
 }
 
 const AppContext = createContext<AppContextType | null>(null);
@@ -104,6 +150,16 @@ const AppContext = createContext<AppContextType | null>(null);
 function loadFromSession<T>(key: string, fallback: T): T {
   try {
     const raw = sessionStorage.getItem(key);
+    if (raw) return JSON.parse(raw) as T;
+  } catch {
+    // ignore
+  }
+  return fallback;
+}
+
+function loadFromLocal<T>(key: string, fallback: T): T {
+  try {
+    const raw = localStorage.getItem(key);
     if (raw) return JSON.parse(raw) as T;
   } catch {
     // ignore
@@ -127,6 +183,21 @@ export function AppProvider({ children }: { children: ReactNode }) {
   >({});
   const [notifications, setNotifications] =
     useState<Notification[]>(DEMO_NOTIFICATIONS);
+  const [aiPanelOpen, setAiPanelOpen] = useState(false);
+  const [socialMediaEnabled, setSocialMediaEnabled] = useState<
+    Record<string, boolean>
+  >(() => loadFromLocal("brfSocialMedia", {}));
+  const [aiProviderConfig, setAiProviderConfigState] =
+    useState<AiProviderConfig>(() =>
+      loadFromLocal("brfAiProvider", {
+        provider: "openai",
+        apiKey: "",
+        model: "gpt-4o",
+      }),
+    );
+  const [listingConfigs, setListingConfigsState] = useState<
+    Record<string, ListingConfig>
+  >(() => loadFromLocal("brfListings", {}));
 
   useEffect(() => {
     sessionStorage.setItem("brfUser", JSON.stringify(currentUser));
@@ -135,6 +206,18 @@ export function AppProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     sessionStorage.setItem("brfTenantId", currentTenantId);
   }, [currentTenantId]);
+
+  useEffect(() => {
+    localStorage.setItem("brfSocialMedia", JSON.stringify(socialMediaEnabled));
+  }, [socialMediaEnabled]);
+
+  useEffect(() => {
+    localStorage.setItem("brfAiProvider", JSON.stringify(aiProviderConfig));
+  }, [aiProviderConfig]);
+
+  useEffect(() => {
+    localStorage.setItem("brfListings", JSON.stringify(listingConfigs));
+  }, [listingConfigs]);
 
   const setCurrentTenantId = (id: string) => setCurrentTenantIdState(id);
 
@@ -169,6 +252,25 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setTenants((prev) => prev.filter((t) => t.id !== id));
   };
 
+  const updateTenantPhone = (
+    tenantId: string,
+    fields: Partial<
+      Pick<
+        TenantEntry,
+        | "assignedPhoneNumber"
+        | "phoneNumberType"
+        | "phoneNumberStatus"
+        | "areaCode"
+        | "portingNumber"
+        | "forwardingFromNumber"
+      >
+    >,
+  ) => {
+    setTenants((prev) =>
+      prev.map((t) => (t.id === tenantId ? { ...t, ...fields } : t)),
+    );
+  };
+
   const setAuditOverride = (tenantId: string, score: number) => {
     setAuditOverrides((prev) => ({ ...prev, [tenantId]: score }));
   };
@@ -187,6 +289,21 @@ export function AppProvider({ children }: { children: ReactNode }) {
     );
   };
 
+  const setSocialMediaEnabledForTenant = (
+    tenantId: string,
+    enabled: boolean,
+  ) => {
+    setSocialMediaEnabled((prev) => ({ ...prev, [tenantId]: enabled }));
+  };
+
+  const setAiProviderConfig = (config: AiProviderConfig) => {
+    setAiProviderConfigState(config);
+  };
+
+  const setListingConfig = (tenantId: string, config: ListingConfig) => {
+    setListingConfigsState((prev) => ({ ...prev, [tenantId]: config }));
+  };
+
   return (
     <AppContext.Provider
       value={{
@@ -201,6 +318,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         tenants,
         addTenant,
         deleteTenant,
+        updateTenantPhone,
         auditOverrides,
         fundabilityOverrides,
         setAuditOverride,
@@ -208,6 +326,14 @@ export function AppProvider({ children }: { children: ReactNode }) {
         notifications,
         markAllRead,
         markRead,
+        aiPanelOpen,
+        setAiPanelOpen,
+        socialMediaEnabled,
+        setSocialMediaEnabledForTenant,
+        aiProviderConfig,
+        setAiProviderConfig,
+        listingConfigs,
+        setListingConfig,
       }}
     >
       {children}

@@ -1,29 +1,33 @@
 # Booked Ranked Fundable
 
 ## Current State
-The app has a full marketing site with homepage, niche pages, pricing, free audit, and a protected app with dashboard, leads, reviews, audit, fundability, voice agent, chat widget, analytics, and settings. There is no `/demo` page. The PublicNav has Home, Industries, Pricing, Free Audit, Login, and Get Free Audit CTA.
+The Admin Panel allows creating/deleting tenants and managing client data. Twilio credentials are entered once in Settings > Integrations and apply globally. There is no per-client phone number assignment, provisioning UI, or number status tracking.
 
 ## Requested Changes (Diff)
 
 ### Add
-- `/demo` public page with three tabbed demos:
-  1. **Voice Agent Demo** — phone UI mockup with 3 scenario buttons (New Customer Inquiry, After-Hours Emergency, Pricing Question). Each plays a scripted conversation that appears line by line with typing delays, simulating a live AI call transcript. At the end a mock lead card animates in showing the captured lead.
-  2. **Chat Widget Demo** — interactive floating chat bubble with a niche selector (Plumbing, HVAC, Restoration, Carpet Cleaning, Roofing, Med Spa). Visitor types real messages; widget responds with niche-aware keyword-branching answers. After lead capture (name + phone), a "Lead Captured" notification appears.
-  3. **Fundability Snapshot Demo** — 4-field form (Business Name, Years in Business, Monthly Revenue, Business Type). Clicking "Run Fundability Snapshot" triggers an animated 3-second calculation, then reveals a score (20-75 based on inputs), four colored pillar scores, a gap analysis, and a Book a Strategy Call CTA.
-- Add "Live Demo" link to PublicNav desktop and mobile menus
-- Add CTA to the demo page from homepage hero area (optional, frontend agent decides placement)
+- Per-client phone number management section in Admin Panel tenant cards/detail view
+- Phone number assignment UI with three provisioning types: New Local Number, Ported Number, Call Forwarding
+- Number status badge per tenant: Active, Pending, Not Assigned
+- Area code input for provisioning a new local number
+- Porting form: enter existing number to initiate port request
+- Call forwarding form: enter their real number, get a forwarding Twilio number
+- Provisioned number displayed prominently on each tenant card in Admin Dashboard
+- Number management panel accessible from tenant detail/edit view
+- Mock provisioning flow with realistic status transitions (Requesting → Pending → Active)
 
 ### Modify
-- `PublicNav.tsx` — add `/demo` link in desktop nav and mobile menu
-- `App.tsx` — add demoRoute for `/demo`
+- Tenant data model to include: assignedPhoneNumber, phoneNumberType, phoneNumberStatus, areaCode, portingNumber
+- Admin tenant cards to show phone number status badge and assigned number
+- Admin Dashboard tenant list to surface phone number info per client
 
 ### Remove
 - Nothing removed
 
 ## Implementation Plan
-1. Create `src/frontend/src/pages/DemoPage.tsx` with three tabs: Voice Agent, Chat Widget, Fundability
-2. Build VoiceAgentDemo sub-component with phone UI, scenario selector, scripted transcript playback with typing delays, and animated lead card reveal
-3. Build ChatWidgetDemo sub-component with niche selector, keyword-branching chat responses, and lead capture flow with notification
-4. Build FundabilityDemo sub-component with input form, animated scoring reveal, pillar scores, gap analysis
-5. Update `App.tsx` to add demoRoute
-6. Update `PublicNav.tsx` to add Demo link in desktop and mobile nav
+1. Extend tenant type/interface to include phone number fields
+2. Add PhoneNumberManager component for the provisioning UI (type selector, forms per type, status display)
+3. Integrate PhoneNumberManager into the Admin tenant detail/edit panel
+4. Update tenant cards in Admin Dashboard to show assigned number and status badge
+5. Mock provisioning logic with status transitions to simulate real Twilio flow
+6. Ensure the assigned number is referenced in the Review Requests and Chat Widget pages as the sending number for that client

@@ -1,4 +1,4 @@
-import { Eye, EyeOff, Loader2 } from "lucide-react";
+import { CheckCircle, Eye, EyeOff, Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "../components/ui/button";
@@ -18,7 +18,7 @@ import {
   TabsList,
   TabsTrigger,
 } from "../components/ui/tabs";
-import { useApp } from "../context/AppContext";
+import { type AiProviderConfig, useApp } from "../context/AppContext";
 import { TENANTS } from "../data/demoData";
 import { useActor } from "../hooks/useActor";
 
@@ -156,6 +156,208 @@ function useTestConnection(
   return [status, setStatus, test];
 }
 
+const AI_PROVIDERS = [
+  {
+    id: "openai",
+    name: "OpenAI GPT-4o",
+    badge: "bg-emerald-100 text-emerald-700",
+    desc: "Best for structured reasoning and chat",
+    models: ["gpt-4o", "gpt-4o-mini", "gpt-4-turbo"],
+  },
+  {
+    id: "anthropic",
+    name: "Anthropic Claude",
+    badge: "bg-purple-100 text-purple-700",
+    desc: "Best for long-form copy and nuanced responses",
+    models: ["claude-3-5-sonnet-20241022", "claude-3-haiku-20240307"],
+  },
+  {
+    id: "meta",
+    name: "Meta Llama 3 (Groq)",
+    badge: "bg-blue-100 text-blue-700",
+    desc: "Fast, cost-effective, great for social content",
+    models: ["llama3-70b-8192", "llama3-8b-8192"],
+  },
+  {
+    id: "google",
+    name: "Google Gemini",
+    badge: "bg-orange-100 text-orange-700",
+    desc: "Strong for search and multimodal tasks",
+    models: ["gemini-1.5-pro", "gemini-1.5-flash"],
+  },
+];
+
+function AiConfigTab() {
+  const { aiProviderConfig, setAiProviderConfig } = useApp();
+  const [config, setConfig] = useState<AiProviderConfig>(aiProviderConfig);
+  const [testing, setTesting] = useState(false);
+  const [testResult, setTestResult] = useState<"idle" | "ok" | "fail">("idle");
+  const [showKey, setShowKey] = useState(false);
+
+  const selectedProvider =
+    AI_PROVIDERS.find((p) => p.id === config.provider) ?? AI_PROVIDERS[0];
+
+  const handleTest = () => {
+    setTesting(true);
+    setTestResult("idle");
+    setTimeout(() => {
+      setTestResult(config.apiKey.length > 8 ? "ok" : "fail");
+      setTesting(false);
+    }, 1500);
+  };
+
+  const handleSave = () => {
+    setAiProviderConfig(config);
+    toast.success("AI configuration saved");
+  };
+
+  return (
+    <div className="space-y-6">
+      <div>
+        <h3 className="text-base font-semibold text-gray-800">
+          AI Provider Configuration
+        </h3>
+        <p className="text-sm text-gray-500 mt-0.5">
+          Choose your default AI provider for the Business Manager, Chat Widget,
+          and Social Media tools.
+        </p>
+      </div>
+
+      {/* Provider Cards */}
+      <div
+        className="grid grid-cols-1 sm:grid-cols-2 gap-3"
+        data-ocid="settings.ai.provider.card"
+      >
+        {AI_PROVIDERS.map((provider) => (
+          <button
+            key={provider.id}
+            type="button"
+            data-ocid={`settings.ai.${provider.id}.button`}
+            onClick={() =>
+              setConfig((c) => ({
+                ...c,
+                provider: provider.id,
+                model: provider.models[0],
+              }))
+            }
+            className={`text-left p-4 rounded-xl border-2 transition-all ${config.provider === provider.id ? "border-indigo-500 bg-indigo-50" : "border-gray-200 bg-white hover:border-gray-300"}`}
+          >
+            <div className="flex items-start justify-between">
+              <div>
+                <p className="text-sm font-semibold text-gray-800">
+                  {provider.name}
+                </p>
+                <p className="text-xs text-gray-500 mt-0.5">{provider.desc}</p>
+              </div>
+              <span
+                className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${provider.badge}`}
+              >
+                {provider.id.toUpperCase()}
+              </span>
+            </div>
+            {config.provider === provider.id && (
+              <div className="mt-2 flex items-center gap-1 text-indigo-600">
+                <CheckCircle size={12} />
+                <span className="text-xs font-medium">Selected</span>
+              </div>
+            )}
+          </button>
+        ))}
+      </div>
+
+      {/* API Key + Model for selected provider */}
+      <div className="border border-gray-200 rounded-xl p-5 space-y-4">
+        <h4 className="text-sm font-semibold text-gray-700">
+          {selectedProvider.name} Settings
+        </h4>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <Label className="text-xs text-gray-600 mb-1 block">API Key</Label>
+            <div className="relative">
+              <Input
+                data-ocid="settings.ai.key.input"
+                type={showKey ? "text" : "password"}
+                value={config.apiKey}
+                onChange={(e) =>
+                  setConfig((c) => ({ ...c, apiKey: e.target.value }))
+                }
+                placeholder="Enter your API key..."
+                className="pr-10 text-xs"
+              />
+              <button
+                type="button"
+                onClick={() => setShowKey((v) => !v)}
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+              >
+                {showKey ? <EyeOff size={14} /> : <Eye size={14} />}
+              </button>
+            </div>
+          </div>
+          <div>
+            <Label className="text-xs text-gray-600 mb-1 block">Model</Label>
+            <Select
+              value={config.model}
+              onValueChange={(v) => setConfig((c) => ({ ...c, model: v }))}
+            >
+              <SelectTrigger
+                className="text-xs h-9"
+                data-ocid="settings.ai.model.select"
+              >
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {selectedProvider.models.map((m) => (
+                  <SelectItem key={m} value={m}>
+                    {m}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+        <div className="flex items-center gap-3">
+          <Button
+            data-ocid="settings.ai.test.button"
+            variant="outline"
+            size="sm"
+            onClick={handleTest}
+            disabled={testing}
+          >
+            {testing ? (
+              <Loader2 size={13} className="mr-1.5 animate-spin" />
+            ) : null}
+            Test Connection
+          </Button>
+          {testResult === "ok" && (
+            <span
+              className="text-xs text-emerald-600 font-medium flex items-center gap-1"
+              data-ocid="settings.ai.success_state"
+            >
+              <CheckCircle size={12} /> Connected
+            </span>
+          )}
+          {testResult === "fail" && (
+            <span
+              className="text-xs text-red-500 font-medium"
+              data-ocid="settings.ai.error_state"
+            >
+              Connection failed — check your API key
+            </span>
+          )}
+        </div>
+        <Button
+          data-ocid="settings.ai.save.button"
+          onClick={handleSave}
+          className="bg-indigo-600 hover:bg-indigo-700 text-white"
+          size="sm"
+        >
+          Save AI Config
+        </Button>
+      </div>
+    </div>
+  );
+}
+
 export default function SettingsPage() {
   const { currentTenantId, isAdmin, isAdminUser } = useApp();
   const { actor } = useActor();
@@ -284,6 +486,11 @@ export default function SettingsPage() {
         <TabsTrigger value="integrations" data-ocid="settings.tab">
           Integrations
         </TabsTrigger>
+        {isAdminUser && (
+          <TabsTrigger value="ai-config" data-ocid="settings.tab">
+            AI Config
+          </TabsTrigger>
+        )}
       </TabsList>
 
       {/* Profile Tab */}
@@ -877,6 +1084,13 @@ export default function SettingsPage() {
           )}
         </div>
       </TabsContent>
+
+      {/* AI Config Tab */}
+      {isAdminUser && (
+        <TabsContent value="ai-config">
+          <AiConfigTab />
+        </TabsContent>
+      )}
     </Tabs>
   );
 }

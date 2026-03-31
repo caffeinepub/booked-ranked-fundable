@@ -20,6 +20,7 @@ import FundabilityPage from "./pages/FundabilityPage";
 import HVACPage from "./pages/HVACPage";
 import HomePage from "./pages/HomePage";
 import LeadsPage from "./pages/LeadsPage";
+import ListingsPage from "./pages/ListingsPage";
 import LoginPage from "./pages/LoginPage";
 import MedSpaPage from "./pages/MedSpaPage";
 import PlumbingPage from "./pages/PlumbingPage";
@@ -30,6 +31,7 @@ import ReviewRequestsPage from "./pages/ReviewRequestsPage";
 import ReviewsPage from "./pages/ReviewsPage";
 import RoofingPage from "./pages/RoofingPage";
 import SettingsPage from "./pages/SettingsPage";
+import SocialMediaPage from "./pages/SocialMediaPage";
 import VoiceAgentPage from "./pages/VoiceAgentPage";
 import WhyUsPage from "./pages/WhyUsPage";
 
@@ -255,6 +257,26 @@ const reviewRequestsRoute = createRoute({
   ),
 });
 
+const listingsRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/listings",
+  component: () => (
+    <ProtectedRoute>
+      <ListingsPage />
+    </ProtectedRoute>
+  ),
+});
+
+const socialMediaRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/social-media",
+  component: () => (
+    <ProtectedRoute>
+      <SocialMediaPage />
+    </ProtectedRoute>
+  ),
+});
+
 const routeTree = rootRoute.addChildren([
   indexRoute,
   loginRoute,
@@ -282,6 +304,8 @@ const routeTree = rootRoute.addChildren([
   chatWidgetRoute,
   voiceAgentRoute,
   reviewRequestsRoute,
+  listingsRoute,
+  socialMediaRoute,
 ]);
 
 const router = createRouter({ routeTree });

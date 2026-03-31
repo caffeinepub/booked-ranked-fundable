@@ -6,13 +6,16 @@ import {
   ChevronDown,
   LayoutDashboard,
   LogOut,
+  MapPin,
   Menu,
   MessageSquare,
   Phone,
   Search,
   Send,
   Settings,
+  Share2,
   ShieldCheck,
+  Sparkles,
   Star,
   TrendingUp,
   Users,
@@ -21,6 +24,7 @@ import {
 import { type ReactNode, useEffect, useState } from "react";
 import { useApp } from "../context/AppContext";
 import type { Notification } from "../context/AppContext";
+import AiBusinessManagerPanel from "./AiBusinessManagerPanel";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -45,6 +49,13 @@ const NAV_GROUPS = [
       { label: "Chat Widget", path: "/chat-widget", icon: MessageSquare },
       { label: "Voice Agent", path: "/voice-agent", icon: Phone },
       { label: "Review Requests", path: "/review-requests", icon: Send },
+    ],
+  },
+  {
+    label: "LISTINGS & SOCIAL",
+    items: [
+      { label: "Listings", path: "/listings", icon: MapPin },
+      { label: "Social Media", path: "/social-media", icon: Share2 },
     ],
   },
   {
@@ -73,6 +84,8 @@ const PAGE_TITLES: Record<string, string> = {
   "/chat-widget": "Chat Widget",
   "/voice-agent": "Voice Agent",
   "/review-requests": "Review Requests",
+  "/listings": "Listings Monitor",
+  "/social-media": "Social Media",
 };
 
 const TYPE_ICONS: Record<Notification["type"], ReactNode> = {
@@ -95,6 +108,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
     notifications,
     markAllRead,
     markRead,
+    setAiPanelOpen,
   } = useApp();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const navigate = useNavigate();
@@ -202,7 +216,18 @@ export default function AppLayout({ children }: { children: ReactNode }) {
         ))}
       </nav>
 
-      <div className="p-3 border-t border-slate-700">
+      <div className="p-3 border-t border-slate-700 space-y-2">
+        {/* AI Business Manager Button */}
+        <button
+          type="button"
+          data-ocid="nav.ai.button"
+          onClick={() => setAiPanelOpen(true)}
+          className="w-full flex items-center gap-2 px-3 py-2 rounded-md text-sm bg-indigo-900/60 hover:bg-indigo-700 text-indigo-300 hover:text-white transition-colors border border-indigo-700/50"
+        >
+          <Sparkles size={15} className="text-indigo-400" />
+          <span className="text-xs font-medium">AI Business Manager</span>
+        </button>
+
         <div className="flex items-center justify-between">
           <div className="min-w-0">
             <p className="text-xs font-medium text-white truncate">
@@ -373,6 +398,9 @@ export default function AppLayout({ children }: { children: ReactNode }) {
 
         <main className="flex-1 overflow-y-auto p-4 md:p-6">{children}</main>
       </div>
+
+      {/* AI Business Manager Panel */}
+      <AiBusinessManagerPanel />
     </div>
   );
 }

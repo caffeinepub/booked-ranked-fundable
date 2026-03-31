@@ -1,6 +1,10 @@
 import { Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import {
+  PhoneNumberManager,
+  PhoneStatusBadge,
+} from "../components/PhoneNumberManager";
 import { Button } from "../components/ui/button";
 import {
   Card,
@@ -17,6 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../components/ui/select";
+import { Switch } from "../components/ui/switch";
 import {
   Table,
   TableBody,
@@ -25,6 +30,12 @@ import {
   TableHeader,
   TableRow,
 } from "../components/ui/table";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "../components/ui/tooltip";
 import { type TenantEntry, useApp } from "../context/AppContext";
 import { LEADS, REVIEWS } from "../data/demoData";
 
@@ -37,6 +48,8 @@ export default function AdminPage() {
     setFundabilityOverride,
     auditOverrides,
     fundabilityOverrides,
+    socialMediaEnabled,
+    setSocialMediaEnabledForTenant,
   } = useApp();
 
   const [showAddForm, setShowAddForm] = useState(false);
@@ -150,9 +163,14 @@ export default function AdminPage() {
       {/* Tenant Management */}
       <Card data-ocid="admin.tenants.card">
         <CardHeader className="flex flex-row items-center justify-between pb-4">
-          <CardTitle className="text-base font-semibold">
-            Tenant Management
-          </CardTitle>
+          <div>
+            <CardTitle className="text-base font-semibold">
+              Tenant Management
+            </CardTitle>
+            <p className="text-xs text-slate-500 mt-0.5">
+              Manage clients and provision dedicated phone numbers per account.
+            </p>
+          </div>
           <Button
             data-ocid="admin.tenant.open_modal_button"
             size="sm"
@@ -249,54 +267,80 @@ export default function AdminPage() {
             </div>
           )}
 
-          <Table data-ocid="admin.tenants.table">
-            <TableHeader>
-              <TableRow>
-                <TableHead>Business Name</TableHead>
-                <TableHead>Type</TableHead>
-                <TableHead className="hidden sm:table-cell">Website</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {tenants.map((tenant, i) => (
-                <TableRow
-                  key={tenant.id}
-                  data-ocid={`admin.tenants.item.${i + 1}`}
-                >
-                  <TableCell className="font-medium">{tenant.name}</TableCell>
-                  <TableCell className="text-slate-500 text-sm">
-                    {tenant.type}
-                  </TableCell>
-                  <TableCell className="hidden sm:table-cell text-slate-500 text-sm">
-                    {tenant.website}
-                  </TableCell>
-                  <TableCell className="text-right">
+          {/* Tenant Cards with Phone Management */}
+          <div className="space-y-2" data-ocid="admin.tenants.table">
+            {tenants.map((tenant, i) => (
+              <div
+                key={tenant.id}
+                data-ocid={`admin.tenants.item.${i + 1}`}
+                className="rounded-xl border border-white/10 bg-white/[0.02] overflow-hidden"
+              >
+                {/* Tenant row header */}
+                <div className="flex items-center gap-3 px-4 py-3">
+                  {/* Business info */}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="font-semibold text-sm text-white truncate">
+                        {tenant.name}
+                      </span>
+                      <span className="text-xs text-slate-500 shrink-0">
+                        {tenant.type}
+                      </span>
+                      {/* Phone status badge inline */}
+                      <PhoneStatusBadge tenant={tenant} />
+                    </div>
+                    {tenant.website && (
+                      <p className="text-xs text-slate-600 mt-0.5 truncate">
+                        {tenant.website}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Controls */}
+                  <div className="flex items-center gap-3 shrink-0">
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-xs text-slate-500 hidden sm:inline">
+                        Social
+                      </span>
+                      <Switch
+                        data-ocid={`admin.tenant.social.switch.${i + 1}`}
+                        checked={socialMediaEnabled[tenant.id] ?? false}
+                        onCheckedChange={(v) => {
+                          setSocialMediaEnabledForTenant(tenant.id, v);
+                          toast.success(
+                            v
+                              ? `Social Media enabled for ${tenant.name}`
+                              : `Social Media disabled for ${tenant.name}`,
+                          );
+                        }}
+                      />
+                    </div>
                     <Button
                       data-ocid={`admin.tenant.delete_button.${i + 1}`}
                       size="sm"
                       variant="ghost"
                       onClick={() => handleDeleteTenant(tenant.id, tenant.name)}
-                      className="text-red-500 hover:text-red-600 hover:bg-red-50"
+                      className="text-red-400 hover:text-red-300 hover:bg-red-500/10 h-7 w-7 p-0"
                     >
-                      <Trash2 size={14} />
+                      <Trash2 size={13} />
                     </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
-              {tenants.length === 0 && (
-                <TableRow>
-                  <TableCell
-                    colSpan={4}
-                    className="text-center text-slate-400 py-8"
-                    data-ocid="admin.tenants.empty_state"
-                  >
-                    No tenants yet. Add one above.
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
+                  </div>
+                </div>
+
+                {/* Phone Number Manager (collapsible) */}
+                <PhoneNumberManager tenant={tenant} index={i + 1} />
+              </div>
+            ))}
+
+            {tenants.length === 0 && (
+              <div
+                data-ocid="admin.tenants.empty_state"
+                className="text-center text-slate-500 py-10 rounded-xl border border-white/5 bg-white/[0.02]"
+              >
+                No tenants yet. Add one above.
+              </div>
+            )}
+          </div>
         </CardContent>
       </Card>
 
@@ -391,6 +435,92 @@ export default function AdminPage() {
               </Button>
             </div>
           )}
+        </CardContent>
+      </Card>
+
+      {/* Module Access Control */}
+      <Card data-ocid="admin.modules.card">
+        <CardHeader>
+          <CardTitle className="text-base font-semibold">
+            Module Access Control
+          </CardTitle>
+          <p className="text-sm text-slate-500">
+            Enable or disable optional modules per tenant.
+          </p>
+        </CardHeader>
+        <CardContent>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Business</TableHead>
+                <TableHead>Social Media</TableHead>
+                <TableHead>Chat Widget</TableHead>
+                <TableHead>Voice Agent</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {tenants.map((tenant, i) => (
+                <TableRow
+                  key={tenant.id}
+                  data-ocid={`admin.modules.item.${i + 1}`}
+                >
+                  <TableCell className="font-medium text-sm">
+                    {tenant.name}
+                  </TableCell>
+                  <TableCell>
+                    <Switch
+                      data-ocid={`admin.modules.social.switch.${i + 1}`}
+                      checked={socialMediaEnabled[tenant.id] ?? false}
+                      onCheckedChange={(v) => {
+                        setSocialMediaEnabledForTenant(tenant.id, v);
+                        toast.success(
+                          v
+                            ? `Social Media enabled for ${tenant.name}`
+                            : `Social Media disabled for ${tenant.name}`,
+                        );
+                      }}
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <span>
+                            <Switch
+                              disabled
+                              checked={false}
+                              data-ocid={`admin.modules.chat.switch.${i + 1}`}
+                            />
+                          </span>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p className="text-xs">Coming Soon</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </TableCell>
+                  <TableCell>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <span>
+                            <Switch
+                              disabled
+                              checked={false}
+                              data-ocid={`admin.modules.voice.switch.${i + 1}`}
+                            />
+                          </span>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p className="text-xs">Coming Soon</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
         </CardContent>
       </Card>
     </div>
