@@ -1,48 +1,29 @@
-# Booked Ranked Fundable — Version 6
+# Booked Ranked Fundable — Version 8 Marketing Copy Upgrades
 
 ## Current State
-Multi-tenant SaaS platform with Dashboard, Leads/CRM, Reviews, SEO Audit, Fundability, Reports, Settings, Admin Panel, Chat Widget, Voice Agent, Review Requests, Free Audit, Why Us, and Homepage pages. Settings page has Twilio and Vapi.ai agency credential fields. No analytics page, no notification center, no integrations hub beyond Twilio/Vapi.
+Homepage (HomePage.tsx) and niche pages (NichePage.tsx via nicheData.ts) are live with hero sections, three engines, how it works, trust/ICP section, pricing, and FAQs. The TrustInfrastructureSection.tsx is a compact 3-card grid. No "imagine" future-pacing copy exists. No standalone bold differentiator section exists. No oversized 97% stat callout exists.
 
 ## Requested Changes (Diff)
 
 ### Add
-- **Settings — Integrations Hub** (expand existing SettingsPage.tsx):
-  - Organized sections: Stripe, Twilio, Vapi.ai, Email (SMTP/SendGrid), Google APIs (Places, Maps), SERP API, OpenAI/AI Provider
-  - Admin view: all sections visible; Client view: only Google Business URL, review platform preferences, notification email/phone
-  - Each credential field has a "Test Connection" button that shows a status badge (Connected / Not Configured / Failed)
-  - All fields stored in component state with save functionality
-- **Live Analytics Page** (`/analytics`):
-  - Website uptime status (green/red badge, simulated ping with realistic data)
-  - SSL certificate status card
-  - Performance score from last audit with trend
-  - Traffic overview chart (simulated weekly sessions, page views, bounce rate)
-  - Lead source breakdown chart (Organic, Referral, Direct, Free Audit)
-  - Audit score history chart (last 6 weeks of scores)
-  - Top pages table (simulated)
-  - Tracking script embed snippet panel ("Install this on your site to get live data")
-- **Notification Center**:
-  - Bell icon in the AppLayout header with unread badge count
-  - Dropdown panel showing recent notifications (new lead, audit score drop, review request sent/responded, uptime alert)
-  - Mark as read / clear all functionality
-  - Notifications stored in React state (simulated with realistic demo entries)
-- **Contextual illustrations/images**:
-  - Dashboard page: visual icons/illustrations for SEO, Reputation, Fundability metric cards
-  - Empty states for Leads, Reviews pages when no data
-  - Analytics page hero graphic
+1. **ImagineSection component** — Full-width standalone section, dark background, each "Imagine..." line on its own row with animated reveal. Ends with bold payoff line: "That's not a vision. That's what Booked, Ranked & Fundable turns on for your business." Place between the hero and the free audit bar on the homepage.
+2. **NoOneElseSection component** — Dedicated "No One Else Does This" section with bold headline, 3-4 supporting bullets about being the only all-in-one platform (bookings + rankings + fundability) built on ICP. Place on homepage after the Three Engines section. Also include on every niche page between ThreeEnginesSection and AuditFormSection.
+3. **StatCallout component** — Large pull quote: "97% of businesses never build the credit profile needed to access growth capital." Big purple number, contrasting highlight, supporting copy. Place on homepage above the pricing section. Also on niche pages above PricingSection.
+4. **Niche-specific "Imagine" opener** — Each niche in nicheData.ts gets an `imagineLines` array (3-4 niche-specific imagine lines). NichePage renders these in the ImagineSection component after the hero.
 
 ### Modify
-- **AppLayout/navigation**: Add `/analytics` route to sidebar navigation (bar chart icon)
-- **App.tsx**: Add analytics route
-- **DashboardPage.tsx**: Enhance metric cards with icon illustrations and make the overall dashboard richer with quick stat cards for leads, reviews, audit score
-- **SettingsPage.tsx**: Replace current simple settings with full Integrations Hub with tabbed sections
+- **TrustInfrastructureSection** — Rename section heading to "Built on Next-Generation Infrastructure" and add bolder, more confident copy about ICP being the most advanced blockchain infrastructure. Keep 3 cards but punch up the language with approved bold claims (tamper-resistant, next-generation, certified data integrity).
+- **HomePage hero badge** — Change from "One Growth System" to something that sets up the "only platform" positioning.
+- **HomePage comparison section** — Add a row for "Platform technology" showing generic cloud vs ICP/next-gen infrastructure.
 
 ### Remove
-- Nothing removed
+Nothing removed.
 
 ## Implementation Plan
-1. Expand SettingsPage with tabbed Integrations Hub (Stripe, Twilio, Vapi, Email, Google, SERP, OpenAI) — admin vs client role-gated views
-2. Create AnalyticsPage with uptime/SSL cards, traffic chart, lead source chart, audit score trend chart, tracking script panel
-3. Add NotificationCenter component to AppLayout header (bell icon, dropdown panel, badge count)
-4. Enhance DashboardPage with richer stat cards and visual improvements
-5. Wire analytics route in App.tsx and sidebar
-6. Add contextual SVG illustrations to key pages
+1. Create `src/frontend/src/components/marketing/ImagineSection.tsx` — animated full-width imagine lines component
+2. Create `src/frontend/src/components/marketing/NoOneElseSection.tsx` — bold differentiator section
+3. Create `src/frontend/src/components/marketing/StatCallout.tsx` — 97% pull quote component
+4. Update `src/frontend/src/data/nicheData.ts` — add `imagineLines` array to each niche
+5. Update `src/frontend/src/components/marketing/TrustInfrastructureSection.tsx` — stronger ICP copy
+6. Update `src/frontend/src/pages/HomePage.tsx` — insert ImagineSection, NoOneElseSection, StatCallout in correct positions
+7. Update `src/frontend/src/pages/NichePage.tsx` — insert ImagineSection (niche-specific lines), NoOneElseSection, StatCallout

@@ -11,16 +11,23 @@ import { AppProvider, useApp } from "./context/AppContext";
 import AdminPage from "./pages/AdminPage";
 import AnalyticsPage from "./pages/AnalyticsPage";
 import AuditPage from "./pages/AuditPage";
+import CarpetCleaningPage from "./pages/CarpetCleaningPage";
 import ChatWidgetPage from "./pages/ChatWidgetPage";
 import DashboardPage from "./pages/DashboardPage";
 import FreeAuditPage from "./pages/FreeAuditPage";
 import FundabilityPage from "./pages/FundabilityPage";
+import HVACPage from "./pages/HVACPage";
 import HomePage from "./pages/HomePage";
 import LeadsPage from "./pages/LeadsPage";
 import LoginPage from "./pages/LoginPage";
+import MedSpaPage from "./pages/MedSpaPage";
+import PlumbingPage from "./pages/PlumbingPage";
+import PricingPage from "./pages/PricingPage";
 import ReportsPage from "./pages/ReportsPage";
+import RestorationPage from "./pages/RestorationPage";
 import ReviewRequestsPage from "./pages/ReviewRequestsPage";
 import ReviewsPage from "./pages/ReviewsPage";
+import RoofingPage from "./pages/RoofingPage";
 import SettingsPage from "./pages/SettingsPage";
 import VoiceAgentPage from "./pages/VoiceAgentPage";
 import WhyUsPage from "./pages/WhyUsPage";
@@ -77,6 +84,50 @@ const whyUsRoute = createRoute({
   component: WhyUsPage,
 });
 
+// Niche pages
+const plumbingRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/plumbing",
+  component: PlumbingPage,
+});
+
+const restorationRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/restoration",
+  component: RestorationPage,
+});
+
+const hvacRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/hvac",
+  component: HVACPage,
+});
+
+const carpetCleaningRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/carpet-cleaning",
+  component: CarpetCleaningPage,
+});
+
+const roofingRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/roofing",
+  component: RoofingPage,
+});
+
+const medSpaRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/med-spa",
+  component: MedSpaPage,
+});
+
+const pricingRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/pricing",
+  component: PricingPage,
+});
+
+// Protected routes
 const dashboardRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/dashboard",
@@ -202,6 +253,15 @@ const routeTree = rootRoute.addChildren([
   loginRoute,
   freeAuditRoute,
   whyUsRoute,
+  // Marketing / niche pages
+  plumbingRoute,
+  restorationRoute,
+  hvacRoute,
+  carpetCleaningRoute,
+  roofingRoute,
+  medSpaRoute,
+  pricingRoute,
+  // Protected app routes
   dashboardRoute,
   leadsRoute,
   reviewsRoute,
