@@ -22,6 +22,7 @@ import ReviewRequestsPage from "./pages/ReviewRequestsPage";
 import ReviewsPage from "./pages/ReviewsPage";
 import SettingsPage from "./pages/SettingsPage";
 import VoiceAgentPage from "./pages/VoiceAgentPage";
+import WhyUsPage from "./pages/WhyUsPage";
 
 function ProtectedRoute({
   children,
@@ -67,6 +68,12 @@ const freeAuditRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/free-audit",
   component: FreeAuditPage,
+});
+
+const whyUsRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/why-us",
+  component: WhyUsPage,
 });
 
 const dashboardRoute = createRoute({
@@ -183,6 +190,7 @@ const routeTree = rootRoute.addChildren([
   indexRoute,
   loginRoute,
   freeAuditRoute,
+  whyUsRoute,
   dashboardRoute,
   leadsRoute,
   reviewsRoute,
