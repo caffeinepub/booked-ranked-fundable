@@ -1,40 +1,63 @@
-# Booked Ranked Fundable
+# Booked Ranked Fundable — v4: Chat Widget, Voice Agent, Review Requests
 
 ## Current State
-- React + TypeScript + Tailwind frontend with pages: Dashboard, Leads, Reviews, Audit, Fundability, Reports, Settings, HomePage, LoginPage
-- AppLayout with fixed left sidebar (slate-900), no mobile collapse
-- LoginPage has role selector (Agency Admin / Business Owner) — no credentials, no password
-- AppContext manages login state with role and tenantId
-- No admin dashboard or admin-specific pages
-- AuditPage shows static demo data with a "Run New Audit" button that only shows a toast
-- Backend Motoko canister exists with tenant, lead, review, audit, fundability CRUD
+- Multi-tenant SaaS platform with Dashboard, Leads, Reviews, SEO Audit, Fundability, Reports, Settings, Admin Panel, and Free Audit pages
+- Single Motoko canister stores leads, reviews, audit/fundability scores, free audit leads
+- AppContext manages tenant switching, admin roles, score overrides
+- AppLayout has sidebar nav with groups: Overview, Growth Engines, Insights, Account
+- No chat widget, voice agent, or review request automation features exist
 
 ## Requested Changes (Diff)
 
 ### Add
-- Admin login credentials: username `Admin333`, email `daree1933@gmail.com`, password `Admin333` (simple client-side check)
-- Master Admin Dashboard page at `/admin` — accessible only to admin role
-  - Overview stats: total tenants, total leads, total reviews across all tenants
-  - Tenant management table: list all tenants with create/delete actions
-  - Score override panel: select tenant, override audit score and fundability score with input + save
-- Mobile-responsive sidebar: on screens < md, sidebar is hidden by default, toggled via hamburger button in header; slides in as overlay drawer
-- Audit page enhancement: "Run Live Audit" flow with step-by-step simulated audit sections (GMB check, citations check, website health check, social media check, Google ranking check) — each step animates through "Checking..." then shows a score result with a progress bar; final consolidated score shown at end
-- Admin nav item "Admin Panel" linking to `/admin` — visible only when isAdmin
+1. **Chat Widget page** (`/chat-widget`) — per-tenant, protected route
+   - AI-generated widget config based on business niche (auto-fills greeting, FAQ topics, personality)
+   - Widget config form: business niche, greeting message, FAQ items (add/remove), lead capture fields toggle, appointment booking toggle
+   - Live widget preview panel showing floating chat bubble
+   - Unique embed code generation (`<script>` tag with tenant ID) — copy to clipboard
+   - Widget activation toggle (active/inactive)
+
+2. **Voice Agent page** (`/voice-agent`) — per-tenant, protected route
+   - Configure: greeting script, business hours, services offered, call routing (forward number, voicemail, AI-handles)
+   - Agency-level API credential fields in Admin Settings: Twilio Account SID, Auth Token, Twilio Phone Number, Vapi.ai API Key
+   - Per-tenant voice agent status (configured / not configured)
+   - "Sync to Vapi" button that shows syncing state
+   - Display phone number assigned to this business
+
+3. **Review Requests page** (`/review-requests`) — per-tenant, protected route
+   - Send review request: enter customer name, phone, email, service completed, review platform (Google/Yelp/Facebook)
+   - Review request list showing status: Sent, Awaiting Response, Happy (review link sent), Unhappy (in recovery), Reviewed, Max Attempts Reached
+   - Self-correcting flow UI: when customer marks unhappy → private feedback form path, staff alert badge in sidebar, recovery message config
+   - Recovery message template editor ("We want to make this right...")
+   - Follow-up cadence settings: interval (default 2 days), max attempts (default 5)
+   - SMS + Email channel toggles (requires agency Twilio credentials)
+
+4. **Backend data models** for:
+   - ChatWidgetConfig: tenantId, niche, greeting, faqs, leadCaptureEnabled, bookingEnabled, isActive, embedToken
+   - VoiceAgentConfig: tenantId, greetingScript, businessHours, services, callRouting, twilioNumber, vapiAgentId, isConfigured
+   - ReviewRequest: id, tenantId, customerName, customerPhone, customerEmail, serviceCompleted, platform, status, sentAt, lastFollowUpAt, attempts, feedback
+   - AgencySettings: twilioAccountSid, twilioAuthToken, twilioPhone, vapiApiKey (admin only)
+
+5. **Sidebar nav additions**: Chat Widget (under Growth Engines), Voice Agent (under Growth Engines), Review Requests (under Growth Engines)
+
+6. **Admin Settings section** for agency API credentials (Twilio + Vapi)
 
 ### Modify
-- LoginPage: replace role picker UI with a real credential form (Username, Email, Password fields). Admin333 / daree1933@gmail.com / Admin333 logs in as agency admin. Any other valid-looking email with any password logs in as business owner (select tenant). Show validation errors for empty fields.
-- AppContext: add `isAdmin` based on credentials match, persist login state in sessionStorage so refresh doesn't log out
-- AppLayout: add hamburger toggle button in header for mobile; sidebar becomes a Sheet/overlay drawer on mobile (use Sheet from shadcn or a simple fixed overlay)
-- App.tsx: add `/admin` route protected and admin-only
+- `AppLayout.tsx`: Add Chat Widget, Voice Agent, Review Requests to NAV_GROUPS under GROWTH ENGINES
+- `App.tsx`: Add routes for `/chat-widget`, `/voice-agent`, `/review-requests`
+- `SettingsPage.tsx`: Add "Integrations" tab with Twilio + Vapi credential fields (admin-only)
+- `AppContext.tsx`: Add agencySettings state, chatWidgetConfigs, voiceAgentConfigs, reviewRequests state
+- PAGE_TITLES map: add new routes
 
 ### Remove
 - Nothing removed
 
 ## Implementation Plan
-1. Update LoginPage with credential form — admin check against Admin333/daree1933@gmail.com/Admin333
-2. Update AppContext to persist login in sessionStorage and support adminLogin flag
-3. Create AdminPage.tsx with master dashboard: tenant stats, create/delete tenant, score override
-4. Update AppLayout for mobile-responsive collapsible sidebar (Sheet overlay on mobile, hamburger in header)
-5. Update AuditPage with live audit simulation: step-by-step animated audit runner with per-category scores
-6. Update App.tsx to add /admin route with admin-only guard
-7. Update navigation in AppLayout to show Admin Panel link for admins
+1. Update backend Motoko to add ChatWidgetConfig, VoiceAgentConfig, ReviewRequest, AgencySettings types and CRUD methods
+2. Create `ChatWidgetPage.tsx` with niche-based AI config generator, form, preview, embed code
+3. Create `VoiceAgentPage.tsx` with config form, Twilio/Vapi credential display, sync UI
+4. Create `ReviewRequestsPage.tsx` with send form, request list, self-correcting flow UI, cadence settings
+5. Update `AppLayout.tsx` navigation groups
+6. Update `App.tsx` routes
+7. Update `SettingsPage.tsx` with Integrations tab
+8. Update `AppContext.tsx` with new state

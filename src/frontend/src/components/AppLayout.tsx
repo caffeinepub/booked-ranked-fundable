@@ -5,7 +5,10 @@ import {
   LayoutDashboard,
   LogOut,
   Menu,
+  MessageSquare,
+  Phone,
   Search,
+  Send,
   Settings,
   ShieldCheck,
   Star,
@@ -34,6 +37,9 @@ const NAV_GROUPS = [
       { label: "Reviews", path: "/reviews", icon: Star },
       { label: "SEO Audit", path: "/audit", icon: Search },
       { label: "Fundability", path: "/fundability", icon: TrendingUp },
+      { label: "Chat Widget", path: "/chat-widget", icon: MessageSquare },
+      { label: "Voice Agent", path: "/voice-agent", icon: Phone },
+      { label: "Review Requests", path: "/review-requests", icon: Send },
     ],
   },
   {
@@ -55,6 +61,9 @@ const PAGE_TITLES: Record<string, string> = {
   "/reports": "Reports",
   "/settings": "Settings",
   "/admin": "Admin Panel",
+  "/chat-widget": "Chat Widget",
+  "/voice-agent": "Voice Agent",
+  "/review-requests": "Review Requests",
 };
 
 export default function AppLayout({ children }: { children: ReactNode }) {

@@ -1,12 +1,16 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import {
   ArrowRight,
   Calendar,
   Check,
   DollarSign,
+  Shield,
   TrendingUp,
+  Zap,
 } from "lucide-react";
+import { useState } from "react";
 import { Button } from "../components/ui/button";
+import { Input } from "../components/ui/input";
 
 const FEATURES = [
   {
@@ -92,6 +96,37 @@ const PRICING = [
   },
 ];
 
+function FreeAuditBar() {
+  const navigate = useNavigate();
+  const [url, setUrl] = useState("");
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!url.trim()) return;
+    navigate({ to: "/free-audit", search: { url: url.trim() } as any });
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="flex gap-3 max-w-xl mx-auto">
+      <Input
+        data-ocid="home.search_input"
+        placeholder="https://yourbusiness.com"
+        value={url}
+        onChange={(e) => setUrl(e.target.value)}
+        className="flex-1 h-12 text-base"
+      />
+      <Button
+        type="submit"
+        data-ocid="home.primary_button"
+        size="lg"
+        className="bg-indigo-600 hover:bg-indigo-700 text-white whitespace-nowrap h-12"
+      >
+        Get Free Audit <ArrowRight size={15} className="ml-1.5" />
+      </Button>
+    </form>
+  );
+}
+
 export default function HomePage() {
   return (
     <div className="min-h-screen bg-white">
@@ -105,11 +140,22 @@ export default function HomePage() {
             Booked Ranked Fundable
           </span>
         </div>
-        <Link to="/login">
-          <Button variant="outline" size="sm">
-            Sign In
-          </Button>
-        </Link>
+        <div className="flex items-center gap-3">
+          <Link to="/free-audit">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-indigo-600 font-medium"
+            >
+              Free Audit
+            </Button>
+          </Link>
+          <Link to="/login">
+            <Button variant="outline" size="sm">
+              Sign In
+            </Button>
+          </Link>
+        </div>
       </nav>
 
       {/* Hero */}
@@ -130,21 +176,47 @@ export default function HomePage() {
           <div className="flex gap-4 justify-center flex-wrap">
             <Link to="/login">
               <Button
+                data-ocid="home.primary_button"
                 size="lg"
                 className="bg-indigo-600 hover:bg-indigo-700 text-white"
               >
                 Start Free Trial <ArrowRight size={16} className="ml-2" />
               </Button>
             </Link>
-            <Link to="/login">
+            <Link to="/free-audit">
               <Button
+                data-ocid="home.secondary_button"
                 size="lg"
                 variant="outline"
                 className="border-white/30 text-white hover:bg-white/10"
               >
-                See Demo
+                Get Free Audit
               </Button>
             </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Free Audit CTA */}
+      <section className="py-16 px-6 bg-white border-b border-gray-100">
+        <div className="max-w-3xl mx-auto text-center">
+          <div className="inline-flex items-center gap-1.5 bg-indigo-50 border border-indigo-100 text-indigo-600 text-xs font-semibold px-3 py-1 rounded-full mb-5">
+            <Zap size={11} /> Free Instant Audit — No Signup Required
+          </div>
+          <h2 className="text-3xl font-bold text-gray-900 mb-3">
+            See How Your Business Ranks — Free
+          </h2>
+          <p className="text-gray-500 mb-8 max-w-xl mx-auto">
+            Get an instant audit of your website, SEO, and social media
+            presence. No signup required.
+          </p>
+          <FreeAuditBar />
+          <div className="flex items-center justify-center gap-6 mt-5 text-xs text-gray-400 flex-wrap">
+            <span className="flex items-center gap-1">
+              <Shield size={11} /> No credit card required
+            </span>
+            <span>✓ Real data from Google PageSpeed</span>
+            <span>✓ Social media presence check</span>
           </div>
         </div>
       </section>
@@ -242,6 +314,7 @@ export default function HomePage() {
                 </ul>
                 <Link to="/login">
                   <Button
+                    data-ocid="home.primary_button"
                     className={`w-full ${
                       featured
                         ? "bg-indigo-600 hover:bg-indigo-700 text-white"

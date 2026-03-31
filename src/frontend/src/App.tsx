@@ -10,14 +10,18 @@ import { Toaster } from "./components/ui/sonner";
 import { AppProvider, useApp } from "./context/AppContext";
 import AdminPage from "./pages/AdminPage";
 import AuditPage from "./pages/AuditPage";
+import ChatWidgetPage from "./pages/ChatWidgetPage";
 import DashboardPage from "./pages/DashboardPage";
+import FreeAuditPage from "./pages/FreeAuditPage";
 import FundabilityPage from "./pages/FundabilityPage";
 import HomePage from "./pages/HomePage";
 import LeadsPage from "./pages/LeadsPage";
 import LoginPage from "./pages/LoginPage";
 import ReportsPage from "./pages/ReportsPage";
+import ReviewRequestsPage from "./pages/ReviewRequestsPage";
 import ReviewsPage from "./pages/ReviewsPage";
 import SettingsPage from "./pages/SettingsPage";
+import VoiceAgentPage from "./pages/VoiceAgentPage";
 
 function ProtectedRoute({
   children,
@@ -57,6 +61,12 @@ const loginRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/login",
   component: LoginPage,
+});
+
+const freeAuditRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/free-audit",
+  component: FreeAuditPage,
 });
 
 const dashboardRoute = createRoute({
@@ -139,9 +149,40 @@ const adminRoute = createRoute({
   ),
 });
 
+const chatWidgetRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/chat-widget",
+  component: () => (
+    <ProtectedRoute>
+      <ChatWidgetPage />
+    </ProtectedRoute>
+  ),
+});
+
+const voiceAgentRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/voice-agent",
+  component: () => (
+    <ProtectedRoute>
+      <VoiceAgentPage />
+    </ProtectedRoute>
+  ),
+});
+
+const reviewRequestsRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/review-requests",
+  component: () => (
+    <ProtectedRoute>
+      <ReviewRequestsPage />
+    </ProtectedRoute>
+  ),
+});
+
 const routeTree = rootRoute.addChildren([
   indexRoute,
   loginRoute,
+  freeAuditRoute,
   dashboardRoute,
   leadsRoute,
   reviewsRoute,
@@ -150,6 +191,9 @@ const routeTree = rootRoute.addChildren([
   reportsRoute,
   settingsRoute,
   adminRoute,
+  chatWidgetRoute,
+  voiceAgentRoute,
+  reviewRequestsRoute,
 ]);
 
 const router = createRouter({ routeTree });

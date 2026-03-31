@@ -13,6 +13,12 @@ export const UserRole = IDL.Variant({
   'user' : IDL.Null,
   'guest' : IDL.Null,
 });
+export const SocialPresence = IDL.Record({
+  'linkedin' : IDL.Bool,
+  'instagram' : IDL.Bool,
+  'facebook' : IDL.Bool,
+  'googleMaps' : IDL.Bool,
+});
 export const Time = IDL.Int;
 export const TenantId = IDL.Text;
 export const Lead = IDL.Record({
@@ -30,6 +36,44 @@ export const Review = IDL.Record({
   'comment' : IDL.Text,
   'rating' : IDL.Nat,
 });
+export const ReviewRequestStatus = IDL.Variant({
+  'unhappy' : IDL.Null,
+  'happy' : IDL.Null,
+  'sent' : IDL.Null,
+  'awaiting' : IDL.Null,
+  'reviewed' : IDL.Null,
+  'maxAttempts' : IDL.Null,
+});
+export const ReviewRequest = IDL.Record({
+  'id' : IDL.Text,
+  'customerName' : IDL.Text,
+  'status' : ReviewRequestStatus,
+  'sentTimestamp' : Time,
+  'platform' : IDL.Text,
+  'email' : IDL.Text,
+  'tenantId' : TenantId,
+  'attemptCount' : IDL.Nat,
+  'customerFeedback' : IDL.Text,
+  'serviceCompleted' : IDL.Text,
+  'phone' : IDL.Text,
+  'lastFollowUp' : Time,
+});
+export const ChatWidgetConfig = IDL.Record({
+  'faqItems' : IDL.Vec(IDL.Text),
+  'active' : IDL.Bool,
+  'leadCaptureEnabled' : IDL.Bool,
+  'greeting' : IDL.Text,
+  'tenantId' : TenantId,
+  'niche' : IDL.Text,
+  'embedToken' : IDL.Text,
+  'bookingEnabled' : IDL.Bool,
+});
+export const AgencySettings = IDL.Record({
+  'twilioSid' : IDL.Text,
+  'twilioAuth' : IDL.Text,
+  'vapiKey' : IDL.Text,
+  'twilioNumber' : IDL.Text,
+});
 export const AuditScore = IDL.Record({
   'lastUpdated' : Time,
   'tenantId' : TenantId,
@@ -39,22 +83,88 @@ export const UserProfile = IDL.Record({
   'name' : IDL.Text,
   'tenantId' : TenantId,
 });
+export const VoiceAgentConfig = IDL.Record({
+  'callRouting' : IDL.Variant({
+    'ai' : IDL.Null,
+    'voicemail' : IDL.Text,
+    'forward' : IDL.Text,
+  }),
+  'vapiAgentId' : IDL.Text,
+  'businessHoursText' : IDL.Text,
+  'tenantId' : TenantId,
+  'configured' : IDL.Bool,
+  'greetingScript' : IDL.Text,
+  'twilioNumber' : IDL.Text,
+  'services' : IDL.Vec(IDL.Text),
+});
+export const FreeAuditLead = IDL.Record({
+  'id' : IDL.Text,
+  'overallScore' : IDL.Nat,
+  'websiteUrl' : IDL.Text,
+  'createdAt' : Time,
+  'businessName' : IDL.Text,
+  'contactEmail' : IDL.Text,
+  'phone' : IDL.Text,
+  'location' : IDL.Text,
+});
 export const FundabilityScore = IDL.Record({
   'lastUpdated' : Time,
   'tenantId' : TenantId,
   'score' : IDL.Nat,
 });
+export const http_header = IDL.Record({
+  'value' : IDL.Text,
+  'name' : IDL.Text,
+});
+export const http_request_result = IDL.Record({
+  'status' : IDL.Nat,
+  'body' : IDL.Vec(IDL.Nat8),
+  'headers' : IDL.Vec(http_header),
+});
+export const TransformationInput = IDL.Record({
+  'context' : IDL.Vec(IDL.Nat8),
+  'response' : http_request_result,
+});
+export const TransformationOutput = IDL.Record({
+  'status' : IDL.Nat,
+  'body' : IDL.Vec(IDL.Nat8),
+  'headers' : IDL.Vec(http_header),
+});
 
 export const idlService = IDL.Service({
   '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
   'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
+  'checkSocialPresence' : IDL.Func([IDL.Text], [SocialPresence], []),
+  'checkSocialPresencePublic' : IDL.Func([IDL.Text], [SocialPresence], []),
   'createLead' : IDL.Func([Lead], [], []),
   'createReview' : IDL.Func([Review], [], []),
+  'createReviewRequest' : IDL.Func([ReviewRequest], [], []),
+  'deleteChatWidgetConfig' : IDL.Func([TenantId], [], []),
   'deleteLead' : IDL.Func([TenantId, IDL.Text], [], []),
   'deleteReview' : IDL.Func([TenantId, IDL.Text], [], []),
+  'deleteReviewRequest' : IDL.Func([TenantId, IDL.Text], [], []),
+  'deleteVoiceAgentConfig' : IDL.Func([TenantId], [], []),
+  'getActiveChatWidgetConfigs' : IDL.Func(
+      [],
+      [IDL.Vec(ChatWidgetConfig)],
+      ['query'],
+    ),
+  'getAgencySettings' : IDL.Func([], [IDL.Opt(AgencySettings)], ['query']),
+  'getAllTenants' : IDL.Func([], [IDL.Vec(IDL.Text)], ['query']),
   'getAuditScore' : IDL.Func([TenantId], [IDL.Opt(AuditScore)], ['query']),
   'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
   'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
+  'getChatWidgetConfig' : IDL.Func(
+      [TenantId],
+      [IDL.Opt(ChatWidgetConfig)],
+      ['query'],
+    ),
+  'getConfiguredVoiceAgents' : IDL.Func(
+      [],
+      [IDL.Vec(VoiceAgentConfig)],
+      ['query'],
+    ),
+  'getFreeAuditLeads' : IDL.Func([], [IDL.Vec(FreeAuditLead)], ['query']),
   'getFundabilityScore' : IDL.Func(
       [TenantId],
       [IDL.Opt(FundabilityScore)],
@@ -67,6 +177,16 @@ export const idlService = IDL.Service({
       [IDL.Opt(Review)],
       ['query'],
     ),
+  'getReviewRequest' : IDL.Func(
+      [TenantId, IDL.Text],
+      [IDL.Opt(ReviewRequest)],
+      ['query'],
+    ),
+  'getReviewRequests' : IDL.Func(
+      [TenantId],
+      [IDL.Vec(ReviewRequest)],
+      ['query'],
+    ),
   'getReviewsByTenantId' : IDL.Func([TenantId], [IDL.Vec(Review)], ['query']),
   'getTenantName' : IDL.Func([TenantId], [IDL.Text], ['query']),
   'getUserProfile' : IDL.Func(
@@ -74,11 +194,38 @@ export const idlService = IDL.Service({
       [IDL.Opt(UserProfile)],
       ['query'],
     ),
+  'getVoiceAgentConfig' : IDL.Func(
+      [TenantId],
+      [IDL.Opt(VoiceAgentConfig)],
+      ['query'],
+    ),
   'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
+  'runPageSpeedAudit' : IDL.Func([IDL.Text], [IDL.Text], []),
+  'runPageSpeedAuditPublic' : IDL.Func([IDL.Text], [IDL.Text], []),
   'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
+  'saveFreeAuditLead' : IDL.Func(
+      [IDL.Text, IDL.Text, IDL.Text, IDL.Text, IDL.Text, IDL.Nat],
+      [],
+      [],
+    ),
   'seedDemoData' : IDL.Func([], [], []),
+  'transform' : IDL.Func(
+      [TransformationInput],
+      [TransformationOutput],
+      ['query'],
+    ),
+  'updateAgencySettings' : IDL.Func([AgencySettings], [], []),
   'updateAuditScore' : IDL.Func([TenantId, IDL.Nat], [], []),
   'updateFundabilityScore' : IDL.Func([TenantId, IDL.Nat], [], []),
+  'updateLead' : IDL.Func([TenantId, IDL.Text, Lead], [], []),
+  'updateReview' : IDL.Func([TenantId, IDL.Text, Review], [], []),
+  'updateReviewRequestStatus' : IDL.Func(
+      [TenantId, IDL.Text, ReviewRequestStatus],
+      [],
+      [],
+    ),
+  'upsertChatWidgetConfig' : IDL.Func([ChatWidgetConfig], [], []),
+  'upsertVoiceAgentConfig' : IDL.Func([VoiceAgentConfig], [], []),
 });
 
 export const idlInitArgs = [];
@@ -88,6 +235,12 @@ export const idlFactory = ({ IDL }) => {
     'admin' : IDL.Null,
     'user' : IDL.Null,
     'guest' : IDL.Null,
+  });
+  const SocialPresence = IDL.Record({
+    'linkedin' : IDL.Bool,
+    'instagram' : IDL.Bool,
+    'facebook' : IDL.Bool,
+    'googleMaps' : IDL.Bool,
   });
   const Time = IDL.Int;
   const TenantId = IDL.Text;
@@ -106,28 +259,129 @@ export const idlFactory = ({ IDL }) => {
     'comment' : IDL.Text,
     'rating' : IDL.Nat,
   });
+  const ReviewRequestStatus = IDL.Variant({
+    'unhappy' : IDL.Null,
+    'happy' : IDL.Null,
+    'sent' : IDL.Null,
+    'awaiting' : IDL.Null,
+    'reviewed' : IDL.Null,
+    'maxAttempts' : IDL.Null,
+  });
+  const ReviewRequest = IDL.Record({
+    'id' : IDL.Text,
+    'customerName' : IDL.Text,
+    'status' : ReviewRequestStatus,
+    'sentTimestamp' : Time,
+    'platform' : IDL.Text,
+    'email' : IDL.Text,
+    'tenantId' : TenantId,
+    'attemptCount' : IDL.Nat,
+    'customerFeedback' : IDL.Text,
+    'serviceCompleted' : IDL.Text,
+    'phone' : IDL.Text,
+    'lastFollowUp' : Time,
+  });
+  const ChatWidgetConfig = IDL.Record({
+    'faqItems' : IDL.Vec(IDL.Text),
+    'active' : IDL.Bool,
+    'leadCaptureEnabled' : IDL.Bool,
+    'greeting' : IDL.Text,
+    'tenantId' : TenantId,
+    'niche' : IDL.Text,
+    'embedToken' : IDL.Text,
+    'bookingEnabled' : IDL.Bool,
+  });
+  const AgencySettings = IDL.Record({
+    'twilioSid' : IDL.Text,
+    'twilioAuth' : IDL.Text,
+    'vapiKey' : IDL.Text,
+    'twilioNumber' : IDL.Text,
+  });
   const AuditScore = IDL.Record({
     'lastUpdated' : Time,
     'tenantId' : TenantId,
     'score' : IDL.Nat,
   });
   const UserProfile = IDL.Record({ 'name' : IDL.Text, 'tenantId' : TenantId });
+  const VoiceAgentConfig = IDL.Record({
+    'callRouting' : IDL.Variant({
+      'ai' : IDL.Null,
+      'voicemail' : IDL.Text,
+      'forward' : IDL.Text,
+    }),
+    'vapiAgentId' : IDL.Text,
+    'businessHoursText' : IDL.Text,
+    'tenantId' : TenantId,
+    'configured' : IDL.Bool,
+    'greetingScript' : IDL.Text,
+    'twilioNumber' : IDL.Text,
+    'services' : IDL.Vec(IDL.Text),
+  });
+  const FreeAuditLead = IDL.Record({
+    'id' : IDL.Text,
+    'overallScore' : IDL.Nat,
+    'websiteUrl' : IDL.Text,
+    'createdAt' : Time,
+    'businessName' : IDL.Text,
+    'contactEmail' : IDL.Text,
+    'phone' : IDL.Text,
+    'location' : IDL.Text,
+  });
   const FundabilityScore = IDL.Record({
     'lastUpdated' : Time,
     'tenantId' : TenantId,
     'score' : IDL.Nat,
   });
+  const http_header = IDL.Record({ 'value' : IDL.Text, 'name' : IDL.Text });
+  const http_request_result = IDL.Record({
+    'status' : IDL.Nat,
+    'body' : IDL.Vec(IDL.Nat8),
+    'headers' : IDL.Vec(http_header),
+  });
+  const TransformationInput = IDL.Record({
+    'context' : IDL.Vec(IDL.Nat8),
+    'response' : http_request_result,
+  });
+  const TransformationOutput = IDL.Record({
+    'status' : IDL.Nat,
+    'body' : IDL.Vec(IDL.Nat8),
+    'headers' : IDL.Vec(http_header),
+  });
   
   return IDL.Service({
     '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
     'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
+    'checkSocialPresence' : IDL.Func([IDL.Text], [SocialPresence], []),
+    'checkSocialPresencePublic' : IDL.Func([IDL.Text], [SocialPresence], []),
     'createLead' : IDL.Func([Lead], [], []),
     'createReview' : IDL.Func([Review], [], []),
+    'createReviewRequest' : IDL.Func([ReviewRequest], [], []),
+    'deleteChatWidgetConfig' : IDL.Func([TenantId], [], []),
     'deleteLead' : IDL.Func([TenantId, IDL.Text], [], []),
     'deleteReview' : IDL.Func([TenantId, IDL.Text], [], []),
+    'deleteReviewRequest' : IDL.Func([TenantId, IDL.Text], [], []),
+    'deleteVoiceAgentConfig' : IDL.Func([TenantId], [], []),
+    'getActiveChatWidgetConfigs' : IDL.Func(
+        [],
+        [IDL.Vec(ChatWidgetConfig)],
+        ['query'],
+      ),
+    'getAgencySettings' : IDL.Func([], [IDL.Opt(AgencySettings)], ['query']),
+    'getAllTenants' : IDL.Func([], [IDL.Vec(IDL.Text)], ['query']),
     'getAuditScore' : IDL.Func([TenantId], [IDL.Opt(AuditScore)], ['query']),
     'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
     'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
+    'getChatWidgetConfig' : IDL.Func(
+        [TenantId],
+        [IDL.Opt(ChatWidgetConfig)],
+        ['query'],
+      ),
+    'getConfiguredVoiceAgents' : IDL.Func(
+        [],
+        [IDL.Vec(VoiceAgentConfig)],
+        ['query'],
+      ),
+    'getFreeAuditLeads' : IDL.Func([], [IDL.Vec(FreeAuditLead)], ['query']),
     'getFundabilityScore' : IDL.Func(
         [TenantId],
         [IDL.Opt(FundabilityScore)],
@@ -140,6 +394,16 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Opt(Review)],
         ['query'],
       ),
+    'getReviewRequest' : IDL.Func(
+        [TenantId, IDL.Text],
+        [IDL.Opt(ReviewRequest)],
+        ['query'],
+      ),
+    'getReviewRequests' : IDL.Func(
+        [TenantId],
+        [IDL.Vec(ReviewRequest)],
+        ['query'],
+      ),
     'getReviewsByTenantId' : IDL.Func([TenantId], [IDL.Vec(Review)], ['query']),
     'getTenantName' : IDL.Func([TenantId], [IDL.Text], ['query']),
     'getUserProfile' : IDL.Func(
@@ -147,11 +411,38 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Opt(UserProfile)],
         ['query'],
       ),
+    'getVoiceAgentConfig' : IDL.Func(
+        [TenantId],
+        [IDL.Opt(VoiceAgentConfig)],
+        ['query'],
+      ),
     'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
+    'runPageSpeedAudit' : IDL.Func([IDL.Text], [IDL.Text], []),
+    'runPageSpeedAuditPublic' : IDL.Func([IDL.Text], [IDL.Text], []),
     'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
+    'saveFreeAuditLead' : IDL.Func(
+        [IDL.Text, IDL.Text, IDL.Text, IDL.Text, IDL.Text, IDL.Nat],
+        [],
+        [],
+      ),
     'seedDemoData' : IDL.Func([], [], []),
+    'transform' : IDL.Func(
+        [TransformationInput],
+        [TransformationOutput],
+        ['query'],
+      ),
+    'updateAgencySettings' : IDL.Func([AgencySettings], [], []),
     'updateAuditScore' : IDL.Func([TenantId, IDL.Nat], [], []),
     'updateFundabilityScore' : IDL.Func([TenantId, IDL.Nat], [], []),
+    'updateLead' : IDL.Func([TenantId, IDL.Text, Lead], [], []),
+    'updateReview' : IDL.Func([TenantId, IDL.Text, Review], [], []),
+    'updateReviewRequestStatus' : IDL.Func(
+        [TenantId, IDL.Text, ReviewRequestStatus],
+        [],
+        [],
+      ),
+    'upsertChatWidgetConfig' : IDL.Func([ChatWidgetConfig], [], []),
+    'upsertVoiceAgentConfig' : IDL.Func([VoiceAgentConfig], [], []),
   });
 };
 

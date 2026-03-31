@@ -10,10 +10,36 @@ import type { ActorMethod } from '@icp-sdk/core/agent';
 import type { IDL } from '@icp-sdk/core/candid';
 import type { Principal } from '@icp-sdk/core/principal';
 
+export interface AgencySettings {
+  'twilioSid' : string,
+  'twilioAuth' : string,
+  'vapiKey' : string,
+  'twilioNumber' : string,
+}
 export interface AuditScore {
   'lastUpdated' : Time,
   'tenantId' : TenantId,
   'score' : bigint,
+}
+export interface ChatWidgetConfig {
+  'faqItems' : Array<string>,
+  'active' : boolean,
+  'leadCaptureEnabled' : boolean,
+  'greeting' : string,
+  'tenantId' : TenantId,
+  'niche' : string,
+  'embedToken' : string,
+  'bookingEnabled' : boolean,
+}
+export interface FreeAuditLead {
+  'id' : string,
+  'overallScore' : bigint,
+  'websiteUrl' : string,
+  'createdAt' : Time,
+  'businessName' : string,
+  'contactEmail' : string,
+  'phone' : string,
+  'location' : string,
 }
 export interface FundabilityScore {
   'lastUpdated' : Time,
@@ -35,34 +61,118 @@ export interface Review {
   'comment' : string,
   'rating' : bigint,
 }
+export interface ReviewRequest {
+  'id' : string,
+  'customerName' : string,
+  'status' : ReviewRequestStatus,
+  'sentTimestamp' : Time,
+  'platform' : string,
+  'email' : string,
+  'tenantId' : TenantId,
+  'attemptCount' : bigint,
+  'customerFeedback' : string,
+  'serviceCompleted' : string,
+  'phone' : string,
+  'lastFollowUp' : Time,
+}
+export type ReviewRequestStatus = { 'unhappy' : null } |
+  { 'happy' : null } |
+  { 'sent' : null } |
+  { 'awaiting' : null } |
+  { 'reviewed' : null } |
+  { 'maxAttempts' : null };
+export interface SocialPresence {
+  'linkedin' : boolean,
+  'instagram' : boolean,
+  'facebook' : boolean,
+  'googleMaps' : boolean,
+}
 export type TenantId = string;
 export type Time = bigint;
+export interface TransformationInput {
+  'context' : Uint8Array,
+  'response' : http_request_result,
+}
+export interface TransformationOutput {
+  'status' : bigint,
+  'body' : Uint8Array,
+  'headers' : Array<http_header>,
+}
 export interface UserProfile { 'name' : string, 'tenantId' : TenantId }
 export type UserRole = { 'admin' : null } |
   { 'user' : null } |
   { 'guest' : null };
+export interface VoiceAgentConfig {
+  'callRouting' : { 'ai' : null } |
+    { 'voicemail' : string } |
+    { 'forward' : string },
+  'vapiAgentId' : string,
+  'businessHoursText' : string,
+  'tenantId' : TenantId,
+  'configured' : boolean,
+  'greetingScript' : string,
+  'twilioNumber' : string,
+  'services' : Array<string>,
+}
+export interface http_header { 'value' : string, 'name' : string }
+export interface http_request_result {
+  'status' : bigint,
+  'body' : Uint8Array,
+  'headers' : Array<http_header>,
+}
 export interface _SERVICE {
   '_initializeAccessControlWithSecret' : ActorMethod<[string], undefined>,
   'assignCallerUserRole' : ActorMethod<[Principal, UserRole], undefined>,
+  'checkSocialPresence' : ActorMethod<[string], SocialPresence>,
+  'checkSocialPresencePublic' : ActorMethod<[string], SocialPresence>,
   'createLead' : ActorMethod<[Lead], undefined>,
   'createReview' : ActorMethod<[Review], undefined>,
+  'createReviewRequest' : ActorMethod<[ReviewRequest], undefined>,
+  'deleteChatWidgetConfig' : ActorMethod<[TenantId], undefined>,
   'deleteLead' : ActorMethod<[TenantId, string], undefined>,
   'deleteReview' : ActorMethod<[TenantId, string], undefined>,
+  'deleteReviewRequest' : ActorMethod<[TenantId, string], undefined>,
+  'deleteVoiceAgentConfig' : ActorMethod<[TenantId], undefined>,
+  'getActiveChatWidgetConfigs' : ActorMethod<[], Array<ChatWidgetConfig>>,
+  'getAgencySettings' : ActorMethod<[], [] | [AgencySettings]>,
+  'getAllTenants' : ActorMethod<[], Array<string>>,
   'getAuditScore' : ActorMethod<[TenantId], [] | [AuditScore]>,
   'getCallerUserProfile' : ActorMethod<[], [] | [UserProfile]>,
   'getCallerUserRole' : ActorMethod<[], UserRole>,
+  'getChatWidgetConfig' : ActorMethod<[TenantId], [] | [ChatWidgetConfig]>,
+  'getConfiguredVoiceAgents' : ActorMethod<[], Array<VoiceAgentConfig>>,
+  'getFreeAuditLeads' : ActorMethod<[], Array<FreeAuditLead>>,
   'getFundabilityScore' : ActorMethod<[TenantId], [] | [FundabilityScore]>,
   'getLeadById' : ActorMethod<[TenantId, string], [] | [Lead]>,
   'getLeadsByTenantId' : ActorMethod<[TenantId], Array<Lead>>,
   'getReviewById' : ActorMethod<[TenantId, string], [] | [Review]>,
+  'getReviewRequest' : ActorMethod<[TenantId, string], [] | [ReviewRequest]>,
+  'getReviewRequests' : ActorMethod<[TenantId], Array<ReviewRequest>>,
   'getReviewsByTenantId' : ActorMethod<[TenantId], Array<Review>>,
   'getTenantName' : ActorMethod<[TenantId], string>,
   'getUserProfile' : ActorMethod<[Principal], [] | [UserProfile]>,
+  'getVoiceAgentConfig' : ActorMethod<[TenantId], [] | [VoiceAgentConfig]>,
   'isCallerAdmin' : ActorMethod<[], boolean>,
+  'runPageSpeedAudit' : ActorMethod<[string], string>,
+  'runPageSpeedAuditPublic' : ActorMethod<[string], string>,
   'saveCallerUserProfile' : ActorMethod<[UserProfile], undefined>,
+  'saveFreeAuditLead' : ActorMethod<
+    [string, string, string, string, string, bigint],
+    undefined
+  >,
   'seedDemoData' : ActorMethod<[], undefined>,
+  'transform' : ActorMethod<[TransformationInput], TransformationOutput>,
+  'updateAgencySettings' : ActorMethod<[AgencySettings], undefined>,
   'updateAuditScore' : ActorMethod<[TenantId, bigint], undefined>,
   'updateFundabilityScore' : ActorMethod<[TenantId, bigint], undefined>,
+  'updateLead' : ActorMethod<[TenantId, string, Lead], undefined>,
+  'updateReview' : ActorMethod<[TenantId, string, Review], undefined>,
+  'updateReviewRequestStatus' : ActorMethod<
+    [TenantId, string, ReviewRequestStatus],
+    undefined
+  >,
+  'upsertChatWidgetConfig' : ActorMethod<[ChatWidgetConfig], undefined>,
+  'upsertVoiceAgentConfig' : ActorMethod<[VoiceAgentConfig], undefined>,
 }
 export declare const idlService: IDL.ServiceClass;
 export declare const idlInitArgs: IDL.Type[];

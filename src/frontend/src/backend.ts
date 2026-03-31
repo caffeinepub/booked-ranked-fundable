@@ -89,6 +89,79 @@ export class ExternalBlob {
         return this;
     }
 }
+export interface UserProfile {
+    name: string;
+    tenantId: TenantId;
+}
+export interface AuditScore {
+    lastUpdated: Time;
+    tenantId: TenantId;
+    score: bigint;
+}
+export interface TransformationOutput {
+    status: bigint;
+    body: Uint8Array;
+    headers: Array<http_header>;
+}
+export type Time = bigint;
+export interface ReviewRequest {
+    id: string;
+    customerName: string;
+    status: ReviewRequestStatus;
+    sentTimestamp: Time;
+    platform: string;
+    email: string;
+    tenantId: TenantId;
+    attemptCount: bigint;
+    customerFeedback: string;
+    serviceCompleted: string;
+    phone: string;
+    lastFollowUp: Time;
+}
+export interface SocialPresence {
+    linkedin: boolean;
+    instagram: boolean;
+    facebook: boolean;
+    googleMaps: boolean;
+}
+export interface FreeAuditLead {
+    id: string;
+    overallScore: bigint;
+    websiteUrl: string;
+    createdAt: Time;
+    businessName: string;
+    contactEmail: string;
+    phone: string;
+    location: string;
+}
+export interface http_header {
+    value: string;
+    name: string;
+}
+export interface http_request_result {
+    status: bigint;
+    body: Uint8Array;
+    headers: Array<http_header>;
+}
+export interface VoiceAgentConfig {
+    callRouting: {
+        __kind__: "ai";
+        ai: null;
+    } | {
+        __kind__: "voicemail";
+        voicemail: string;
+    } | {
+        __kind__: "forward";
+        forward: string;
+    };
+    vapiAgentId: string;
+    businessHoursText: string;
+    tenantId: TenantId;
+    configured: boolean;
+    greetingScript: string;
+    twilioNumber: string;
+    services: Array<string>;
+}
 export interface Lead {
     id: string;
     name: string;
@@ -97,13 +170,26 @@ export interface Lead {
     tenantId: TenantId;
     phone: string;
 }
-export type TenantId = string;
-export interface AuditScore {
-    lastUpdated: Time;
-    tenantId: TenantId;
-    score: bigint;
+export interface AgencySettings {
+    twilioSid: string;
+    twilioAuth: string;
+    vapiKey: string;
+    twilioNumber: string;
 }
-export type Time = bigint;
+export interface TransformationInput {
+    context: Uint8Array;
+    response: http_request_result;
+}
+export interface ChatWidgetConfig {
+    faqItems: Array<string>;
+    active: boolean;
+    leadCaptureEnabled: boolean;
+    greeting: string;
+    tenantId: TenantId;
+    niche: string;
+    embedToken: string;
+    bookingEnabled: boolean;
+}
 export interface FundabilityScore {
     lastUpdated: Time;
     tenantId: TenantId;
@@ -116,9 +202,14 @@ export interface Review {
     comment: string;
     rating: bigint;
 }
-export interface UserProfile {
-    name: string;
-    tenantId: TenantId;
+export type TenantId = string;
+export enum ReviewRequestStatus {
+    unhappy = "unhappy",
+    happy = "happy",
+    sent = "sent",
+    awaiting = "awaiting",
+    reviewed = "reviewed",
+    maxAttempts = "maxAttempts"
 }
 export enum UserRole {
     admin = "admin",
@@ -128,27 +219,52 @@ export enum UserRole {
 export interface backendInterface {
     _initializeAccessControlWithSecret(userSecret: string): Promise<void>;
     assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
+    checkSocialPresence(businessName: string): Promise<SocialPresence>;
+    checkSocialPresencePublic(businessName: string): Promise<SocialPresence>;
     createLead(lead: Lead): Promise<void>;
     createReview(review: Review): Promise<void>;
+    createReviewRequest(request: ReviewRequest): Promise<void>;
+    deleteChatWidgetConfig(tenantId: TenantId): Promise<void>;
     deleteLead(tenantId: TenantId, leadId: string): Promise<void>;
     deleteReview(tenantId: TenantId, reviewId: string): Promise<void>;
+    deleteReviewRequest(tenantId: TenantId, requestId: string): Promise<void>;
+    deleteVoiceAgentConfig(tenantId: TenantId): Promise<void>;
+    getActiveChatWidgetConfigs(): Promise<Array<ChatWidgetConfig>>;
+    getAgencySettings(): Promise<AgencySettings | null>;
+    getAllTenants(): Promise<Array<string>>;
     getAuditScore(tenantId: TenantId): Promise<AuditScore | null>;
     getCallerUserProfile(): Promise<UserProfile | null>;
     getCallerUserRole(): Promise<UserRole>;
+    getChatWidgetConfig(tenantId: TenantId): Promise<ChatWidgetConfig | null>;
+    getConfiguredVoiceAgents(): Promise<Array<VoiceAgentConfig>>;
+    getFreeAuditLeads(): Promise<Array<FreeAuditLead>>;
     getFundabilityScore(tenantId: TenantId): Promise<FundabilityScore | null>;
     getLeadById(tenantId: TenantId, leadId: string): Promise<Lead | null>;
     getLeadsByTenantId(tenantId: TenantId): Promise<Array<Lead>>;
     getReviewById(tenantId: TenantId, reviewId: string): Promise<Review | null>;
+    getReviewRequest(tenantId: TenantId, requestId: string): Promise<ReviewRequest | null>;
+    getReviewRequests(tenantId: TenantId): Promise<Array<ReviewRequest>>;
     getReviewsByTenantId(tenantId: TenantId): Promise<Array<Review>>;
     getTenantName(tenantId: TenantId): Promise<string>;
     getUserProfile(user: Principal): Promise<UserProfile | null>;
+    getVoiceAgentConfig(tenantId: TenantId): Promise<VoiceAgentConfig | null>;
     isCallerAdmin(): Promise<boolean>;
+    runPageSpeedAudit(url: string): Promise<string>;
+    runPageSpeedAuditPublic(url: string): Promise<string>;
     saveCallerUserProfile(profile: UserProfile): Promise<void>;
+    saveFreeAuditLead(businessName: string, websiteUrl: string, location: string, contactEmail: string, phone: string, overallScore: bigint): Promise<void>;
     seedDemoData(): Promise<void>;
+    transform(input: TransformationInput): Promise<TransformationOutput>;
+    updateAgencySettings(settings: AgencySettings): Promise<void>;
     updateAuditScore(tenantId: TenantId, score: bigint): Promise<void>;
     updateFundabilityScore(tenantId: TenantId, score: bigint): Promise<void>;
+    updateLead(tenantId: TenantId, leadId: string, lead: Lead): Promise<void>;
+    updateReview(tenantId: TenantId, reviewId: string, review: Review): Promise<void>;
+    updateReviewRequestStatus(tenantId: TenantId, requestId: string, status: ReviewRequestStatus): Promise<void>;
+    upsertChatWidgetConfig(config: ChatWidgetConfig): Promise<void>;
+    upsertVoiceAgentConfig(config: VoiceAgentConfig): Promise<void>;
 }
-import type { AuditScore as _AuditScore, FundabilityScore as _FundabilityScore, Lead as _Lead, Review as _Review, UserProfile as _UserProfile, UserRole as _UserRole } from "./declarations/backend.did.d.ts";
+import type { AgencySettings as _AgencySettings, AuditScore as _AuditScore, ChatWidgetConfig as _ChatWidgetConfig, FundabilityScore as _FundabilityScore, Lead as _Lead, Review as _Review, ReviewRequest as _ReviewRequest, ReviewRequestStatus as _ReviewRequestStatus, TenantId as _TenantId, Time as _Time, UserProfile as _UserProfile, UserRole as _UserRole, VoiceAgentConfig as _VoiceAgentConfig } from "./declarations/backend.did.d.ts";
 export class Backend implements backendInterface {
     constructor(private actor: ActorSubclass<_SERVICE>, private _uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, private _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, private processError?: (error: unknown) => never){}
     async _initializeAccessControlWithSecret(arg0: string): Promise<void> {
@@ -176,6 +292,34 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.assignCallerUserRole(arg0, to_candid_UserRole_n1(this._uploadFile, this._downloadFile, arg1));
+            return result;
+        }
+    }
+    async checkSocialPresence(arg0: string): Promise<SocialPresence> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.checkSocialPresence(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.checkSocialPresence(arg0);
+            return result;
+        }
+    }
+    async checkSocialPresencePublic(arg0: string): Promise<SocialPresence> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.checkSocialPresencePublic(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.checkSocialPresencePublic(arg0);
             return result;
         }
     }
@@ -207,6 +351,34 @@ export class Backend implements backendInterface {
             return result;
         }
     }
+    async createReviewRequest(arg0: ReviewRequest): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.createReviewRequest(to_candid_ReviewRequest_n3(this._uploadFile, this._downloadFile, arg0));
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.createReviewRequest(to_candid_ReviewRequest_n3(this._uploadFile, this._downloadFile, arg0));
+            return result;
+        }
+    }
+    async deleteChatWidgetConfig(arg0: TenantId): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.deleteChatWidgetConfig(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.deleteChatWidgetConfig(arg0);
+            return result;
+        }
+    }
     async deleteLead(arg0: TenantId, arg1: string): Promise<void> {
         if (this.processError) {
             try {
@@ -235,74 +407,186 @@ export class Backend implements backendInterface {
             return result;
         }
     }
-    async getAuditScore(arg0: TenantId): Promise<AuditScore | null> {
+    async deleteReviewRequest(arg0: TenantId, arg1: string): Promise<void> {
         if (this.processError) {
             try {
-                const result = await this.actor.getAuditScore(arg0);
-                return from_candid_opt_n3(this._uploadFile, this._downloadFile, result);
+                const result = await this.actor.deleteReviewRequest(arg0, arg1);
+                return result;
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.getAuditScore(arg0);
-            return from_candid_opt_n3(this._uploadFile, this._downloadFile, result);
+            const result = await this.actor.deleteReviewRequest(arg0, arg1);
+            return result;
         }
     }
-    async getCallerUserProfile(): Promise<UserProfile | null> {
+    async deleteVoiceAgentConfig(arg0: TenantId): Promise<void> {
         if (this.processError) {
             try {
-                const result = await this.actor.getCallerUserProfile();
-                return from_candid_opt_n4(this._uploadFile, this._downloadFile, result);
+                const result = await this.actor.deleteVoiceAgentConfig(arg0);
+                return result;
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.getCallerUserProfile();
-            return from_candid_opt_n4(this._uploadFile, this._downloadFile, result);
+            const result = await this.actor.deleteVoiceAgentConfig(arg0);
+            return result;
         }
     }
-    async getCallerUserRole(): Promise<UserRole> {
+    async getActiveChatWidgetConfigs(): Promise<Array<ChatWidgetConfig>> {
         if (this.processError) {
             try {
-                const result = await this.actor.getCallerUserRole();
-                return from_candid_UserRole_n5(this._uploadFile, this._downloadFile, result);
+                const result = await this.actor.getActiveChatWidgetConfigs();
+                return result;
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.getCallerUserRole();
-            return from_candid_UserRole_n5(this._uploadFile, this._downloadFile, result);
+            const result = await this.actor.getActiveChatWidgetConfigs();
+            return result;
         }
     }
-    async getFundabilityScore(arg0: TenantId): Promise<FundabilityScore | null> {
+    async getAgencySettings(): Promise<AgencySettings | null> {
         if (this.processError) {
             try {
-                const result = await this.actor.getFundabilityScore(arg0);
+                const result = await this.actor.getAgencySettings();
                 return from_candid_opt_n7(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.getFundabilityScore(arg0);
+            const result = await this.actor.getAgencySettings();
             return from_candid_opt_n7(this._uploadFile, this._downloadFile, result);
         }
     }
-    async getLeadById(arg0: TenantId, arg1: string): Promise<Lead | null> {
+    async getAllTenants(): Promise<Array<string>> {
         if (this.processError) {
             try {
-                const result = await this.actor.getLeadById(arg0, arg1);
+                const result = await this.actor.getAllTenants();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getAllTenants();
+            return result;
+        }
+    }
+    async getAuditScore(arg0: TenantId): Promise<AuditScore | null> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getAuditScore(arg0);
                 return from_candid_opt_n8(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.getLeadById(arg0, arg1);
+            const result = await this.actor.getAuditScore(arg0);
             return from_candid_opt_n8(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async getCallerUserProfile(): Promise<UserProfile | null> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getCallerUserProfile();
+                return from_candid_opt_n9(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getCallerUserProfile();
+            return from_candid_opt_n9(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async getCallerUserRole(): Promise<UserRole> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getCallerUserRole();
+                return from_candid_UserRole_n10(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getCallerUserRole();
+            return from_candid_UserRole_n10(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async getChatWidgetConfig(arg0: TenantId): Promise<ChatWidgetConfig | null> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getChatWidgetConfig(arg0);
+                return from_candid_opt_n12(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getChatWidgetConfig(arg0);
+            return from_candid_opt_n12(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async getConfiguredVoiceAgents(): Promise<Array<VoiceAgentConfig>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getConfiguredVoiceAgents();
+                return from_candid_vec_n13(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getConfiguredVoiceAgents();
+            return from_candid_vec_n13(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async getFreeAuditLeads(): Promise<Array<FreeAuditLead>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getFreeAuditLeads();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getFreeAuditLeads();
+            return result;
+        }
+    }
+    async getFundabilityScore(arg0: TenantId): Promise<FundabilityScore | null> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getFundabilityScore(arg0);
+                return from_candid_opt_n17(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getFundabilityScore(arg0);
+            return from_candid_opt_n17(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async getLeadById(arg0: TenantId, arg1: string): Promise<Lead | null> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getLeadById(arg0, arg1);
+                return from_candid_opt_n18(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getLeadById(arg0, arg1);
+            return from_candid_opt_n18(this._uploadFile, this._downloadFile, result);
         }
     }
     async getLeadsByTenantId(arg0: TenantId): Promise<Array<Lead>> {
@@ -323,14 +607,42 @@ export class Backend implements backendInterface {
         if (this.processError) {
             try {
                 const result = await this.actor.getReviewById(arg0, arg1);
-                return from_candid_opt_n9(this._uploadFile, this._downloadFile, result);
+                return from_candid_opt_n19(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.getReviewById(arg0, arg1);
-            return from_candid_opt_n9(this._uploadFile, this._downloadFile, result);
+            return from_candid_opt_n19(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async getReviewRequest(arg0: TenantId, arg1: string): Promise<ReviewRequest | null> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getReviewRequest(arg0, arg1);
+                return from_candid_opt_n20(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getReviewRequest(arg0, arg1);
+            return from_candid_opt_n20(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async getReviewRequests(arg0: TenantId): Promise<Array<ReviewRequest>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getReviewRequests(arg0);
+                return from_candid_vec_n25(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getReviewRequests(arg0);
+            return from_candid_vec_n25(this._uploadFile, this._downloadFile, result);
         }
     }
     async getReviewsByTenantId(arg0: TenantId): Promise<Array<Review>> {
@@ -365,14 +677,28 @@ export class Backend implements backendInterface {
         if (this.processError) {
             try {
                 const result = await this.actor.getUserProfile(arg0);
-                return from_candid_opt_n4(this._uploadFile, this._downloadFile, result);
+                return from_candid_opt_n9(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.getUserProfile(arg0);
-            return from_candid_opt_n4(this._uploadFile, this._downloadFile, result);
+            return from_candid_opt_n9(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async getVoiceAgentConfig(arg0: TenantId): Promise<VoiceAgentConfig | null> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getVoiceAgentConfig(arg0);
+                return from_candid_opt_n26(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getVoiceAgentConfig(arg0);
+            return from_candid_opt_n26(this._uploadFile, this._downloadFile, result);
         }
     }
     async isCallerAdmin(): Promise<boolean> {
@@ -386,6 +712,34 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.isCallerAdmin();
+            return result;
+        }
+    }
+    async runPageSpeedAudit(arg0: string): Promise<string> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.runPageSpeedAudit(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.runPageSpeedAudit(arg0);
+            return result;
+        }
+    }
+    async runPageSpeedAuditPublic(arg0: string): Promise<string> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.runPageSpeedAuditPublic(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.runPageSpeedAuditPublic(arg0);
             return result;
         }
     }
@@ -403,6 +757,20 @@ export class Backend implements backendInterface {
             return result;
         }
     }
+    async saveFreeAuditLead(arg0: string, arg1: string, arg2: string, arg3: string, arg4: string, arg5: bigint): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.saveFreeAuditLead(arg0, arg1, arg2, arg3, arg4, arg5);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.saveFreeAuditLead(arg0, arg1, arg2, arg3, arg4, arg5);
+            return result;
+        }
+    }
     async seedDemoData(): Promise<void> {
         if (this.processError) {
             try {
@@ -414,6 +782,34 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.seedDemoData();
+            return result;
+        }
+    }
+    async transform(arg0: TransformationInput): Promise<TransformationOutput> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.transform(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.transform(arg0);
+            return result;
+        }
+    }
+    async updateAgencySettings(arg0: AgencySettings): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.updateAgencySettings(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.updateAgencySettings(arg0);
             return result;
         }
     }
@@ -445,26 +841,204 @@ export class Backend implements backendInterface {
             return result;
         }
     }
+    async updateLead(arg0: TenantId, arg1: string, arg2: Lead): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.updateLead(arg0, arg1, arg2);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.updateLead(arg0, arg1, arg2);
+            return result;
+        }
+    }
+    async updateReview(arg0: TenantId, arg1: string, arg2: Review): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.updateReview(arg0, arg1, arg2);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.updateReview(arg0, arg1, arg2);
+            return result;
+        }
+    }
+    async updateReviewRequestStatus(arg0: TenantId, arg1: string, arg2: ReviewRequestStatus): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.updateReviewRequestStatus(arg0, arg1, to_candid_ReviewRequestStatus_n5(this._uploadFile, this._downloadFile, arg2));
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.updateReviewRequestStatus(arg0, arg1, to_candid_ReviewRequestStatus_n5(this._uploadFile, this._downloadFile, arg2));
+            return result;
+        }
+    }
+    async upsertChatWidgetConfig(arg0: ChatWidgetConfig): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.upsertChatWidgetConfig(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.upsertChatWidgetConfig(arg0);
+            return result;
+        }
+    }
+    async upsertVoiceAgentConfig(arg0: VoiceAgentConfig): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.upsertVoiceAgentConfig(to_candid_VoiceAgentConfig_n27(this._uploadFile, this._downloadFile, arg0));
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.upsertVoiceAgentConfig(to_candid_VoiceAgentConfig_n27(this._uploadFile, this._downloadFile, arg0));
+            return result;
+        }
+    }
 }
-function from_candid_UserRole_n5(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _UserRole): UserRole {
-    return from_candid_variant_n6(_uploadFile, _downloadFile, value);
+function from_candid_ReviewRequestStatus_n23(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _ReviewRequestStatus): ReviewRequestStatus {
+    return from_candid_variant_n24(_uploadFile, _downloadFile, value);
 }
-function from_candid_opt_n3(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_AuditScore]): AuditScore | null {
+function from_candid_ReviewRequest_n21(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _ReviewRequest): ReviewRequest {
+    return from_candid_record_n22(_uploadFile, _downloadFile, value);
+}
+function from_candid_UserRole_n10(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _UserRole): UserRole {
+    return from_candid_variant_n11(_uploadFile, _downloadFile, value);
+}
+function from_candid_VoiceAgentConfig_n14(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _VoiceAgentConfig): VoiceAgentConfig {
+    return from_candid_record_n15(_uploadFile, _downloadFile, value);
+}
+function from_candid_opt_n12(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_ChatWidgetConfig]): ChatWidgetConfig | null {
     return value.length === 0 ? null : value[0];
 }
-function from_candid_opt_n4(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_UserProfile]): UserProfile | null {
+function from_candid_opt_n17(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_FundabilityScore]): FundabilityScore | null {
     return value.length === 0 ? null : value[0];
 }
-function from_candid_opt_n7(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_FundabilityScore]): FundabilityScore | null {
+function from_candid_opt_n18(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_Lead]): Lead | null {
     return value.length === 0 ? null : value[0];
 }
-function from_candid_opt_n8(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_Lead]): Lead | null {
+function from_candid_opt_n19(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_Review]): Review | null {
     return value.length === 0 ? null : value[0];
 }
-function from_candid_opt_n9(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_Review]): Review | null {
+function from_candid_opt_n20(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_ReviewRequest]): ReviewRequest | null {
+    return value.length === 0 ? null : from_candid_ReviewRequest_n21(_uploadFile, _downloadFile, value[0]);
+}
+function from_candid_opt_n26(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_VoiceAgentConfig]): VoiceAgentConfig | null {
+    return value.length === 0 ? null : from_candid_VoiceAgentConfig_n14(_uploadFile, _downloadFile, value[0]);
+}
+function from_candid_opt_n7(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_AgencySettings]): AgencySettings | null {
     return value.length === 0 ? null : value[0];
 }
-function from_candid_variant_n6(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+function from_candid_opt_n8(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_AuditScore]): AuditScore | null {
+    return value.length === 0 ? null : value[0];
+}
+function from_candid_opt_n9(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_UserProfile]): UserProfile | null {
+    return value.length === 0 ? null : value[0];
+}
+function from_candid_record_n15(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+    callRouting: {
+        ai: null;
+    } | {
+        voicemail: string;
+    } | {
+        forward: string;
+    };
+    vapiAgentId: string;
+    businessHoursText: string;
+    tenantId: _TenantId;
+    configured: boolean;
+    greetingScript: string;
+    twilioNumber: string;
+    services: Array<string>;
+}): {
+    callRouting: {
+        __kind__: "ai";
+        ai: null;
+    } | {
+        __kind__: "voicemail";
+        voicemail: string;
+    } | {
+        __kind__: "forward";
+        forward: string;
+    };
+    vapiAgentId: string;
+    businessHoursText: string;
+    tenantId: TenantId;
+    configured: boolean;
+    greetingScript: string;
+    twilioNumber: string;
+    services: Array<string>;
+} {
+    return {
+        callRouting: from_candid_variant_n16(_uploadFile, _downloadFile, value.callRouting),
+        vapiAgentId: value.vapiAgentId,
+        businessHoursText: value.businessHoursText,
+        tenantId: value.tenantId,
+        configured: value.configured,
+        greetingScript: value.greetingScript,
+        twilioNumber: value.twilioNumber,
+        services: value.services
+    };
+}
+function from_candid_record_n22(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+    id: string;
+    customerName: string;
+    status: _ReviewRequestStatus;
+    sentTimestamp: _Time;
+    platform: string;
+    email: string;
+    tenantId: _TenantId;
+    attemptCount: bigint;
+    customerFeedback: string;
+    serviceCompleted: string;
+    phone: string;
+    lastFollowUp: _Time;
+}): {
+    id: string;
+    customerName: string;
+    status: ReviewRequestStatus;
+    sentTimestamp: Time;
+    platform: string;
+    email: string;
+    tenantId: TenantId;
+    attemptCount: bigint;
+    customerFeedback: string;
+    serviceCompleted: string;
+    phone: string;
+    lastFollowUp: Time;
+} {
+    return {
+        id: value.id,
+        customerName: value.customerName,
+        status: from_candid_ReviewRequestStatus_n23(_uploadFile, _downloadFile, value.status),
+        sentTimestamp: value.sentTimestamp,
+        platform: value.platform,
+        email: value.email,
+        tenantId: value.tenantId,
+        attemptCount: value.attemptCount,
+        customerFeedback: value.customerFeedback,
+        serviceCompleted: value.serviceCompleted,
+        phone: value.phone,
+        lastFollowUp: value.lastFollowUp
+    };
+}
+function from_candid_variant_n11(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
     admin: null;
 } | {
     user: null;
@@ -473,8 +1047,152 @@ function from_candid_variant_n6(_uploadFile: (file: ExternalBlob) => Promise<Uin
 }): UserRole {
     return "admin" in value ? UserRole.admin : "user" in value ? UserRole.user : "guest" in value ? UserRole.guest : value;
 }
+function from_candid_variant_n16(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+    ai: null;
+} | {
+    voicemail: string;
+} | {
+    forward: string;
+}): {
+    __kind__: "ai";
+    ai: null;
+} | {
+    __kind__: "voicemail";
+    voicemail: string;
+} | {
+    __kind__: "forward";
+    forward: string;
+} {
+    return "ai" in value ? {
+        __kind__: "ai",
+        ai: value.ai
+    } : "voicemail" in value ? {
+        __kind__: "voicemail",
+        voicemail: value.voicemail
+    } : "forward" in value ? {
+        __kind__: "forward",
+        forward: value.forward
+    } : value;
+}
+function from_candid_variant_n24(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+    unhappy: null;
+} | {
+    happy: null;
+} | {
+    sent: null;
+} | {
+    awaiting: null;
+} | {
+    reviewed: null;
+} | {
+    maxAttempts: null;
+}): ReviewRequestStatus {
+    return "unhappy" in value ? ReviewRequestStatus.unhappy : "happy" in value ? ReviewRequestStatus.happy : "sent" in value ? ReviewRequestStatus.sent : "awaiting" in value ? ReviewRequestStatus.awaiting : "reviewed" in value ? ReviewRequestStatus.reviewed : "maxAttempts" in value ? ReviewRequestStatus.maxAttempts : value;
+}
+function from_candid_vec_n13(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Array<_VoiceAgentConfig>): Array<VoiceAgentConfig> {
+    return value.map((x)=>from_candid_VoiceAgentConfig_n14(_uploadFile, _downloadFile, x));
+}
+function from_candid_vec_n25(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Array<_ReviewRequest>): Array<ReviewRequest> {
+    return value.map((x)=>from_candid_ReviewRequest_n21(_uploadFile, _downloadFile, x));
+}
+function to_candid_ReviewRequestStatus_n5(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: ReviewRequestStatus): _ReviewRequestStatus {
+    return to_candid_variant_n6(_uploadFile, _downloadFile, value);
+}
+function to_candid_ReviewRequest_n3(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: ReviewRequest): _ReviewRequest {
+    return to_candid_record_n4(_uploadFile, _downloadFile, value);
+}
 function to_candid_UserRole_n1(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: UserRole): _UserRole {
     return to_candid_variant_n2(_uploadFile, _downloadFile, value);
+}
+function to_candid_VoiceAgentConfig_n27(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: VoiceAgentConfig): _VoiceAgentConfig {
+    return to_candid_record_n28(_uploadFile, _downloadFile, value);
+}
+function to_candid_record_n28(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+    callRouting: {
+        __kind__: "ai";
+        ai: null;
+    } | {
+        __kind__: "voicemail";
+        voicemail: string;
+    } | {
+        __kind__: "forward";
+        forward: string;
+    };
+    vapiAgentId: string;
+    businessHoursText: string;
+    tenantId: TenantId;
+    configured: boolean;
+    greetingScript: string;
+    twilioNumber: string;
+    services: Array<string>;
+}): {
+    callRouting: {
+        ai: null;
+    } | {
+        voicemail: string;
+    } | {
+        forward: string;
+    };
+    vapiAgentId: string;
+    businessHoursText: string;
+    tenantId: _TenantId;
+    configured: boolean;
+    greetingScript: string;
+    twilioNumber: string;
+    services: Array<string>;
+} {
+    return {
+        callRouting: to_candid_variant_n29(_uploadFile, _downloadFile, value.callRouting),
+        vapiAgentId: value.vapiAgentId,
+        businessHoursText: value.businessHoursText,
+        tenantId: value.tenantId,
+        configured: value.configured,
+        greetingScript: value.greetingScript,
+        twilioNumber: value.twilioNumber,
+        services: value.services
+    };
+}
+function to_candid_record_n4(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+    id: string;
+    customerName: string;
+    status: ReviewRequestStatus;
+    sentTimestamp: Time;
+    platform: string;
+    email: string;
+    tenantId: TenantId;
+    attemptCount: bigint;
+    customerFeedback: string;
+    serviceCompleted: string;
+    phone: string;
+    lastFollowUp: Time;
+}): {
+    id: string;
+    customerName: string;
+    status: _ReviewRequestStatus;
+    sentTimestamp: _Time;
+    platform: string;
+    email: string;
+    tenantId: _TenantId;
+    attemptCount: bigint;
+    customerFeedback: string;
+    serviceCompleted: string;
+    phone: string;
+    lastFollowUp: _Time;
+} {
+    return {
+        id: value.id,
+        customerName: value.customerName,
+        status: to_candid_ReviewRequestStatus_n5(_uploadFile, _downloadFile, value.status),
+        sentTimestamp: value.sentTimestamp,
+        platform: value.platform,
+        email: value.email,
+        tenantId: value.tenantId,
+        attemptCount: value.attemptCount,
+        customerFeedback: value.customerFeedback,
+        serviceCompleted: value.serviceCompleted,
+        phone: value.phone,
+        lastFollowUp: value.lastFollowUp
+    };
 }
 function to_candid_variant_n2(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: UserRole): {
     admin: null;
@@ -489,6 +1207,57 @@ function to_candid_variant_n2(_uploadFile: (file: ExternalBlob) => Promise<Uint8
         user: null
     } : value == UserRole.guest ? {
         guest: null
+    } : value;
+}
+function to_candid_variant_n29(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+    __kind__: "ai";
+    ai: null;
+} | {
+    __kind__: "voicemail";
+    voicemail: string;
+} | {
+    __kind__: "forward";
+    forward: string;
+}): {
+    ai: null;
+} | {
+    voicemail: string;
+} | {
+    forward: string;
+} {
+    return value.__kind__ === "ai" ? {
+        ai: value.ai
+    } : value.__kind__ === "voicemail" ? {
+        voicemail: value.voicemail
+    } : value.__kind__ === "forward" ? {
+        forward: value.forward
+    } : value;
+}
+function to_candid_variant_n6(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: ReviewRequestStatus): {
+    unhappy: null;
+} | {
+    happy: null;
+} | {
+    sent: null;
+} | {
+    awaiting: null;
+} | {
+    reviewed: null;
+} | {
+    maxAttempts: null;
+} {
+    return value == ReviewRequestStatus.unhappy ? {
+        unhappy: null
+    } : value == ReviewRequestStatus.happy ? {
+        happy: null
+    } : value == ReviewRequestStatus.sent ? {
+        sent: null
+    } : value == ReviewRequestStatus.awaiting ? {
+        awaiting: null
+    } : value == ReviewRequestStatus.reviewed ? {
+        reviewed: null
+    } : value == ReviewRequestStatus.maxAttempts ? {
+        maxAttempts: null
     } : value;
 }
 export interface CreateActorOptions {
