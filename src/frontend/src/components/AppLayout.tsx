@@ -1,6 +1,8 @@
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import {
+  Activity,
   BarChart2,
+  Bell,
   ChevronDown,
   LayoutDashboard,
   LogOut,
@@ -18,12 +20,15 @@ import {
 } from "lucide-react";
 import { type ReactNode, useEffect, useState } from "react";
 import { useApp } from "../context/AppContext";
+import type { Notification } from "../context/AppContext";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
+import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
+import { ScrollArea } from "./ui/scroll-area";
 
 const NAV_GROUPS = [
   {
@@ -44,7 +49,10 @@ const NAV_GROUPS = [
   },
   {
     label: "INSIGHTS",
-    items: [{ label: "Reports", path: "/reports", icon: BarChart2 }],
+    items: [
+      { label: "Reports", path: "/reports", icon: BarChart2 },
+      { label: "Analytics", path: "/analytics", icon: Activity },
+    ],
   },
   {
     label: "ACCOUNT",
@@ -59,11 +67,20 @@ const PAGE_TITLES: Record<string, string> = {
   "/audit": "SEO Audit",
   "/fundability": "Fundability Score",
   "/reports": "Reports",
+  "/analytics": "Analytics",
   "/settings": "Settings",
   "/admin": "Admin Panel",
   "/chat-widget": "Chat Widget",
   "/voice-agent": "Voice Agent",
   "/review-requests": "Review Requests",
+};
+
+const TYPE_ICONS: Record<Notification["type"], ReactNode> = {
+  lead: <Users size={14} className="text-blue-500" />,
+  review: <Star size={14} className="text-amber-500" />,
+  audit: <Search size={14} className="text-emerald-500" />,
+  uptime: <Activity size={14} className="text-purple-500" />,
+  general: <Bell size={14} className="text-gray-500" />,
 };
 
 export default function AppLayout({ children }: { children: ReactNode }) {
@@ -75,12 +92,16 @@ export default function AppLayout({ children }: { children: ReactNode }) {
     currentUser,
     logout,
     tenants,
+    notifications,
+    markAllRead,
+    markRead,
   } = useApp();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const navigate = useNavigate();
   const currentTenant = tenants.find((t) => t.id === currentTenantId);
   const pageTitle = PAGE_TITLES[pathname] ?? "";
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const unreadCount = notifications.filter((n) => !n.read).length;
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: close sidebar on navigation
   useEffect(() => {
@@ -269,6 +290,84 @@ export default function AppLayout({ children }: { children: ReactNode }) {
                 {currentTenant?.name}
               </span>
             )}
+
+            {/* Notification Bell */}
+            <Popover>
+              <PopoverTrigger asChild>
+                <button
+                  type="button"
+                  data-ocid="notifications.bell"
+                  className="relative p-2 rounded-md hover:bg-gray-100 text-gray-600 transition-colors"
+                  aria-label="Notifications"
+                >
+                  <Bell size={18} />
+                  {unreadCount > 0 && (
+                    <span className="absolute top-1 right-1 w-4 h-4 bg-red-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center">
+                      {unreadCount}
+                    </span>
+                  )}
+                </button>
+              </PopoverTrigger>
+              <PopoverContent
+                align="end"
+                className="w-80 p-0"
+                data-ocid="notifications.popover"
+              >
+                <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
+                  <h3 className="text-sm font-semibold text-gray-800">
+                    Notifications
+                  </h3>
+                  {unreadCount > 0 && (
+                    <button
+                      type="button"
+                      data-ocid="notifications.mark_all_read"
+                      onClick={markAllRead}
+                      className="text-xs text-indigo-600 hover:text-indigo-800 font-medium"
+                    >
+                      Mark all read
+                    </button>
+                  )}
+                </div>
+                <ScrollArea className="max-h-80">
+                  {notifications.length === 0 ? (
+                    <div className="px-4 py-8 text-center text-sm text-gray-400">
+                      No notifications
+                    </div>
+                  ) : (
+                    <div>
+                      {notifications.map((n) => (
+                        <button
+                          key={n.id}
+                          type="button"
+                          onClick={() => markRead(n.id)}
+                          className="w-full text-left flex items-start gap-3 px-4 py-3 hover:bg-gray-50 transition-colors border-b border-gray-50 last:border-0"
+                        >
+                          <div className="mt-0.5 shrink-0">
+                            {TYPE_ICONS[n.type]}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-1.5">
+                              <p className="text-xs font-semibold text-gray-800">
+                                {n.title}
+                              </p>
+                              {!n.read && (
+                                <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 shrink-0" />
+                              )}
+                            </div>
+                            <p className="text-xs text-gray-500 mt-0.5 truncate">
+                              {n.message}
+                            </p>
+                            <p className="text-[10px] text-gray-400 mt-1">
+                              {n.time}
+                            </p>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </ScrollArea>
+              </PopoverContent>
+            </Popover>
           </div>
         </header>
 

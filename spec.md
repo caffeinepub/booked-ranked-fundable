@@ -1,31 +1,48 @@
-# Booked Ranked Fundable — Homepage Overhaul
+# Booked Ranked Fundable — Version 6
 
 ## Current State
-Homepage has a basic nav bar (logo + 2 buttons), hero section, free audit CTA bar, three feature cards, pricing section, and footer. No dropdown navigation, no blockchain/ICP section, no differentiation/why-us content.
+Multi-tenant SaaS platform with Dashboard, Leads/CRM, Reviews, SEO Audit, Fundability, Reports, Settings, Admin Panel, Chat Widget, Voice Agent, Review Requests, Free Audit, Why Us, and Homepage pages. Settings page has Twilio and Vapi.ai agency credential fields. No analytics page, no notification center, no integrations hub beyond Twilio/Vapi.
 
 ## Requested Changes (Diff)
 
 ### Add
-- **Full sticky top navigation bar** with logo, dropdown menus (Solutions, Platform, Why Us, Pricing), and CTA buttons (Free Audit, Sign In). Mobile hamburger menu with slide-out drawer.
-- **"The Only Platform" section** — headline about being the only company in the world combining Booked + Ranked + Fundable in one system. Stats bar (businesses served, avg revenue increase, etc.).
-- **"Built on Blockchain" section** — explains ICP (Internet Computer Protocol), what tamper-resistant certified-data means, why it's unpassable vs traditional cloud (AWS, GCP), trust and security angle.
-- **"Why We're Different" section** — side-by-side comparison (BRF vs competitors), 3-4 key differentiators with icons, the "easiest choice" angle.
-- **"How It Works" section** — simple 3-step flow (Audit → Activate → Grow) to make onboarding feel effortless.
-- **Social proof / trust bar** — logos or stat callouts to build credibility.
-- Anchor links in nav so dropdown items scroll to sections.
-- Dedicated `/why-us` route rendering the full Why Us / Blockchain / Differentiators content as a standalone page option.
+- **Settings — Integrations Hub** (expand existing SettingsPage.tsx):
+  - Organized sections: Stripe, Twilio, Vapi.ai, Email (SMTP/SendGrid), Google APIs (Places, Maps), SERP API, OpenAI/AI Provider
+  - Admin view: all sections visible; Client view: only Google Business URL, review platform preferences, notification email/phone
+  - Each credential field has a "Test Connection" button that shows a status badge (Connected / Not Configured / Failed)
+  - All fields stored in component state with save functionality
+- **Live Analytics Page** (`/analytics`):
+  - Website uptime status (green/red badge, simulated ping with realistic data)
+  - SSL certificate status card
+  - Performance score from last audit with trend
+  - Traffic overview chart (simulated weekly sessions, page views, bounce rate)
+  - Lead source breakdown chart (Organic, Referral, Direct, Free Audit)
+  - Audit score history chart (last 6 weeks of scores)
+  - Top pages table (simulated)
+  - Tracking script embed snippet panel ("Install this on your site to get live data")
+- **Notification Center**:
+  - Bell icon in the AppLayout header with unread badge count
+  - Dropdown panel showing recent notifications (new lead, audit score drop, review request sent/responded, uptime alert)
+  - Mark as read / clear all functionality
+  - Notifications stored in React state (simulated with realistic demo entries)
+- **Contextual illustrations/images**:
+  - Dashboard page: visual icons/illustrations for SEO, Reputation, Fundability metric cards
+  - Empty states for Leads, Reviews pages when no data
+  - Analytics page hero graphic
 
 ### Modify
-- Nav bar: replace minimal header with full dropdown navigation.
-- Hero section: tighten copy, add trust signals under CTA buttons.
-- Features section: keep but visually elevate with better layout.
-- Footer: add navigation links matching the new nav structure.
+- **AppLayout/navigation**: Add `/analytics` route to sidebar navigation (bar chart icon)
+- **App.tsx**: Add analytics route
+- **DashboardPage.tsx**: Enhance metric cards with icon illustrations and make the overall dashboard richer with quick stat cards for leads, reviews, audit score
+- **SettingsPage.tsx**: Replace current simple settings with full Integrations Hub with tabbed sections
 
 ### Remove
-- Nothing removed — all existing sections retained and enhanced.
+- Nothing removed
 
 ## Implementation Plan
-1. Rewrite `HomePage.tsx` with: sticky dropdown nav, new hero, trust bar, three-pillars section, "Only Platform" section, Blockchain section, Why Different section, How It Works, Pricing, enhanced footer.
-2. Add `WhyUsPage.tsx` as a standalone page for `/why-us` (reuses the blockchain + differentiators sections).
-3. Register `/why-us` route in `App.tsx`.
-4. Nav dropdown links to anchor sections on homepage OR navigates to `/why-us`.
+1. Expand SettingsPage with tabbed Integrations Hub (Stripe, Twilio, Vapi, Email, Google, SERP, OpenAI) — admin vs client role-gated views
+2. Create AnalyticsPage with uptime/SSL cards, traffic chart, lead source chart, audit score trend chart, tracking script panel
+3. Add NotificationCenter component to AppLayout header (bell icon, dropdown panel, badge count)
+4. Enhance DashboardPage with richer stat cards and visual improvements
+5. Wire analytics route in App.tsx and sidebar
+6. Add contextual SVG illustrations to key pages

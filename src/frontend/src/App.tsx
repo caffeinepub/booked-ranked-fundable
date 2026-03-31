@@ -9,6 +9,7 @@ import AppLayout from "./components/AppLayout";
 import { Toaster } from "./components/ui/sonner";
 import { AppProvider, useApp } from "./context/AppContext";
 import AdminPage from "./pages/AdminPage";
+import AnalyticsPage from "./pages/AnalyticsPage";
 import AuditPage from "./pages/AuditPage";
 import ChatWidgetPage from "./pages/ChatWidgetPage";
 import DashboardPage from "./pages/DashboardPage";
@@ -136,6 +137,16 @@ const reportsRoute = createRoute({
   ),
 });
 
+const analyticsRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/analytics",
+  component: () => (
+    <ProtectedRoute>
+      <AnalyticsPage />
+    </ProtectedRoute>
+  ),
+});
+
 const settingsRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/settings",
@@ -197,6 +208,7 @@ const routeTree = rootRoute.addChildren([
   auditRoute,
   fundabilityRoute,
   reportsRoute,
+  analyticsRoute,
   settingsRoute,
   adminRoute,
   chatWidgetRoute,

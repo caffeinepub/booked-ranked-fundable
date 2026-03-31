@@ -22,6 +22,58 @@ export interface TenantEntry {
   type: string;
 }
 
+export interface Notification {
+  id: string;
+  type: "lead" | "review" | "audit" | "uptime" | "general";
+  title: string;
+  message: string;
+  time: string;
+  read: boolean;
+}
+
+const DEMO_NOTIFICATIONS: Notification[] = [
+  {
+    id: "n1",
+    type: "lead",
+    title: "New Lead",
+    message: "Maria Gonzalez submitted a contact form",
+    time: "5 min ago",
+    read: false,
+  },
+  {
+    id: "n2",
+    type: "review",
+    title: "New Review",
+    message: "Kevin R. left a 5★ review on Google",
+    time: "2 hours ago",
+    read: false,
+  },
+  {
+    id: "n3",
+    type: "audit",
+    title: "Audit Score Improved",
+    message: "SEO score increased from 68 to 72 this week",
+    time: "Yesterday",
+    read: false,
+  },
+  {
+    id: "n4",
+    type: "uptime",
+    title: "Uptime Alert Cleared",
+    message: "Website returned to normal — was down for 3 minutes",
+    time: "2 days ago",
+    read: true,
+  },
+  {
+    id: "n5",
+    type: "general",
+    title: "Review Request Sent",
+    message: "Review request sent to 3 customers via SMS",
+    time: "3 days ago",
+    read: true,
+  },
+];
+
 interface AppContextType {
   currentTenantId: string;
   setCurrentTenantId: (id: string) => void;
@@ -42,6 +94,9 @@ interface AppContextType {
   fundabilityOverrides: Record<string, number>;
   setAuditOverride: (tenantId: string, score: number) => void;
   setFundabilityOverride: (tenantId: string, score: number) => void;
+  notifications: Notification[];
+  markAllRead: () => void;
+  markRead: (id: string) => void;
 }
 
 const AppContext = createContext<AppContextType | null>(null);
@@ -70,6 +125,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [fundabilityOverrides, setFundabilityOverrides] = useState<
     Record<string, number>
   >({});
+  const [notifications, setNotifications] =
+    useState<Notification[]>(DEMO_NOTIFICATIONS);
 
   useEffect(() => {
     sessionStorage.setItem("brfUser", JSON.stringify(currentUser));
@@ -120,6 +177,16 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setFundabilityOverrides((prev) => ({ ...prev, [tenantId]: score }));
   };
 
+  const markAllRead = () => {
+    setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+  };
+
+  const markRead = (id: string) => {
+    setNotifications((prev) =>
+      prev.map((n) => (n.id === id ? { ...n, read: true } : n)),
+    );
+  };
+
   return (
     <AppContext.Provider
       value={{
@@ -138,6 +205,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
         fundabilityOverrides,
         setAuditOverride,
         setFundabilityOverride,
+        notifications,
+        markAllRead,
+        markRead,
       }}
     >
       {children}

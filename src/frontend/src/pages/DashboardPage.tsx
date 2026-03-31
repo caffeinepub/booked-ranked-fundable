@@ -1,9 +1,12 @@
 import { Link } from "@tanstack/react-router";
 import {
   Activity,
+  ArrowRight,
+  Building,
   MessageSquare,
   Plus,
   Search,
+  Shield,
   Star,
   TrendingUp,
   Users,
@@ -24,8 +27,13 @@ import {
 } from "../data/demoData";
 
 export default function DashboardPage() {
-  const { currentTenantId, currentUser, auditOverrides, fundabilityOverrides } =
-    useApp();
+  const {
+    currentTenantId,
+    currentUser,
+    auditOverrides,
+    fundabilityOverrides,
+    tenants,
+  } = useApp();
   const leads = LEADS[currentTenantId] ?? [];
   const reviews = REVIEWS[currentTenantId] ?? [];
   const auditScore =
@@ -39,6 +47,11 @@ export default function DashboardPage() {
   const avgRating = reviews.length
     ? (reviews.reduce((s, r) => s + r.rating, 0) / reviews.length).toFixed(1)
     : "0.0";
+
+  const openLeads = leads.filter(
+    (l) => l.status === "new" || l.status === "contacted",
+  ).length;
+  const reviewsThisMonth = reviews.filter(() => true).length;
 
   const KPI_CARDS = [
     {
@@ -70,6 +83,13 @@ export default function DashboardPage() {
       sub:
         fundScore >= 70 ? "Bankable" : fundScore >= 40 ? "Builder" : "Starter",
     },
+    {
+      title: "Active Clients",
+      value: tenants.length,
+      icon: Building,
+      color: "border-indigo-500",
+      sub: "Managed businesses",
+    },
   ];
 
   const recentActivity = [
@@ -98,7 +118,7 @@ export default function DashboardPage() {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
         {KPI_CARDS.map(({ title, value, icon: Icon, color, sub }) => (
           <Card key={title} className={`border-t-4 ${color} shadow-sm`}>
             <CardHeader className="pb-1 pt-4 px-4">
@@ -114,6 +134,42 @@ export default function DashboardPage() {
           </Card>
         ))}
       </div>
+
+      {/* Quick Stats Row */}
+      <div className="flex flex-wrap gap-2">
+        <span className="inline-flex items-center gap-1.5 bg-gray-100 text-gray-600 text-xs font-medium px-3 py-1.5 rounded-full">
+          <Activity size={12} className="text-gray-400" />
+          Last audit: 3 days ago
+        </span>
+        <span className="inline-flex items-center gap-1.5 bg-amber-50 text-amber-700 text-xs font-medium px-3 py-1.5 rounded-full">
+          <Star size={12} className="text-amber-400" />
+          Reviews this month: {reviewsThisMonth}
+        </span>
+        <span className="inline-flex items-center gap-1.5 bg-blue-50 text-blue-700 text-xs font-medium px-3 py-1.5 rounded-full">
+          <Users size={12} className="text-blue-400" />
+          Open leads: {openLeads}
+        </span>
+      </div>
+
+      {/* Website Status Mini-Card */}
+      <Link to="/analytics">
+        <Card className="shadow-sm border border-emerald-100 bg-emerald-50/50 hover:border-emerald-200 transition-colors cursor-pointer">
+          <CardContent className="px-4 py-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                <Shield size={14} className="text-emerald-600" />
+                <span className="text-sm font-medium text-emerald-800">
+                  Online · 99.7% uptime · SSL valid
+                </span>
+              </div>
+              <span className="text-xs text-emerald-600 font-medium flex items-center gap-1">
+                View Analytics <ArrowRight size={12} />
+              </span>
+            </div>
+          </CardContent>
+        </Card>
+      </Link>
 
       <div className="flex gap-3 flex-wrap">
         <Link to="/leads">
@@ -167,6 +223,15 @@ export default function DashboardPage() {
                 <span className="text-xs text-gray-400">{item.time}</span>
               </div>
             ))}
+          </div>
+          <div className="mt-4 pt-3 border-t border-gray-100">
+            <Link
+              to="/analytics"
+              className="text-xs text-indigo-600 hover:text-indigo-800 font-medium flex items-center gap-1"
+              data-ocid="dashboard.analytics.link"
+            >
+              View Analytics <ArrowRight size={12} />
+            </Link>
           </div>
         </CardContent>
       </Card>
