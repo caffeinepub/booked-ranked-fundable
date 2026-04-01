@@ -11,6 +11,7 @@ import { AppProvider, useApp } from "./context/AppContext";
 import AdminPage from "./pages/AdminPage";
 import AnalyticsPage from "./pages/AnalyticsPage";
 import AuditPage from "./pages/AuditPage";
+import CampaignsPage from "./pages/CampaignsPage";
 import CarpetCleaningPage from "./pages/CarpetCleaningPage";
 import ChatWidgetPage from "./pages/ChatWidgetPage";
 import DashboardPage from "./pages/DashboardPage";
@@ -247,6 +248,16 @@ const listingsRoute = createRoute({
     </ProtectedRoute>
   ),
 });
+const campaignsRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/campaigns",
+  component: () => (
+    <ProtectedRoute>
+      <CampaignsPage />
+    </ProtectedRoute>
+  ),
+});
+
 const socialMediaRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/social-media",
@@ -285,6 +296,7 @@ const routeTree = rootRoute.addChildren([
   reviewRequestsRoute,
   listingsRoute,
   socialMediaRoute,
+  campaignsRoute,
 ]);
 
 const router = createRouter({ routeTree });

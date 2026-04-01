@@ -7,6 +7,7 @@ import {
   LayoutDashboard,
   LogOut,
   MapPin,
+  Megaphone,
   Menu,
   MessageSquare,
   Phone,
@@ -50,6 +51,7 @@ const NAV_GROUPS = [
       { label: "Chat Widget", path: "/chat-widget", icon: MessageSquare },
       { label: "Voice Agent", path: "/voice-agent", icon: Phone },
       { label: "Review Requests", path: "/review-requests", icon: Send },
+      { label: "Campaigns", path: "/campaigns", icon: Megaphone },
     ],
   },
   {
@@ -87,6 +89,7 @@ const PAGE_TITLES: Record<string, string> = {
   "/review-requests": "Review Requests",
   "/listings": "Listings Monitor",
   "/social-media": "Social Media",
+  "/campaigns": "Campaigns",
 };
 
 const TYPE_ICONS: Record<Notification["type"], ReactNode> = {

@@ -146,6 +146,12 @@ interface AppContextType {
   setAiProviderConfig: (config: AiProviderConfig) => void;
   listingConfigs: Record<string, ListingConfig>;
   setListingConfig: (tenantId: string, config: ListingConfig) => void;
+  campaignToggles: Record<string, Record<string, boolean>>;
+  setCampaignToggle: (
+    tenantId: string,
+    campaignId: string,
+    enabled: boolean,
+  ) => void;
   // Demo mode
   isDemoMode: boolean;
   demoInfo: DemoInfo | null;
@@ -204,6 +210,15 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [listingConfigs, setListingConfigsState] = useState<
     Record<string, ListingConfig>
   >(() => loadFromLocal("brfListings", {}));
+  const [campaignToggles, setCampaignTogglesState] = useState<
+    Record<string, Record<string, boolean>>
+  >(() => {
+    try {
+      const r = localStorage.getItem("brfCampaignToggles");
+      if (r) return JSON.parse(r);
+    } catch {}
+    return {};
+  });
   const [demoInfo, setDemoInfo] = useState<DemoInfo | null>(() =>
     loadFromSession<DemoInfo | null>("brfDemo", null),
   );
@@ -227,6 +242,19 @@ export function AppProvider({ children }: { children: ReactNode }) {
     sessionStorage.setItem("brfDemo", JSON.stringify(demoInfo));
   }, [demoInfo]);
 
+  useEffect(() => {
+    localStorage.setItem("brfCampaignToggles", JSON.stringify(campaignToggles));
+  }, [campaignToggles]);
+  const setCampaignToggle = (
+    tenantId: string,
+    campaignId: string,
+    enabled: boolean,
+  ) => {
+    setCampaignTogglesState((prev) => ({
+      ...prev,
+      [tenantId]: { ...(prev[tenantId] ?? {}), [campaignId]: enabled },
+    }));
+  };
   const setCurrentTenantId = (id: string) => setCurrentTenantIdState(id);
 
   const login = (
@@ -365,6 +393,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
         setAiProviderConfig,
         listingConfigs,
         setListingConfig,
+        campaignToggles,
+        setCampaignToggle,
         isDemoMode,
         demoInfo,
       }}

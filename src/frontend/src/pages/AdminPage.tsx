@@ -39,6 +39,15 @@ import {
 import { type TenantEntry, useApp } from "../context/AppContext";
 import { LEADS, REVIEWS } from "../data/demoData";
 
+const CAMPAIGN_IDS = [
+  "plumb-missed-call",
+  "plumb-estimate-recovery",
+  "plumb-review-referral",
+  "spa-consult-nurture",
+  "spa-noshow-recovery",
+  "spa-rebook-membership",
+];
+
 export default function AdminPage() {
   const {
     tenants,
@@ -50,6 +59,8 @@ export default function AdminPage() {
     fundabilityOverrides,
     socialMediaEnabled,
     setSocialMediaEnabledForTenant,
+    campaignToggles,
+    setCampaignToggle,
   } = useApp();
 
   const [showAddForm, setShowAddForm] = useState(false);
@@ -454,6 +465,7 @@ export default function AdminPage() {
               <TableRow>
                 <TableHead>Business</TableHead>
                 <TableHead>Social Media</TableHead>
+                <TableHead>Campaigns</TableHead>
                 <TableHead>Chat Widget</TableHead>
                 <TableHead>Voice Agent</TableHead>
               </TableRow>
@@ -477,6 +489,25 @@ export default function AdminPage() {
                           v
                             ? `Social Media enabled for ${tenant.name}`
                             : `Social Media disabled for ${tenant.name}`,
+                        );
+                      }}
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <Switch
+                      data-ocid={`admin.modules.campaigns.switch.${i + 1}`}
+                      checked={(() => {
+                        const t = campaignToggles[tenant.id];
+                        if (!t) return true;
+                        return Object.values(t).some(Boolean);
+                      })()}
+                      onCheckedChange={(v) => {
+                        for (const cid of CAMPAIGN_IDS)
+                          setCampaignToggle(tenant.id, cid, v);
+                        toast.success(
+                          v
+                            ? `Campaigns enabled for ${tenant.name}`
+                            : `Campaigns disabled for ${tenant.name}`,
                         );
                       }}
                     />
