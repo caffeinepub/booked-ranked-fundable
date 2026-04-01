@@ -14,6 +14,7 @@ import AuditPage from "./pages/AuditPage";
 import CarpetCleaningPage from "./pages/CarpetCleaningPage";
 import ChatWidgetPage from "./pages/ChatWidgetPage";
 import DashboardPage from "./pages/DashboardPage";
+import DemoLoginPage from "./pages/DemoLoginPage";
 import DemoPage from "./pages/DemoPage";
 import FreeAuditPage from "./pages/FreeAuditPage";
 import FundabilityPage from "./pages/FundabilityPage";
@@ -68,75 +69,67 @@ const indexRoute = createRoute({
   path: "/",
   component: HomePage,
 });
-
 const loginRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/login",
   component: LoginPage,
 });
-
+const demoLoginRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/demo-login",
+  component: DemoLoginPage,
+});
 const freeAuditRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/free-audit",
   component: FreeAuditPage,
 });
-
 const demoRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/demo",
   component: DemoPage,
 });
-
 const whyUsRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/why-us",
   component: WhyUsPage,
 });
-
-// Niche pages
 const plumbingRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/plumbing",
   component: PlumbingPage,
 });
-
 const restorationRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/restoration",
   component: RestorationPage,
 });
-
 const hvacRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/hvac",
   component: HVACPage,
 });
-
 const carpetCleaningRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/carpet-cleaning",
   component: CarpetCleaningPage,
 });
-
 const roofingRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/roofing",
   component: RoofingPage,
 });
-
 const medSpaRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/med-spa",
   component: MedSpaPage,
 });
-
 const pricingRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/pricing",
   component: PricingPage,
 });
 
-// Protected routes
 const dashboardRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/dashboard",
@@ -146,7 +139,6 @@ const dashboardRoute = createRoute({
     </ProtectedRoute>
   ),
 });
-
 const leadsRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/leads",
@@ -156,7 +148,6 @@ const leadsRoute = createRoute({
     </ProtectedRoute>
   ),
 });
-
 const reviewsRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/reviews",
@@ -166,7 +157,6 @@ const reviewsRoute = createRoute({
     </ProtectedRoute>
   ),
 });
-
 const auditRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/audit",
@@ -176,7 +166,6 @@ const auditRoute = createRoute({
     </ProtectedRoute>
   ),
 });
-
 const fundabilityRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/fundability",
@@ -186,7 +175,6 @@ const fundabilityRoute = createRoute({
     </ProtectedRoute>
   ),
 });
-
 const reportsRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/reports",
@@ -196,7 +184,6 @@ const reportsRoute = createRoute({
     </ProtectedRoute>
   ),
 });
-
 const analyticsRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/analytics",
@@ -206,7 +193,6 @@ const analyticsRoute = createRoute({
     </ProtectedRoute>
   ),
 });
-
 const settingsRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/settings",
@@ -216,7 +202,6 @@ const settingsRoute = createRoute({
     </ProtectedRoute>
   ),
 });
-
 const adminRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/admin",
@@ -226,7 +211,6 @@ const adminRoute = createRoute({
     </ProtectedRoute>
   ),
 });
-
 const chatWidgetRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/chat-widget",
@@ -236,7 +220,6 @@ const chatWidgetRoute = createRoute({
     </ProtectedRoute>
   ),
 });
-
 const voiceAgentRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/voice-agent",
@@ -246,7 +229,6 @@ const voiceAgentRoute = createRoute({
     </ProtectedRoute>
   ),
 });
-
 const reviewRequestsRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/review-requests",
@@ -256,7 +238,6 @@ const reviewRequestsRoute = createRoute({
     </ProtectedRoute>
   ),
 });
-
 const listingsRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/listings",
@@ -266,7 +247,6 @@ const listingsRoute = createRoute({
     </ProtectedRoute>
   ),
 });
-
 const socialMediaRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/social-media",
@@ -280,10 +260,10 @@ const socialMediaRoute = createRoute({
 const routeTree = rootRoute.addChildren([
   indexRoute,
   loginRoute,
+  demoLoginRoute,
   freeAuditRoute,
   demoRoute,
   whyUsRoute,
-  // Marketing / niche pages
   plumbingRoute,
   restorationRoute,
   hvacRoute,
@@ -291,7 +271,6 @@ const routeTree = rootRoute.addChildren([
   roofingRoute,
   medSpaRoute,
   pricingRoute,
-  // Protected app routes
   dashboardRoute,
   leadsRoute,
   reviewsRoute,

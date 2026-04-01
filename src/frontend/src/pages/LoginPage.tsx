@@ -1,177 +1,285 @@
-import { useNavigate } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
+import { Building2, PlayCircle, ShieldCheck } from "lucide-react";
 import { useState } from "react";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import { useApp } from "../context/AppContext";
-import { TENANTS } from "../data/demoData";
 
 const ADMIN_USERNAME = "Admin333";
 const ADMIN_EMAIL = "daree1933@gmail.com";
 const ADMIN_PASSWORD = "Admin333";
 
+const CLIENT_CREDS: Record<string, { tenantId: string }> = {
+  "plumbing@demo.com": { tenantId: "tenant-plumbing" },
+  "medspa@demo.com": { tenantId: "tenant-medspa" },
+  "oceanside@demo.com": { tenantId: "tenant-oceanside" },
+};
+
+type Path = "admin" | "client" | null;
+
 export default function LoginPage() {
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [tenantId, setTenantId] = useState("tenant-oceanside");
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [activePath, setActivePath] = useState<Path>(null);
+  const [adminUser, setAdminUser] = useState("");
+  const [adminEmail, setAdminEmail] = useState("");
+  const [adminPass, setAdminPass] = useState("");
+  const [adminError, setAdminError] = useState("");
+  const [clientEmail, setClientEmail] = useState("");
+  const [clientPass, setClientPass] = useState("");
+  const [clientError, setClientError] = useState("");
+
   const { login } = useApp();
   const navigate = useNavigate();
 
-  const validate = () => {
-    const errs: Record<string, string> = {};
-    if (!username.trim()) errs.username = "Username is required";
-    if (!email.trim()) errs.email = "Email is required";
-    if (!password.trim()) errs.password = "Password is required";
-    setErrors(errs);
-    return Object.keys(errs).length === 0;
-  };
-
-  const handleLogin = () => {
-    if (!validate()) return;
-    const isAdmin =
-      username === ADMIN_USERNAME &&
-      email === ADMIN_EMAIL &&
-      password === ADMIN_PASSWORD;
-
-    if (isAdmin) {
+  const handleAdminLogin = () => {
+    if (
+      adminUser === ADMIN_USERNAME &&
+      adminEmail === ADMIN_EMAIL &&
+      adminPass === ADMIN_PASSWORD
+    ) {
       login("agency", "tenant-oceanside", true);
+      navigate({ to: "/dashboard" });
     } else {
-      login("client", tenantId, false);
+      setAdminError("Invalid admin credentials.");
     }
-    navigate({ to: "/dashboard" });
   };
 
-  const isAdminCreds =
-    username === ADMIN_USERNAME &&
-    email === ADMIN_EMAIL &&
-    password === ADMIN_PASSWORD;
+  const handleClientLogin = () => {
+    const match = CLIENT_CREDS[clientEmail.toLowerCase()];
+    if (match && clientPass === "demo123") {
+      login("client", match.tenantId, false);
+      navigate({ to: "/dashboard" });
+    } else {
+      setClientError("Invalid email or password.");
+    }
+  };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-indigo-950 flex items-center justify-center p-4">
-      <div className="w-full max-w-sm">
-        <div className="text-center mb-8">
-          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-500 to-indigo-700 flex items-center justify-center text-white font-bold text-lg mx-auto mb-4 shadow-lg shadow-indigo-500/30">
-            BRF
-          </div>
-          <h1 className="text-2xl font-bold text-white">Welcome Back</h1>
-          <p className="text-slate-400 text-sm mt-1">Booked Ranked Fundable</p>
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 flex flex-col items-center justify-center p-4">
+      <div className="text-center mb-10">
+        <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-700 flex items-center justify-center text-white font-bold text-lg mx-auto mb-4 shadow-lg shadow-indigo-500/30">
+          BRF
         </div>
-
-        <div className="bg-slate-800/80 backdrop-blur border border-slate-700 rounded-2xl p-6 space-y-5 shadow-xl">
-          <div>
-            <Label className="text-sm font-medium text-slate-300 mb-1.5 block">
-              Username
-            </Label>
-            <Input
-              data-ocid="login.input"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              placeholder="Enter username"
-              className="bg-slate-700/60 border-slate-600 text-white placeholder:text-slate-500 focus:border-indigo-500"
-            />
-            {errors.username && (
-              <p
-                data-ocid="login.error_state"
-                className="text-red-400 text-xs mt-1"
-              >
-                {errors.username}
-              </p>
-            )}
-          </div>
-
-          <div>
-            <Label className="text-sm font-medium text-slate-300 mb-1.5 block">
-              Email
-            </Label>
-            <Input
-              data-ocid="login.input"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="Enter email"
-              className="bg-slate-700/60 border-slate-600 text-white placeholder:text-slate-500 focus:border-indigo-500"
-            />
-            {errors.email && (
-              <p
-                data-ocid="login.error_state"
-                className="text-red-400 text-xs mt-1"
-              >
-                {errors.email}
-              </p>
-            )}
-          </div>
-
-          <div>
-            <Label className="text-sm font-medium text-slate-300 mb-1.5 block">
-              Password
-            </Label>
-            <Input
-              data-ocid="login.input"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Enter password"
-              className="bg-slate-700/60 border-slate-600 text-white placeholder:text-slate-500 focus:border-indigo-500"
-              onKeyDown={(e) => e.key === "Enter" && handleLogin()}
-            />
-            {errors.password && (
-              <p
-                data-ocid="login.error_state"
-                className="text-red-400 text-xs mt-1"
-              >
-                {errors.password}
-              </p>
-            )}
-          </div>
-
-          {!isAdminCreds && username && email && password && (
-            <div>
-              <Label className="text-sm font-medium text-slate-300 mb-2 block">
-                Select Your Business
-              </Label>
-              <div className="space-y-2">
-                {TENANTS.map((t) => (
-                  <button
-                    key={t.id}
-                    type="button"
-                    onClick={() => setTenantId(t.id)}
-                    className={`w-full text-left py-2.5 px-4 rounded-lg text-sm border transition-colors ${
-                      tenantId === t.id
-                        ? "bg-indigo-600/30 border-indigo-500 text-indigo-200 font-medium"
-                        : "bg-slate-700/40 border-slate-600 text-slate-300 hover:border-indigo-400"
-                    }`}
-                  >
-                    {t.name}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-
-          <Button
-            data-ocid="login.primary_button"
-            type="button"
-            onClick={handleLogin}
-            className="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-2.5 shadow-lg shadow-indigo-600/20"
-          >
-            Sign In
-          </Button>
-        </div>
-
-        <p className="text-center text-xs text-slate-500 mt-4">
-          &copy; {new Date().getFullYear()}. Built with love using{" "}
-          <a
-            href={`https://caffeine.ai?utm_source=caffeine-footer&utm_medium=referral&utm_content=${encodeURIComponent(typeof window !== "undefined" ? window.location.hostname : "")}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-indigo-400 hover:text-indigo-300"
-          >
-            caffeine.ai
-          </a>
+        <h1 className="text-3xl font-bold text-white">
+          Booked Ranked Fundable
+        </h1>
+        <p className="text-slate-400 text-sm mt-2">
+          Choose how you'd like to access the platform
         </p>
       </div>
+
+      <div className="w-full max-w-4xl grid grid-cols-1 md:grid-cols-3 gap-5">
+        {/* Admin Card */}
+        <div
+          className={`bg-slate-800/80 backdrop-blur border rounded-2xl p-6 shadow-xl transition-all ${
+            activePath === "admin"
+              ? "border-amber-500 shadow-amber-500/20"
+              : "border-slate-700"
+          }`}
+        >
+          <button
+            type="button"
+            className="flex items-center gap-3 mb-4 w-full text-left"
+            onClick={() =>
+              setActivePath(activePath === "admin" ? null : "admin")
+            }
+          >
+            <div className="w-10 h-10 rounded-xl bg-amber-500/20 flex items-center justify-center shrink-0">
+              <ShieldCheck size={20} className="text-amber-400" />
+            </div>
+            <div>
+              <h2 className="text-white font-semibold text-sm">
+                Platform Administration
+              </h2>
+              <p className="text-slate-500 text-xs">Full admin access</p>
+            </div>
+          </button>
+
+          {activePath === "admin" ? (
+            <div className="space-y-3">
+              <div>
+                <Label className="text-xs font-medium text-slate-300 mb-1 block">
+                  Username
+                </Label>
+                <Input
+                  value={adminUser}
+                  onChange={(e) => {
+                    setAdminUser(e.target.value);
+                    setAdminError("");
+                  }}
+                  placeholder="Admin username"
+                  className="bg-slate-700/60 border-slate-600 text-white placeholder:text-slate-500 focus:border-amber-500 h-9 text-sm"
+                />
+              </div>
+              <div>
+                <Label className="text-xs font-medium text-slate-300 mb-1 block">
+                  Email
+                </Label>
+                <Input
+                  type="email"
+                  value={adminEmail}
+                  onChange={(e) => {
+                    setAdminEmail(e.target.value);
+                    setAdminError("");
+                  }}
+                  placeholder="Admin email"
+                  className="bg-slate-700/60 border-slate-600 text-white placeholder:text-slate-500 focus:border-amber-500 h-9 text-sm"
+                />
+              </div>
+              <div>
+                <Label className="text-xs font-medium text-slate-300 mb-1 block">
+                  Password
+                </Label>
+                <Input
+                  type="password"
+                  value={adminPass}
+                  onChange={(e) => {
+                    setAdminPass(e.target.value);
+                    setAdminError("");
+                  }}
+                  placeholder="Password"
+                  className="bg-slate-700/60 border-slate-600 text-white placeholder:text-slate-500 focus:border-amber-500 h-9 text-sm"
+                  onKeyDown={(e) => e.key === "Enter" && handleAdminLogin()}
+                />
+              </div>
+              {adminError && (
+                <p className="text-red-400 text-xs">{adminError}</p>
+              )}
+              <Button
+                onClick={handleAdminLogin}
+                className="w-full bg-amber-500 hover:bg-amber-400 text-slate-900 font-semibold h-9 text-sm"
+              >
+                Sign In as Admin
+              </Button>
+            </div>
+          ) : (
+            <p className="text-slate-500 text-xs">Click to expand login</p>
+          )}
+        </div>
+
+        {/* Client Card */}
+        <div
+          className={`bg-slate-800/80 backdrop-blur border rounded-2xl p-6 shadow-xl transition-all ${
+            activePath === "client"
+              ? "border-indigo-500 shadow-indigo-500/20"
+              : "border-slate-700"
+          }`}
+        >
+          <button
+            type="button"
+            className="flex items-center gap-3 mb-4 w-full text-left"
+            onClick={() =>
+              setActivePath(activePath === "client" ? null : "client")
+            }
+          >
+            <div className="w-10 h-10 rounded-xl bg-indigo-500/20 flex items-center justify-center shrink-0">
+              <Building2 size={20} className="text-indigo-400" />
+            </div>
+            <div>
+              <h2 className="text-white font-semibold text-sm">
+                Client Dashboard
+              </h2>
+              <p className="text-slate-500 text-xs">For active subscribers</p>
+            </div>
+          </button>
+
+          {activePath === "client" ? (
+            <div className="space-y-3">
+              <div>
+                <Label className="text-xs font-medium text-slate-300 mb-1 block">
+                  Email
+                </Label>
+                <Input
+                  type="email"
+                  value={clientEmail}
+                  onChange={(e) => {
+                    setClientEmail(e.target.value);
+                    setClientError("");
+                  }}
+                  placeholder="your@email.com"
+                  className="bg-slate-700/60 border-slate-600 text-white placeholder:text-slate-500 focus:border-indigo-500 h-9 text-sm"
+                />
+              </div>
+              <div>
+                <Label className="text-xs font-medium text-slate-300 mb-1 block">
+                  Password
+                </Label>
+                <Input
+                  type="password"
+                  value={clientPass}
+                  onChange={(e) => {
+                    setClientPass(e.target.value);
+                    setClientError("");
+                  }}
+                  placeholder="Password"
+                  className="bg-slate-700/60 border-slate-600 text-white placeholder:text-slate-500 focus:border-indigo-500 h-9 text-sm"
+                  onKeyDown={(e) => e.key === "Enter" && handleClientLogin()}
+                />
+              </div>
+              {clientError && (
+                <p className="text-red-400 text-xs">{clientError}</p>
+              )}
+              <Button
+                onClick={handleClientLogin}
+                className="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-semibold h-9 text-sm"
+              >
+                Sign In
+              </Button>
+              <p className="text-slate-500 text-xs text-center pt-1">
+                Not a client yet?{" "}
+                <Link
+                  to="/pricing"
+                  className="text-indigo-400 hover:text-indigo-300"
+                >
+                  View plans
+                </Link>
+              </p>
+            </div>
+          ) : (
+            <p className="text-slate-500 text-xs">Click to expand login</p>
+          )}
+        </div>
+
+        {/* Demo Card */}
+        <div className="relative bg-gradient-to-br from-indigo-900/80 to-purple-900/80 backdrop-blur border border-purple-500/60 rounded-2xl p-6 shadow-xl shadow-purple-500/10 ring-1 ring-purple-500/20">
+          <div className="absolute -top-2.5 left-1/2 -translate-x-1/2">
+            <span className="bg-gradient-to-r from-purple-500 to-indigo-500 text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wide">
+              No Login Required
+            </span>
+          </div>
+          <div className="flex items-center gap-3 mb-4 mt-2">
+            <div className="w-10 h-10 rounded-xl bg-purple-500/30 flex items-center justify-center">
+              <PlayCircle size={20} className="text-purple-300" />
+            </div>
+            <div>
+              <h2 className="text-white font-semibold text-sm">
+                Try the Platform Live
+              </h2>
+              <p className="text-purple-300 text-xs">
+                See your business on the platform
+              </p>
+            </div>
+          </div>
+          <p className="text-slate-300 text-xs leading-relaxed mb-5">
+            Enter your business details and we'll generate a live, personalized
+            simulation of your dashboard — fully white-labeled to your business
+            in 60 seconds.
+          </p>
+          <Link to="/demo-login">
+            <Button className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-semibold h-10 text-sm shadow-lg shadow-purple-700/30">
+              Launch My Demo →
+            </Button>
+          </Link>
+          <p className="text-purple-400/60 text-[10px] text-center mt-3">
+            No credit card · No account · Takes 60 seconds
+          </p>
+        </div>
+      </div>
+
+      <p className="text-center text-xs text-slate-600 mt-8">
+        &copy; {new Date().getFullYear()} Booked Ranked Fundable. Built on
+        Internet Computer infrastructure.
+      </p>
     </div>
   );
 }

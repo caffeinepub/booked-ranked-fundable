@@ -7,10 +7,13 @@ import {
   Plus,
   Search,
   Shield,
+  Sparkles,
   Star,
   TrendingUp,
   Users,
+  X,
 } from "lucide-react";
+import { useState } from "react";
 import { Button } from "../components/ui/button";
 import {
   Card,
@@ -26,6 +29,13 @@ import {
   REVIEWS,
 } from "../data/demoData";
 
+function getGreeting() {
+  const hour = new Date().getHours();
+  if (hour < 12) return "Good morning";
+  if (hour < 17) return "Good afternoon";
+  return "Good evening";
+}
+
 export default function DashboardPage() {
   const {
     currentTenantId,
@@ -33,7 +43,11 @@ export default function DashboardPage() {
     auditOverrides,
     fundabilityOverrides,
     tenants,
+    isDemoMode,
+    demoInfo,
   } = useApp();
+  const [greetingDismissed, setGreetingDismissed] = useState(false);
+
   const leads = LEADS[currentTenantId] ?? [];
   const reviews = REVIEWS[currentTenantId] ?? [];
   const auditScore =
@@ -52,6 +66,7 @@ export default function DashboardPage() {
     (l) => l.status === "new" || l.status === "contacted",
   ).length;
   const reviewsThisMonth = reviews.filter(() => true).length;
+  const newLeads = leads.filter((l) => l.status === "new").length;
 
   const KPI_CARDS = [
     {
@@ -59,7 +74,7 @@ export default function DashboardPage() {
       value: leads.length,
       icon: Users,
       color: "border-blue-500",
-      sub: `${leads.filter((l) => l.status === "new").length} new this week`,
+      sub: `${newLeads} new this week`,
     },
     {
       title: "Avg Rating",
@@ -102,19 +117,101 @@ export default function DashboardPage() {
     ...reviews.slice(0, 2).map((r) => ({
       type: "review",
       name: r.author,
-      action: `${r.rating}★ review on ${r.platform}`,
+      action: `${r.rating}\u2605 review on ${r.platform}`,
       time: "This week",
     })),
   ];
 
+  // Build AI greeting message
+  const buildGreeting = () => {
+    const greeting = getGreeting();
+    if (isDemoMode && demoInfo) {
+      return {
+        title: `${greeting}, ${demoInfo.firstName}.`,
+        message: `Here's a live simulation of ${demoInfo.businessName}'s dashboard on Booked, Ranked & Fundable. You have ${leads.length} simulated leads in your pipeline, ${newLeads} new this week, and ${reviews.length} customer reviews. Your ${demoInfo.niche} SEO audit score is ${auditScore}/100 and your fundability is at ${fundScore}/100. Explore each section to see how the full platform works for your business in ${demoInfo.city}.`,
+        isDemo: true,
+      };
+    }
+    if (currentUser && !currentUser.isAdminUser) {
+      return {
+        title: `${greeting}, ${currentUser.name}.`,
+        message: `You have ${openLeads} open leads and ${newLeads} new ones this week. Your review average is ${avgRating}\u2605 and your SEO score is ${auditScore}/100. Here's what needs your attention today.`,
+        isDemo: false,
+      };
+    }
+    return null;
+  };
+
+  const greetingData = buildGreeting();
+
   return (
     <div className="space-y-6">
+      {/* AI Greeting Panel */}
+      {greetingData && !greetingDismissed && (
+        <div
+          className={`relative rounded-xl p-5 border ${
+            greetingData.isDemo
+              ? "bg-gradient-to-r from-purple-900/40 to-indigo-900/40 border-purple-500/30"
+              : "bg-gradient-to-r from-indigo-900/20 to-slate-900/20 border-indigo-200"
+          }`}
+        >
+          <button
+            type="button"
+            onClick={() => setGreetingDismissed(true)}
+            className="absolute top-3 right-3 text-gray-400 hover:text-gray-600"
+            aria-label="Dismiss"
+          >
+            <X size={16} />
+          </button>
+          <div className="flex items-start gap-4">
+            <div
+              className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${
+                greetingData.isDemo ? "bg-purple-600/40" : "bg-indigo-100"
+              }`}
+            >
+              <Sparkles
+                size={18}
+                className={
+                  greetingData.isDemo ? "text-purple-300" : "text-indigo-600"
+                }
+              />
+            </div>
+            <div className="flex-1 min-w-0 pr-6">
+              <h3
+                className={`font-semibold text-base mb-1 ${
+                  greetingData.isDemo ? "text-white" : "text-gray-900"
+                }`}
+              >
+                {greetingData.title}
+              </h3>
+              <p
+                className={`text-sm leading-relaxed ${
+                  greetingData.isDemo ? "text-purple-200" : "text-gray-600"
+                }`}
+              >
+                {greetingData.message}
+              </p>
+              {greetingData.isDemo && (
+                <Link
+                  to="/pricing"
+                  className="inline-flex items-center gap-1 mt-3 text-xs bg-purple-600 hover:bg-purple-500 text-white px-3 py-1.5 rounded-full font-medium transition-colors"
+                >
+                  Activate for My Business <ArrowRight size={11} />
+                </Link>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
       <div>
         <h2 className="text-2xl font-bold text-gray-900">
-          Good morning, {currentUser?.name}
+          {isDemoMode && demoInfo ? demoInfo.businessName : "Dashboard"}
         </h2>
         <p className="text-gray-500 text-sm mt-1">
-          Here&apos;s what&apos;s happening with your business today.
+          {isDemoMode
+            ? `${demoInfo?.niche} business simulation — ${demoInfo?.city}`
+            : "Here's what's happening with your business today."}
         </p>
       </div>
 
@@ -160,7 +257,7 @@ export default function DashboardPage() {
                 <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                 <Shield size={14} className="text-emerald-600" />
                 <span className="text-sm font-medium text-emerald-800">
-                  Online · 99.7% uptime · SSL valid
+                  Online &middot; 99.7% uptime &middot; SSL valid
                 </span>
               </div>
               <span className="text-xs text-emerald-600 font-medium flex items-center gap-1">

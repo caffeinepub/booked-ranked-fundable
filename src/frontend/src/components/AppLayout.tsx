@@ -10,6 +10,7 @@ import {
   Menu,
   MessageSquare,
   Phone,
+  Rocket,
   Search,
   Send,
   Settings,
@@ -109,12 +110,17 @@ export default function AppLayout({ children }: { children: ReactNode }) {
     markAllRead,
     markRead,
     setAiPanelOpen,
+    isDemoMode,
+    demoInfo,
   } = useApp();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const navigate = useNavigate();
   const currentTenant = tenants.find((t) => t.id === currentTenantId);
+  const displayName =
+    isDemoMode && demoInfo ? demoInfo.businessName : currentTenant?.name;
   const pageTitle = PAGE_TITLES[pathname] ?? "";
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [demoBannerDismissed, setDemoBannerDismissed] = useState(false);
   const unreadCount = notifications.filter((n) => !n.read).length;
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: close sidebar on navigation
@@ -123,11 +129,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
   }, [pathname]);
 
   useEffect(() => {
-    if (sidebarOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
+    document.body.style.overflow = sidebarOpen ? "hidden" : "";
     return () => {
       document.body.style.overflow = "";
     };
@@ -149,11 +151,17 @@ export default function AppLayout({ children }: { children: ReactNode }) {
               BRF
             </div>
             <div>
-              <div className="text-xs font-semibold leading-tight">
-                Booked Ranked
+              <div className="text-xs font-semibold leading-tight truncate max-w-[110px]">
+                {isDemoMode && demoInfo
+                  ? demoInfo.businessName
+                  : "Booked Ranked"}
               </div>
               <div className="text-xs text-indigo-300 leading-tight">
-                Fundable
+                {isDemoMode ? (
+                  <span className="text-amber-400">Demo Mode</span>
+                ) : (
+                  "Fundable"
+                )}
               </div>
             </div>
           </div>
@@ -217,7 +225,6 @@ export default function AppLayout({ children }: { children: ReactNode }) {
       </nav>
 
       <div className="p-3 border-t border-slate-700 space-y-2">
-        {/* AI Business Manager Button */}
         <button
           type="button"
           data-ocid="nav.ai.button"
@@ -231,10 +238,14 @@ export default function AppLayout({ children }: { children: ReactNode }) {
         <div className="flex items-center justify-between">
           <div className="min-w-0">
             <p className="text-xs font-medium text-white truncate">
-              {currentUser?.name}
+              {isDemoMode && demoInfo ? demoInfo.firstName : currentUser?.name}
             </p>
             <p className="text-xs text-slate-400 capitalize">
-              {currentUser?.isAdminUser ? "Super Admin" : currentUser?.role}
+              {isDemoMode
+                ? "Demo User"
+                : currentUser?.isAdminUser
+                  ? "Super Admin"
+                  : currentUser?.role}
             </p>
           </div>
           <button
@@ -252,151 +263,187 @@ export default function AppLayout({ children }: { children: ReactNode }) {
   );
 
   return (
-    <div className="flex h-screen bg-gray-50 overflow-hidden">
-      {/* Desktop sidebar */}
-      <aside className="hidden md:flex w-56 flex-shrink-0 bg-slate-900 text-white flex-col">
-        <SidebarContent />
-      </aside>
-
-      {/* Mobile sidebar overlay */}
-      {sidebarOpen && (
-        <div className="md:hidden fixed inset-0 z-50 flex">
-          <button
-            type="button"
-            aria-label="Close sidebar"
-            className="absolute inset-0 bg-black/60 backdrop-blur-sm w-full h-full cursor-default border-0"
-            onClick={closeSidebar}
-          />
-          <aside className="relative z-10 w-64 flex-shrink-0 bg-slate-900 text-white flex flex-col h-full shadow-2xl">
-            <SidebarContent />
-          </aside>
+    <div className="flex flex-col h-screen bg-gray-50 overflow-hidden">
+      {/* Demo Mode Banner */}
+      {isDemoMode && !demoBannerDismissed && (
+        <div className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-4 py-2 flex items-center justify-between flex-shrink-0 z-50">
+          <div className="flex items-center gap-2 text-sm">
+            <Rocket size={14} className="text-purple-200 shrink-0" />
+            <span className="font-medium">Demo Mode</span>
+            <span className="text-purple-200 hidden sm:inline">
+              — You're exploring a live simulation for{" "}
+              <strong className="text-white">{demoInfo?.businessName}</strong>
+            </span>
+          </div>
+          <div className="flex items-center gap-3">
+            <Link
+              to="/pricing"
+              className="text-xs bg-white text-purple-700 font-semibold px-3 py-1 rounded-full hover:bg-purple-50 transition-colors whitespace-nowrap"
+            >
+              Activate for My Business
+            </Link>
+            <button
+              type="button"
+              onClick={() => setDemoBannerDismissed(true)}
+              className="text-purple-200 hover:text-white"
+              aria-label="Dismiss"
+            >
+              <X size={16} />
+            </button>
+          </div>
         </div>
       )}
 
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <header className="bg-white border-b border-gray-200 px-4 md:px-6 py-3 flex items-center justify-between flex-shrink-0">
-          <div className="flex items-center gap-3">
+      <div className="flex flex-1 overflow-hidden">
+        {/* Desktop sidebar */}
+        <aside className="hidden md:flex w-56 flex-shrink-0 bg-slate-900 text-white flex-col">
+          <SidebarContent />
+        </aside>
+
+        {/* Mobile sidebar overlay */}
+        {sidebarOpen && (
+          <div className="md:hidden fixed inset-0 z-50 flex">
             <button
               type="button"
-              data-ocid="nav.menu.button"
-              onClick={() => setSidebarOpen(true)}
-              className="md:hidden p-2 rounded-md hover:bg-gray-100 text-gray-600"
-              aria-label="Open menu"
-            >
-              <Menu size={20} />
-            </button>
-            <h1 className="text-lg font-semibold text-gray-800">{pageTitle}</h1>
+              aria-label="Close sidebar"
+              className="absolute inset-0 bg-black/60 backdrop-blur-sm w-full h-full cursor-default border-0"
+              onClick={closeSidebar}
+            />
+            <aside className="relative z-10 w-64 flex-shrink-0 bg-slate-900 text-white flex flex-col h-full shadow-2xl">
+              <SidebarContent />
+            </aside>
           </div>
-          <div className="flex items-center gap-3">
-            {isAdmin ? (
-              <DropdownMenu>
-                <DropdownMenuTrigger
-                  data-ocid="nav.tenant.select"
-                  className="flex items-center gap-1.5 text-sm bg-gray-100 px-3 py-1.5 rounded-md hover:bg-gray-200 transition-colors"
-                >
-                  <span className="font-medium text-gray-700 max-w-[120px] truncate">
-                    {currentTenant?.name}
-                  </span>
-                  <ChevronDown size={14} className="text-gray-500" />
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  {tenants.map((t) => (
-                    <DropdownMenuItem
-                      key={t.id}
-                      onClick={() => setCurrentTenantId(t.id)}
-                    >
-                      {t.name}
-                    </DropdownMenuItem>
-                  ))}
-                </DropdownMenuContent>
-              </DropdownMenu>
-            ) : (
-              <span className="text-sm text-gray-600 font-medium max-w-[140px] truncate">
-                {currentTenant?.name}
-              </span>
-            )}
+        )}
 
-            {/* Notification Bell */}
-            <Popover>
-              <PopoverTrigger asChild>
-                <button
-                  type="button"
-                  data-ocid="notifications.bell"
-                  className="relative p-2 rounded-md hover:bg-gray-100 text-gray-600 transition-colors"
-                  aria-label="Notifications"
-                >
-                  <Bell size={18} />
-                  {unreadCount > 0 && (
-                    <span className="absolute top-1 right-1 w-4 h-4 bg-red-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center">
-                      {unreadCount}
-                    </span>
-                  )}
-                </button>
-              </PopoverTrigger>
-              <PopoverContent
-                align="end"
-                className="w-80 p-0"
-                data-ocid="notifications.popover"
+        <div className="flex-1 flex flex-col overflow-hidden">
+          <header className="bg-white border-b border-gray-200 px-4 md:px-6 py-3 flex items-center justify-between flex-shrink-0">
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                data-ocid="nav.menu.button"
+                onClick={() => setSidebarOpen(true)}
+                className="md:hidden p-2 rounded-md hover:bg-gray-100 text-gray-600"
+                aria-label="Open menu"
               >
-                <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
-                  <h3 className="text-sm font-semibold text-gray-800">
-                    Notifications
-                  </h3>
-                  {unreadCount > 0 && (
-                    <button
-                      type="button"
-                      data-ocid="notifications.mark_all_read"
-                      onClick={markAllRead}
-                      className="text-xs text-indigo-600 hover:text-indigo-800 font-medium"
-                    >
-                      Mark all read
-                    </button>
-                  )}
-                </div>
-                <ScrollArea className="max-h-80">
-                  {notifications.length === 0 ? (
-                    <div className="px-4 py-8 text-center text-sm text-gray-400">
-                      No notifications
-                    </div>
-                  ) : (
-                    <div>
-                      {notifications.map((n) => (
-                        <button
-                          key={n.id}
-                          type="button"
-                          onClick={() => markRead(n.id)}
-                          className="w-full text-left flex items-start gap-3 px-4 py-3 hover:bg-gray-50 transition-colors border-b border-gray-50 last:border-0"
+                <Menu size={20} />
+              </button>
+              <h1 className="text-lg font-semibold text-gray-800">
+                {pageTitle}
+              </h1>
+            </div>
+            <div className="flex items-center gap-3">
+              {isAdmin && !isDemoMode ? (
+                <DropdownMenu>
+                  <DropdownMenuTrigger
+                    data-ocid="nav.tenant.select"
+                    className="flex items-center gap-1.5 text-sm bg-gray-100 px-3 py-1.5 rounded-md hover:bg-gray-200 transition-colors"
+                  >
+                    <span className="font-medium text-gray-700 max-w-[120px] truncate">
+                      {displayName}
+                    </span>
+                    <ChevronDown size={14} className="text-gray-500" />
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    {tenants
+                      .filter((t) => t.id !== "tenant-demo")
+                      .map((t) => (
+                        <DropdownMenuItem
+                          key={t.id}
+                          onClick={() => setCurrentTenantId(t.id)}
                         >
-                          <div className="mt-0.5 shrink-0">
-                            {TYPE_ICONS[n.type]}
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-1.5">
-                              <p className="text-xs font-semibold text-gray-800">
-                                {n.title}
-                              </p>
-                              {!n.read && (
-                                <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 shrink-0" />
-                              )}
-                            </div>
-                            <p className="text-xs text-gray-500 mt-0.5 truncate">
-                              {n.message}
-                            </p>
-                            <p className="text-[10px] text-gray-400 mt-1">
-                              {n.time}
-                            </p>
-                          </div>
-                        </button>
+                          {t.name}
+                        </DropdownMenuItem>
                       ))}
-                    </div>
-                  )}
-                </ScrollArea>
-              </PopoverContent>
-            </Popover>
-          </div>
-        </header>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              ) : (
+                <span className="text-sm text-gray-600 font-medium max-w-[140px] truncate">
+                  {displayName}
+                </span>
+              )}
 
-        <main className="flex-1 overflow-y-auto p-4 md:p-6">{children}</main>
+              {/* Notification Bell */}
+              <Popover>
+                <PopoverTrigger asChild>
+                  <button
+                    type="button"
+                    data-ocid="notifications.bell"
+                    className="relative p-2 rounded-md hover:bg-gray-100 text-gray-600 transition-colors"
+                    aria-label="Notifications"
+                  >
+                    <Bell size={18} />
+                    {unreadCount > 0 && (
+                      <span className="absolute top-1 right-1 w-4 h-4 bg-red-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center">
+                        {unreadCount}
+                      </span>
+                    )}
+                  </button>
+                </PopoverTrigger>
+                <PopoverContent
+                  align="end"
+                  className="w-80 p-0"
+                  data-ocid="notifications.popover"
+                >
+                  <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
+                    <h3 className="text-sm font-semibold text-gray-800">
+                      Notifications
+                    </h3>
+                    {unreadCount > 0 && (
+                      <button
+                        type="button"
+                        data-ocid="notifications.mark_all_read"
+                        onClick={markAllRead}
+                        className="text-xs text-indigo-600 hover:text-indigo-800 font-medium"
+                      >
+                        Mark all read
+                      </button>
+                    )}
+                  </div>
+                  <ScrollArea className="max-h-80">
+                    {notifications.length === 0 ? (
+                      <div className="px-4 py-8 text-center text-sm text-gray-400">
+                        No notifications
+                      </div>
+                    ) : (
+                      <div>
+                        {notifications.map((n) => (
+                          <button
+                            key={n.id}
+                            type="button"
+                            onClick={() => markRead(n.id)}
+                            className="w-full text-left flex items-start gap-3 px-4 py-3 hover:bg-gray-50 transition-colors border-b border-gray-50 last:border-0"
+                          >
+                            <div className="mt-0.5 shrink-0">
+                              {TYPE_ICONS[n.type]}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-1.5">
+                                <p className="text-xs font-semibold text-gray-800">
+                                  {n.title}
+                                </p>
+                                {!n.read && (
+                                  <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 shrink-0" />
+                                )}
+                              </div>
+                              <p className="text-xs text-gray-500 mt-0.5 truncate">
+                                {n.message}
+                              </p>
+                              <p className="text-[10px] text-gray-400 mt-1">
+                                {n.time}
+                              </p>
+                            </div>
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </ScrollArea>
+                </PopoverContent>
+              </Popover>
+            </div>
+          </header>
+
+          <main className="flex-1 overflow-y-auto p-4 md:p-6">{children}</main>
+        </div>
       </div>
 
       {/* AI Business Manager Panel */}

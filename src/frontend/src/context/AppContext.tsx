@@ -20,7 +20,6 @@ export interface TenantEntry {
   website: string;
   address: string;
   type: string;
-  // Phone number provisioning fields
   assignedPhoneNumber?: string;
   phoneNumberType?: "new" | "port" | "forward" | null;
   phoneNumberStatus?: "active" | "pending" | "not_assigned";
@@ -94,6 +93,13 @@ export interface AiProviderConfig {
   model: string;
 }
 
+export interface DemoInfo {
+  firstName: string;
+  businessName: string;
+  niche: string;
+  city: string;
+}
+
 interface AppContextType {
   currentTenantId: string;
   setCurrentTenantId: (id: string) => void;
@@ -106,6 +112,7 @@ interface AppContextType {
     tenantId: string,
     adminUser?: boolean,
   ) => void;
+  loginDemo: (info: DemoInfo) => void;
   logout: () => void;
   tenants: TenantEntry[];
   addTenant: (tenant: TenantEntry) => void;
@@ -131,18 +138,17 @@ interface AppContextType {
   notifications: Notification[];
   markAllRead: () => void;
   markRead: (id: string) => void;
-  // AI Panel
   aiPanelOpen: boolean;
   setAiPanelOpen: (v: boolean) => void;
-  // Social Media
   socialMediaEnabled: Record<string, boolean>;
   setSocialMediaEnabledForTenant: (tenantId: string, enabled: boolean) => void;
-  // AI Provider
   aiProviderConfig: AiProviderConfig;
   setAiProviderConfig: (config: AiProviderConfig) => void;
-  // Listing configs
   listingConfigs: Record<string, ListingConfig>;
   setListingConfig: (tenantId: string, config: ListingConfig) => void;
+  // Demo mode
+  isDemoMode: boolean;
+  demoInfo: DemoInfo | null;
 }
 
 const AppContext = createContext<AppContextType | null>(null);
@@ -152,7 +158,7 @@ function loadFromSession<T>(key: string, fallback: T): T {
     const raw = sessionStorage.getItem(key);
     if (raw) return JSON.parse(raw) as T;
   } catch {
-    // ignore
+    /* ignore */
   }
   return fallback;
 }
@@ -162,7 +168,7 @@ function loadFromLocal<T>(key: string, fallback: T): T {
     const raw = localStorage.getItem(key);
     if (raw) return JSON.parse(raw) as T;
   } catch {
-    // ignore
+    /* ignore */
   }
   return fallback;
 }
@@ -198,26 +204,28 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [listingConfigs, setListingConfigsState] = useState<
     Record<string, ListingConfig>
   >(() => loadFromLocal("brfListings", {}));
+  const [demoInfo, setDemoInfo] = useState<DemoInfo | null>(() =>
+    loadFromSession<DemoInfo | null>("brfDemo", null),
+  );
 
   useEffect(() => {
     sessionStorage.setItem("brfUser", JSON.stringify(currentUser));
   }, [currentUser]);
-
   useEffect(() => {
     sessionStorage.setItem("brfTenantId", currentTenantId);
   }, [currentTenantId]);
-
   useEffect(() => {
     localStorage.setItem("brfSocialMedia", JSON.stringify(socialMediaEnabled));
   }, [socialMediaEnabled]);
-
   useEffect(() => {
     localStorage.setItem("brfAiProvider", JSON.stringify(aiProviderConfig));
   }, [aiProviderConfig]);
-
   useEffect(() => {
     localStorage.setItem("brfListings", JSON.stringify(listingConfigs));
   }, [listingConfigs]);
+  useEffect(() => {
+    sessionStorage.setItem("brfDemo", JSON.stringify(demoInfo));
+  }, [demoInfo]);
 
   const setCurrentTenantId = (id: string) => setCurrentTenantIdState(id);
 
@@ -226,6 +234,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
     tenantId: string,
     adminUser = false,
   ) => {
+    setDemoInfo(null);
+    sessionStorage.removeItem("brfDemo");
     setCurrentUser({
       name: adminUser
         ? "Admin333"
@@ -238,16 +248,40 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setCurrentTenantIdState(tenantId);
   };
 
+  const loginDemo = (info: DemoInfo) => {
+    setDemoInfo(info);
+    // Update the tenant-demo entry with their business name
+    setTenants((prev) =>
+      prev.map((t) =>
+        t.id === "tenant-demo"
+          ? {
+              ...t,
+              name: info.businessName,
+              type: info.niche,
+              address: `${info.city}`,
+            }
+          : t,
+      ),
+    );
+    setCurrentUser({
+      name: info.firstName,
+      role: "client",
+      isAdminUser: false,
+    });
+    setCurrentTenantIdState("tenant-demo");
+  };
+
   const logout = () => {
     setCurrentUser(null);
+    setDemoInfo(null);
     sessionStorage.removeItem("brfUser");
     sessionStorage.removeItem("brfTenantId");
+    sessionStorage.removeItem("brfDemo");
   };
 
   const addTenant = (tenant: TenantEntry) => {
     setTenants((prev) => [...prev, tenant]);
   };
-
   const deleteTenant = (id: string) => {
     setTenants((prev) => prev.filter((t) => t.id !== id));
   };
@@ -274,35 +308,31 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const setAuditOverride = (tenantId: string, score: number) => {
     setAuditOverrides((prev) => ({ ...prev, [tenantId]: score }));
   };
-
   const setFundabilityOverride = (tenantId: string, score: number) => {
     setFundabilityOverrides((prev) => ({ ...prev, [tenantId]: score }));
   };
-
   const markAllRead = () => {
     setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
   };
-
   const markRead = (id: string) => {
     setNotifications((prev) =>
       prev.map((n) => (n.id === id ? { ...n, read: true } : n)),
     );
   };
-
   const setSocialMediaEnabledForTenant = (
     tenantId: string,
     enabled: boolean,
   ) => {
     setSocialMediaEnabled((prev) => ({ ...prev, [tenantId]: enabled }));
   };
-
   const setAiProviderConfig = (config: AiProviderConfig) => {
     setAiProviderConfigState(config);
   };
-
   const setListingConfig = (tenantId: string, config: ListingConfig) => {
     setListingConfigsState((prev) => ({ ...prev, [tenantId]: config }));
   };
+
+  const isDemoMode = demoInfo !== null && currentTenantId === "tenant-demo";
 
   return (
     <AppContext.Provider
@@ -314,6 +344,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         currentUser,
         isLoggedIn: currentUser !== null,
         login,
+        loginDemo,
         logout,
         tenants,
         addTenant,
@@ -334,6 +365,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
         setAiProviderConfig,
         listingConfigs,
         setListingConfig,
+        isDemoMode,
+        demoInfo,
       }}
     >
       {children}
