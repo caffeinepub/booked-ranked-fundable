@@ -97,7 +97,7 @@ const TYPE_ICONS: Record<Notification["type"], ReactNode> = {
   review: <Star size={14} className="text-amber-500" />,
   audit: <Search size={14} className="text-emerald-500" />,
   uptime: <Activity size={14} className="text-purple-500" />,
-  general: <Bell size={14} className="text-gray-500" />,
+  general: <Bell size={14} className="text-gray-200" />,
 };
 
 export default function AppLayout({ children }: { children: ReactNode }) {
@@ -176,7 +176,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
           <button
             type="button"
             onClick={closeSidebar}
-            className="md:hidden p-1.5 rounded hover:bg-slate-700 text-slate-400 hover:text-white"
+            className="md:hidden p-1.5 rounded hover:bg-slate-700 text-slate-200 hover:text-white"
             aria-label="Close sidebar"
           >
             <X size={18} />
@@ -187,7 +187,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
       <nav className="flex-1 overflow-y-auto py-3 px-2">
         {isAdminUser && (
           <div className="mb-4">
-            <p className="text-xs text-slate-500 font-semibold px-2 mb-1">
+            <p className="text-xs text-slate-200 font-semibold px-2 mb-1">
               ADMIN
             </p>
             <Link
@@ -207,7 +207,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
 
         {NAV_GROUPS.map((group) => (
           <div key={group.label} className="mb-4">
-            <p className="text-xs text-slate-500 font-semibold px-2 mb-1">
+            <p className="text-xs text-slate-200 font-semibold px-2 mb-1">
               {group.label}
             </p>
             {group.items.map(({ label, path, icon: Icon }) => {
@@ -220,7 +220,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
                   className={`flex items-center gap-2 px-3 py-2 rounded-md text-sm mb-0.5 transition-colors ${
                     active
                       ? "bg-indigo-600 text-white"
-                      : "text-slate-300 hover:bg-slate-800 hover:text-white"
+                      : "text-slate-200 hover:bg-slate-800 hover:text-white"
                   }`}
                 >
                   <Icon size={16} />
@@ -248,7 +248,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
             <p className="text-xs font-medium text-white truncate">
               {isDemoMode && demoInfo ? demoInfo.firstName : currentUser?.name}
             </p>
-            <p className="text-xs text-slate-400 capitalize">
+            <p className="text-xs text-slate-200 capitalize">
               {isDemoMode
                 ? "Demo User"
                 : currentUser?.isAdminUser
@@ -260,7 +260,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
             type="button"
             onClick={handleLogout}
             data-ocid="nav.logout.button"
-            className="p-1.5 rounded hover:bg-slate-700 text-slate-400 hover:text-white transition-colors"
+            className="p-1.5 rounded hover:bg-slate-700 text-slate-200 hover:text-white transition-colors"
             title="Logout"
           >
             <LogOut size={15} />
@@ -349,7 +349,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
                     <span className="font-medium text-gray-700 max-w-[120px] truncate">
                       {displayName}
                     </span>
-                    <ChevronDown size={14} className="text-gray-500" />
+                    <ChevronDown size={14} className="text-gray-200" />
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
                     {tenants
@@ -409,7 +409,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
                   </div>
                   <ScrollArea className="max-h-80">
                     {notifications.length === 0 ? (
-                      <div className="px-4 py-8 text-center text-sm text-gray-400">
+                      <div className="px-4 py-8 text-center text-sm text-gray-200">
                         No notifications
                       </div>
                     ) : (
@@ -433,10 +433,10 @@ export default function AppLayout({ children }: { children: ReactNode }) {
                                   <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 shrink-0" />
                                 )}
                               </div>
-                              <p className="text-xs text-gray-500 mt-0.5 truncate">
+                              <p className="text-xs text-gray-200 mt-0.5 truncate">
                                 {n.message}
                               </p>
-                              <p className="text-[10px] text-gray-400 mt-1">
+                              <p className="text-[10px] text-gray-200 mt-1">
                                 {n.time}
                               </p>
                             </div>

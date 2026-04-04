@@ -40,7 +40,7 @@ export default function StatCallout() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.25 }}
-            className="text-slate-400 text-sm md:text-base leading-relaxed max-w-xl mx-auto mb-8"
+            className="text-slate-200 text-sm md:text-base leading-relaxed max-w-xl mx-auto mb-8"
           >
             The fundability gap is real — and most business owners don't even
             know it exists until it's too late. We built the only tool that

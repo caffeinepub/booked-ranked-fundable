@@ -52,7 +52,7 @@ function PasswordField({
         <button
           type="button"
           onClick={() => setShow((v) => !v)}
-          className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+          className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-200 hover:text-gray-600"
         >
           {show ? <EyeOff size={15} /> : <Eye size={15} />}
         </button>
@@ -101,7 +101,7 @@ function IntegrationSection({
           </div>
           <div>
             <h4 className="text-sm font-semibold text-gray-800">{title}</h4>
-            <p className="text-xs text-gray-500 mt-0.5">{description}</p>
+            <p className="text-xs text-gray-200 mt-0.5">{description}</p>
           </div>
         </div>
         <div className="flex items-center gap-2 shrink-0">
@@ -111,7 +111,7 @@ function IntegrationSection({
             </span>
           )}
           {status === "unconfigured" && (
-            <span className="text-xs bg-gray-100 text-gray-500 font-medium px-2.5 py-1 rounded-full">
+            <span className="text-xs bg-gray-100 text-gray-200 font-medium px-2.5 py-1 rounded-full">
               Not Configured
             </span>
           )}
@@ -216,7 +216,7 @@ function AiConfigTab() {
         <h3 className="text-base font-semibold text-gray-800">
           AI Provider Configuration
         </h3>
-        <p className="text-sm text-gray-500 mt-0.5">
+        <p className="text-sm text-gray-200 mt-0.5">
           Choose your default AI provider for the Business Manager, Chat Widget,
           and Social Media tools.
         </p>
@@ -246,7 +246,7 @@ function AiConfigTab() {
                 <p className="text-sm font-semibold text-gray-800">
                   {provider.name}
                 </p>
-                <p className="text-xs text-gray-500 mt-0.5">{provider.desc}</p>
+                <p className="text-xs text-gray-200 mt-0.5">{provider.desc}</p>
               </div>
               <span
                 className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${provider.badge}`}
@@ -286,7 +286,7 @@ function AiConfigTab() {
               <button
                 type="button"
                 onClick={() => setShowKey((v) => !v)}
-                className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-200 hover:text-gray-600"
               >
                 {showKey ? <EyeOff size={14} /> : <Eye size={14} />}
               </button>
@@ -576,7 +576,7 @@ export default function SettingsPage() {
                 <h3 className="text-sm font-semibold text-gray-800">
                   Onboarding Wizard
                 </h3>
-                <p className="text-xs text-gray-500 mt-1 leading-relaxed">
+                <p className="text-xs text-gray-200 mt-1 leading-relaxed">
                   Re-run the step-by-step setup wizard to update your business
                   profile, phone setup, campaigns, chat widget, and
                   integrations.
@@ -630,7 +630,7 @@ export default function SettingsPage() {
                   <p className="text-sm font-medium text-gray-800">
                     {item.label}
                   </p>
-                  <p className="text-xs text-gray-500">{item.sub}</p>
+                  <p className="text-xs text-gray-200">{item.sub}</p>
                 </div>
                 <Switch
                   defaultChecked
@@ -649,7 +649,7 @@ export default function SettingsPage() {
             <h3 className="text-sm font-semibold text-gray-800 mb-4">
               Client Businesses
             </h3>
-            <p className="text-xs text-gray-500">
+            <p className="text-xs text-gray-200">
               Manage client accounts and business profiles from the Admin Panel.
             </p>
           </div>
@@ -664,14 +664,14 @@ export default function SettingsPage() {
               <h3 className="text-sm font-semibold text-gray-800">
                 Integrations Hub
               </h3>
-              <p className="text-xs text-gray-500 mt-0.5">
+              <p className="text-xs text-gray-200 mt-0.5">
                 Connect your tools to unlock the full power of the platform.
               </p>
             </div>
           </div>
 
           {loadingIntegrations && (
-            <div className="flex items-center gap-2 text-sm text-gray-500 py-4">
+            <div className="flex items-center gap-2 text-sm text-gray-200 py-4">
               <Loader2 size={14} className="animate-spin" /> Loading saved
               credentials...
             </div>
@@ -826,7 +826,7 @@ export default function SettingsPage() {
               onTest={testEmail}
             >
               <div className="space-y-3">
-                <p className="text-xs text-gray-500 font-medium">
+                <p className="text-xs text-gray-200 font-medium">
                   SMTP Configuration
                 </p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -886,7 +886,7 @@ export default function SettingsPage() {
                   />
                 </div>
                 <div className="border-t border-gray-100 pt-3">
-                  <p className="text-xs text-gray-500 font-medium mb-2">
+                  <p className="text-xs text-gray-200 font-medium mb-2">
                     — OR use SendGrid —
                   </p>
                   <PasswordField
@@ -1055,7 +1055,7 @@ export default function SettingsPage() {
                 <h4 className="text-sm font-semibold text-gray-800">
                   Review Platforms
                 </h4>
-                <p className="text-xs text-gray-500 mt-0.5">
+                <p className="text-xs text-gray-200 mt-0.5">
                   Choose where customers are directed to leave reviews
                 </p>
               </div>

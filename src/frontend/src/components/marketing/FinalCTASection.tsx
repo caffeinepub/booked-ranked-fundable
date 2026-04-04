@@ -35,7 +35,7 @@ export default function FinalCTASection({
               {headline}
             </span>
           </h2>
-          <p className="text-slate-300 mb-10 max-w-xl mx-auto">{subtext}</p>
+          <p className="text-slate-200 mb-10 max-w-xl mx-auto">{subtext}</p>
           <div className="flex gap-4 justify-center flex-wrap">
             <Link to={auditHref as any}>
               <Button

@@ -120,7 +120,7 @@ export default function WhyUsPage() {
                 For Businesses That Refuse to Settle
               </span>
             </h1>
-            <p className="text-lg text-slate-300 max-w-2xl leading-relaxed mb-10">
+            <p className="text-lg text-slate-200 max-w-2xl leading-relaxed mb-10">
               Three fundamental growth engines. One tamper-proof blockchain
               infrastructure. Zero compromises. This is why forward-thinking
               local businesses choose BRF over everything else.
@@ -129,7 +129,7 @@ export default function WhyUsPage() {
               {TRUST_SIGNALS.map(({ icon: Icon, text }) => (
                 <div
                   key={text}
-                  className="flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-4 py-2 text-sm text-slate-300"
+                  className="flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-4 py-2 text-sm text-slate-200"
                 >
                   <Icon size={14} className="text-indigo-400" />
                   {text}
@@ -154,7 +154,7 @@ export default function WhyUsPage() {
               Three Pillars.
               <span className="text-indigo-600"> Zero Gaps.</span>
             </h2>
-            <p className="text-slate-500 mt-3 max-w-xl mx-auto">
+            <p className="text-slate-200 mt-3 max-w-xl mx-auto">
               Most platforms pick one problem to solve. We solved all three —
               and built them to work together.
             </p>
@@ -181,7 +181,7 @@ export default function WhyUsPage() {
                 <h3 className="text-xl font-bold text-slate-900 mb-3">
                   {headline}
                 </h3>
-                <p className="text-sm text-slate-500 leading-relaxed">{desc}</p>
+                <p className="text-sm text-slate-200 leading-relaxed">{desc}</p>
               </motion.div>
             ))}
           </div>
@@ -250,7 +250,7 @@ export default function WhyUsPage() {
                 Your Data on Unpassable
                 <span className="text-indigo-400"> Infrastructure</span>
               </h2>
-              <div className="space-y-4 text-slate-300 leading-relaxed">
+              <div className="space-y-4 text-slate-200 leading-relaxed">
                 <p>
                   BRF runs on{" "}
                   <strong className="text-white">
@@ -286,7 +286,7 @@ export default function WhyUsPage() {
                       size={16}
                       className="text-emerald-400 flex-shrink-0 mt-0.5"
                     />
-                    <span className="text-sm text-slate-300">{point}</span>
+                    <span className="text-sm text-slate-200">{point}</span>
                   </div>
                 ))}
               </div>
@@ -310,7 +310,7 @@ export default function WhyUsPage() {
                   <h4 className="font-semibold text-white mb-2 text-sm">
                     {title}
                   </h4>
-                  <p className="text-xs text-slate-400 leading-relaxed">
+                  <p className="text-xs text-slate-200 leading-relaxed">
                     {desc}
                   </p>
                 </div>
@@ -340,10 +340,10 @@ export default function WhyUsPage() {
 
           <div className="rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
             <div className="grid grid-cols-3 bg-slate-50 border-b border-slate-200">
-              <div className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+              <div className="px-6 py-4 text-xs font-semibold text-slate-200 uppercase tracking-wider">
                 Category
               </div>
-              <div className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider border-l border-slate-200">
+              <div className="px-6 py-4 text-xs font-semibold text-slate-200 uppercase tracking-wider border-l border-slate-200">
                 Other Tools
               </div>
               <div className="px-6 py-4 text-xs font-semibold text-indigo-600 uppercase tracking-wider border-l border-slate-200 bg-indigo-50">
@@ -358,7 +358,7 @@ export default function WhyUsPage() {
                 }`}
               >
                 <div className="px-6 py-5">
-                  <span className="text-xs font-semibold text-slate-500 uppercase tracking-wide">
+                  <span className="text-xs font-semibold text-slate-200 uppercase tracking-wide">
                     {aspect}
                   </span>
                 </div>
@@ -367,7 +367,7 @@ export default function WhyUsPage() {
                     size={16}
                     className="text-red-400 flex-shrink-0 mt-0.5"
                   />
-                  <p className="text-sm text-slate-500">{others}</p>
+                  <p className="text-sm text-slate-200">{others}</p>
                 </div>
                 <div className="px-6 py-5 border-l border-slate-100 bg-indigo-50/50 flex gap-2">
                   <CheckCircle2
@@ -396,7 +396,7 @@ export default function WhyUsPage() {
               <br />
               <span className="text-indigo-400">Built for Your Growth?</span>
             </h2>
-            <p className="text-slate-300 mb-10 text-lg max-w-xl mx-auto">
+            <p className="text-slate-200 mb-10 text-lg max-w-xl mx-auto">
               Start with a free audit — see exactly where you stand today, and
               what it takes to dominate your local market tomorrow.
             </p>

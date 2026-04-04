@@ -70,7 +70,7 @@ export default function IndustryCardGrid() {
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
             Serving Local Service Businesses Across Every Trade
           </h2>
-          <p className="text-slate-400 max-w-xl mx-auto">
+          <p className="text-slate-200 max-w-xl mx-auto">
             Each niche has its own pain points, competitive dynamics, and growth
             opportunities. We've built specifically for yours.
           </p>
@@ -92,7 +92,7 @@ export default function IndustryCardGrid() {
               >
                 <div className="text-3xl mb-4">{industry.icon}</div>
                 <h3 className="font-bold text-white mb-2">{industry.name}</h3>
-                <p className="text-sm text-slate-400 mb-4 leading-relaxed">
+                <p className="text-sm text-slate-200 mb-4 leading-relaxed">
                   {industry.tagline}
                 </p>
                 <div className="flex items-center gap-1.5 text-indigo-400 text-sm font-medium group-hover:gap-2.5 transition-all">

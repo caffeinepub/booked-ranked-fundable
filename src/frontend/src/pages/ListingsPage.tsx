@@ -132,7 +132,7 @@ export default function ListingsPage() {
     <div className="space-y-6 max-w-4xl mx-auto">
       <div>
         <h1 className="text-2xl font-bold text-gray-900">Listings Monitor</h1>
-        <p className="text-sm text-gray-500 mt-1">
+        <p className="text-sm text-gray-200 mt-1">
           Track your business presence across all major platforms
         </p>
       </div>
@@ -225,13 +225,13 @@ export default function ListingsPage() {
                               className="text-emerald-500"
                             />
                           ) : (
-                            <XCircle size={12} className="text-gray-400" />
+                            <XCircle size={12} className="text-gray-200" />
                           )}
                           <span
                             className={`text-xs font-medium ${
                               status.status === "live"
                                 ? "text-emerald-600"
-                                : "text-gray-400"
+                                : "text-gray-200"
                             }`}
                           >
                             {status.status === "live"
@@ -242,7 +242,7 @@ export default function ListingsPage() {
                           </span>
                         </div>
                       ) : (
-                        <span className="text-xs text-gray-400">
+                        <span className="text-xs text-gray-200">
                           {hasUrl ? "URL saved" : "Not configured"}
                         </span>
                       )}
@@ -271,17 +271,17 @@ export default function ListingsPage() {
                         <p className="text-base font-bold text-gray-800">
                           {status.rating}★
                         </p>
-                        <p className="text-[10px] text-gray-400">Rating</p>
+                        <p className="text-[10px] text-gray-200">Rating</p>
                       </div>
                       <div className="text-center">
                         <p className="text-base font-bold text-gray-800">
                           {status.reviewCount}
                         </p>
-                        <p className="text-[10px] text-gray-400">Reviews</p>
+                        <p className="text-[10px] text-gray-200">Reviews</p>
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="text-[10px] text-gray-400">
+                      <p className="text-[10px] text-gray-200">
                         Checked {status.lastChecked}
                       </p>
                       {config[p.urlKey] && (
@@ -310,17 +310,17 @@ export default function ListingsPage() {
           <CardTitle className="text-base font-semibold">
             NAP Consistency Score
           </CardTitle>
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-gray-200">
             Name, Address & Phone consistency across platforms
           </p>
         </CardHeader>
         <CardContent className="space-y-3">
           <div className="flex items-center justify-between">
             <span className="text-3xl font-bold text-gray-900">{napScore}</span>
-            <span className="text-sm text-gray-400">/100</span>
+            <span className="text-sm text-gray-200">/100</span>
           </div>
           <Progress value={napScore} className="h-2" />
-          <p className="text-xs text-gray-500">
+          <p className="text-xs text-gray-200">
             {connectedCount < 2
               ? "Connect more platforms to improve your NAP score and local SEO."
               : connectedCount < 4

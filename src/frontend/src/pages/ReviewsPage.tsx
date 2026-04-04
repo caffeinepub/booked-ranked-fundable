@@ -49,12 +49,12 @@ export default function ReviewsPage() {
                   className={
                     s <= Math.round(avgRating)
                       ? "text-amber-400 fill-amber-400"
-                      : "text-gray-300"
+                      : "text-gray-200"
                   }
                 />
               ))}
             </div>
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs text-gray-200 mt-1">
               {reviews.length} reviews
             </p>
           </div>
@@ -73,7 +73,7 @@ export default function ReviewsPage() {
                     }}
                   />
                 </div>
-                <span className="text-xs text-gray-500 w-4">{count}</span>
+                <span className="text-xs text-gray-200 w-4">{count}</span>
               </div>
             ))}
           </div>
@@ -97,7 +97,7 @@ export default function ReviewsPage() {
             className={`px-4 py-1.5 rounded-md text-sm font-medium transition-colors ${
               activeTab === p
                 ? "bg-white shadow-sm text-gray-900"
-                : "text-gray-500 hover:text-gray-700"
+                : "text-gray-200 hover:text-gray-700"
             }`}
           >
             {p}
@@ -141,14 +141,14 @@ export default function ReviewsPage() {
                 >
                   {review.platform}
                 </span>
-                <span className="text-xs text-gray-400">{review.date}</span>
+                <span className="text-xs text-gray-200">{review.date}</span>
               </div>
             </div>
             <p className="text-sm text-gray-600 mt-2">{review.comment}</p>
           </div>
         ))}
         {filtered.length === 0 && (
-          <p className="text-center text-gray-500 py-10 text-sm">
+          <p className="text-center text-gray-200 py-10 text-sm">
             No reviews for this platform yet.
           </p>
         )}

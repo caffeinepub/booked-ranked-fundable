@@ -38,7 +38,7 @@ function StepHeader({
       </p>
       <h2 className="text-2xl font-bold text-white leading-tight">{title}</h2>
       {subtitle && (
-        <p className="text-slate-400 text-sm mt-2 leading-relaxed">
+        <p className="text-slate-200 text-sm mt-2 leading-relaxed">
           {subtitle}
         </p>
       )}
@@ -67,7 +67,7 @@ function WizardNav({
         variant="ghost"
         onClick={onBack}
         disabled={step === 1}
-        className="text-slate-400 hover:text-white hover:bg-slate-800 gap-1.5"
+        className="text-slate-200 hover:text-white hover:bg-slate-800 gap-1.5"
         data-ocid="onboarding.agency.back.button"
       >
         <ChevronLeft size={16} /> Back
@@ -77,7 +77,7 @@ function WizardNav({
           <button
             type="button"
             onClick={onSkip}
-            className="text-slate-500 hover:text-slate-300 text-sm transition-colors"
+            className="text-slate-200 hover:text-slate-200 text-sm transition-colors"
             data-ocid="onboarding.agency.skip.button"
           >
             Skip for now
@@ -108,7 +108,7 @@ function Step1({ contactName }: { contactName: string }) {
       />
       <div className="bg-slate-800/60 rounded-xl p-5 space-y-4">
         <div>
-          <Label className="text-xs text-slate-400 mb-1 block">
+          <Label className="text-xs text-slate-200 mb-1 block">
             Agency Name
           </Label>
           <Input
@@ -120,7 +120,7 @@ function Step1({ contactName }: { contactName: string }) {
           />
         </div>
         <div>
-          <Label className="text-xs text-slate-400 mb-1 block">
+          <Label className="text-xs text-slate-200 mb-1 block">
             Primary Contact Name
           </Label>
           <Input
@@ -165,7 +165,7 @@ function Step2() {
       />
       <div className="space-y-4">
         <div>
-          <Label className="text-xs text-slate-400 mb-1 block">
+          <Label className="text-xs text-slate-200 mb-1 block">
             Agency Name
           </Label>
           <Input
@@ -177,7 +177,7 @@ function Step2() {
           />
         </div>
         <div>
-          <Label className="text-xs text-slate-400 mb-1 block">
+          <Label className="text-xs text-slate-200 mb-1 block">
             Tagline <span className="text-slate-600">(optional)</span>
           </Label>
           <Input
@@ -189,7 +189,7 @@ function Step2() {
           />
         </div>
         <div>
-          <Label className="text-xs text-slate-400 mb-2 block">
+          <Label className="text-xs text-slate-200 mb-2 block">
             Primary Color
           </Label>
           <div className="flex gap-3">
@@ -208,24 +208,24 @@ function Step2() {
               />
             ))}
           </div>
-          <p className="text-slate-500 text-xs mt-2">
+          <p className="text-slate-200 text-xs mt-2">
             Selected:{" "}
-            <span className="text-slate-300">{colors[selectedColor].name}</span>
+            <span className="text-slate-200">{colors[selectedColor].name}</span>
           </p>
         </div>
         <div>
-          <Label className="text-xs text-slate-400 mb-2 block">
+          <Label className="text-xs text-slate-200 mb-2 block">
             Agency Logo
           </Label>
           <div className="border-2 border-dashed border-slate-600 rounded-xl p-5 text-center hover:border-amber-500/60 transition-colors cursor-pointer">
-            <UploadCloud size={22} className="mx-auto text-slate-500 mb-2" />
-            <p className="text-slate-400 text-xs">
+            <UploadCloud size={22} className="mx-auto text-slate-200 mb-2" />
+            <p className="text-slate-200 text-xs">
               Upload your logo (PNG or SVG)
             </p>
             <Button
               size="sm"
               variant="outline"
-              className="mt-3 border-slate-600 text-slate-300 hover:text-white text-xs"
+              className="mt-3 border-slate-600 text-slate-200 hover:text-white text-xs"
               data-ocid="onboarding.agency.logo.upload_button"
             >
               Upload Logo
@@ -275,7 +275,7 @@ function IntegrationCard({
         </div>
         <div>
           <p className="text-white text-sm font-medium">{title}</p>
-          <p className="text-slate-400 text-xs mt-0.5">{desc}</p>
+          <p className="text-slate-200 text-xs mt-0.5">{desc}</p>
         </div>
       </div>
       <div className="flex gap-2">
@@ -292,7 +292,7 @@ function IntegrationCard({
           variant="outline"
           onClick={handleTest}
           disabled={status === "testing"}
-          className="border-slate-600 text-slate-300 hover:text-white text-xs shrink-0"
+          className="border-slate-600 text-slate-200 hover:text-white text-xs shrink-0"
           data-ocid={`${ocid}.test.button`}
         >
           {status === "testing" ? (
@@ -398,10 +398,10 @@ function Step4() {
           >
             <div className="flex-1">
               <p className="text-white font-medium text-sm">{tier.name}</p>
-              <p className="text-slate-400 text-xs mt-0.5">{tier.desc}</p>
+              <p className="text-slate-200 text-xs mt-0.5">{tier.desc}</p>
             </div>
             <div className="flex items-center gap-1 shrink-0">
-              <span className="text-slate-400 text-sm">$</span>
+              <span className="text-slate-200 text-sm">$</span>
               <Input
                 value={tier.price}
                 onChange={(e) =>
@@ -414,13 +414,13 @@ function Step4() {
                 className="w-20 bg-slate-700/60 border-slate-600 text-white text-sm text-right"
                 data-ocid={`onboarding.agency.price.${i + 1}.input`}
               />
-              <span className="text-slate-400 text-sm">/mo</span>
+              <span className="text-slate-200 text-sm">/mo</span>
             </div>
           </div>
         ))}
       </div>
       <div className="bg-slate-800/40 border border-slate-700 rounded-xl p-4">
-        <p className="text-slate-400 text-xs leading-relaxed">
+        <p className="text-slate-200 text-xs leading-relaxed">
           <span className="text-slate-200 font-medium">How it works:</span> You
           set the price, you bill the client, and you pay the platform fee. Your
           margin is the difference. Most agency owners charge 2–3x the platform
@@ -468,7 +468,7 @@ function Step5() {
           <p className="text-white font-semibold text-lg mb-1">
             {form.bizName} is live!
           </p>
-          <p className="text-slate-400 text-sm">
+          <p className="text-slate-200 text-sm">
             Login credentials have been sent to{" "}
             <span className="text-indigo-300">{form.email}</span>. Their
             niche-matched campaigns are pre-activated and ready to go.
@@ -488,7 +488,7 @@ function Step5() {
       <div className="bg-slate-800/60 rounded-xl p-5 space-y-4">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <Label className="text-xs text-slate-400 mb-1 block">
+            <Label className="text-xs text-slate-200 mb-1 block">
               Business Name
             </Label>
             <Input
@@ -502,7 +502,7 @@ function Step5() {
             />
           </div>
           <div>
-            <Label className="text-xs text-slate-400 mb-1 block">
+            <Label className="text-xs text-slate-200 mb-1 block">
               Owner Name
             </Label>
             <Input
@@ -516,7 +516,7 @@ function Step5() {
             />
           </div>
           <div className="sm:col-span-2">
-            <Label className="text-xs text-slate-400 mb-1 block">
+            <Label className="text-xs text-slate-200 mb-1 block">
               Email Address
             </Label>
             <Input
@@ -531,7 +531,7 @@ function Step5() {
             />
           </div>
           <div>
-            <Label className="text-xs text-slate-400 mb-1 block">Niche</Label>
+            <Label className="text-xs text-slate-200 mb-1 block">Niche</Label>
             <select
               value={form.niche}
               onChange={(e) =>
@@ -549,7 +549,7 @@ function Step5() {
             </select>
           </div>
           <div>
-            <Label className="text-xs text-slate-400 mb-1 block">City</Label>
+            <Label className="text-xs text-slate-200 mb-1 block">City</Label>
             <Input
               value={form.city}
               onChange={(e) => setForm((f) => ({ ...f, city: e.target.value }))}
@@ -612,11 +612,11 @@ function Step6() {
                 {c.seq}
               </span>
             </div>
-            <p className="text-slate-400 text-xs leading-relaxed mb-3">
+            <p className="text-slate-200 text-xs leading-relaxed mb-3">
               {c.desc}
             </p>
             <div className="flex items-center justify-between">
-              <span className="text-xs text-slate-500">
+              <span className="text-xs text-slate-200">
                 Est. open rate:{" "}
                 <span className="text-emerald-400 font-semibold">{c.rate}</span>
               </span>
@@ -632,7 +632,7 @@ function Step6() {
         ))}
       </div>
       <div className="bg-slate-800/40 border border-slate-700 rounded-xl p-4">
-        <p className="text-slate-400 text-xs leading-relaxed">
+        <p className="text-slate-200 text-xs leading-relaxed">
           <span className="text-slate-200 font-medium">Note:</span> Add
           prospects to these campaigns from{" "}
           <span className="text-amber-400">
@@ -665,7 +665,7 @@ function Step7({ completedSteps }: { completedSteps: Set<number> }) {
         <h2 className="text-3xl font-bold text-white">
           Your Agency Platform Is Live
         </h2>
-        <p className="text-slate-400 text-sm mt-2">
+        <p className="text-slate-200 text-sm mt-2">
           Everything is configured. You're ready to onboard clients and grow.
         </p>
       </div>
@@ -687,7 +687,7 @@ function Step7({ completedSteps }: { completedSteps: Set<number> }) {
                 )}
               </div>
               <span
-                className={`text-sm ${done ? "text-slate-200" : "text-slate-500"}`}
+                className={`text-sm ${done ? "text-slate-200" : "text-slate-200"}`}
               >
                 {item.label}
               </span>
@@ -779,7 +779,7 @@ export default function AgencyOnboardingWizard() {
               <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center text-slate-900 font-bold text-xs">
                 BRF
               </div>
-              <span className="text-slate-400 text-sm">
+              <span className="text-slate-200 text-sm">
                 Agency Setup Wizard
               </span>
             </div>

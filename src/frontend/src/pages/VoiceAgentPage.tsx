@@ -204,7 +204,7 @@ export default function VoiceAgentPage() {
         <div>
           <div className="flex items-center justify-between mb-1">
             <Label className="text-xs text-gray-600">Greeting Script</Label>
-            <span className="text-xs text-gray-400">
+            <span className="text-xs text-gray-200">
               {config.greetingScript.length} chars
             </span>
           </div>
@@ -327,7 +327,7 @@ export default function VoiceAgentPage() {
                 />
                 <div className="flex-1">
                   <p className="text-sm font-medium text-gray-800">{label}</p>
-                  <p className="text-xs text-gray-500">{desc}</p>
+                  <p className="text-xs text-gray-200">{desc}</p>
                   {config.routing === "forward" && value === "forward" && (
                     <Input
                       value={config.forwardNumber}
@@ -366,7 +366,7 @@ export default function VoiceAgentPage() {
         {/* Phone / Vapi info */}
         <div className="grid grid-cols-2 gap-4 pt-4 border-t border-gray-100">
           <div className="bg-gray-50 rounded-lg p-3">
-            <p className="text-xs text-gray-500 mb-1">Assigned Phone Number</p>
+            <p className="text-xs text-gray-200 mb-1">Assigned Phone Number</p>
             <div className="flex items-center gap-1.5">
               <Phone size={14} className="text-indigo-500" />
               <p className="text-sm font-semibold text-gray-800">
@@ -375,7 +375,7 @@ export default function VoiceAgentPage() {
             </div>
           </div>
           <div className="bg-gray-50 rounded-lg p-3">
-            <p className="text-xs text-gray-500 mb-1">Vapi Agent ID</p>
+            <p className="text-xs text-gray-200 mb-1">Vapi Agent ID</p>
             <p className="text-sm font-semibold text-gray-800 truncate">
               {config.vapiAgentId || "—"}
             </p>
@@ -388,7 +388,7 @@ export default function VoiceAgentPage() {
             <p className="text-sm font-medium text-gray-800">
               Mark as Configured
             </p>
-            <p className="text-xs text-gray-500">
+            <p className="text-xs text-gray-200">
               Activate this voice agent for your business
             </p>
           </div>

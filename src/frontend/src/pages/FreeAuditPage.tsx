@@ -351,7 +351,7 @@ export default function FreeAuditPage() {
           <Button
             variant="outline"
             size="sm"
-            className="bg-transparent border-slate-700 text-slate-300 hover:bg-slate-800"
+            className="bg-transparent border-slate-700 text-slate-200 hover:bg-slate-800"
           >
             Sign In
           </Button>
@@ -373,7 +373,7 @@ export default function FreeAuditPage() {
             <br />
             <span className="text-indigo-400">Really Rank Online?</span>
           </h1>
-          <p className="text-slate-400 text-lg mb-2">
+          <p className="text-slate-200 text-lg mb-2">
             Get a real audit of your website performance, SEO, and social media
             presence — powered by Google PageSpeed data.
           </p>
@@ -394,7 +394,7 @@ export default function FreeAuditPage() {
                 <h2 className="text-xl font-bold text-white mb-1">
                   Run Your Free Audit
                 </h2>
-                <p className="text-slate-400 text-sm mb-6">
+                <p className="text-slate-200 text-sm mb-6">
                   Takes 30 seconds. Real data from Google PageSpeed.
                 </p>
                 <form
@@ -405,7 +405,7 @@ export default function FreeAuditPage() {
                   <div>
                     <label
                       htmlFor="audit-biz-name"
-                      className="block text-sm font-medium text-slate-300 mb-1.5"
+                      className="block text-sm font-medium text-slate-200 mb-1.5"
                     >
                       Business Name *
                     </label>
@@ -418,13 +418,13 @@ export default function FreeAuditPage() {
                         setForm((f) => ({ ...f, businessName: e.target.value }))
                       }
                       required
-                      className="bg-slate-800 border-slate-700 text-white placeholder:text-slate-500 focus:border-indigo-500"
+                      className="bg-slate-800 border-slate-700 text-white placeholder:text-slate-200 focus:border-indigo-500"
                     />
                   </div>
                   <div>
                     <label
                       htmlFor="audit-website"
-                      className="block text-sm font-medium text-slate-300 mb-1.5"
+                      className="block text-sm font-medium text-slate-200 mb-1.5"
                     >
                       Website URL *
                     </label>
@@ -437,7 +437,7 @@ export default function FreeAuditPage() {
                         setForm((f) => ({ ...f, websiteUrl: e.target.value }));
                         setUrlError("");
                       }}
-                      className={`bg-slate-800 border-slate-700 text-white placeholder:text-slate-500 focus:border-indigo-500 ${
+                      className={`bg-slate-800 border-slate-700 text-white placeholder:text-slate-200 focus:border-indigo-500 ${
                         urlError ? "border-red-500" : ""
                       }`}
                     />
@@ -454,7 +454,7 @@ export default function FreeAuditPage() {
                     <div>
                       <label
                         htmlFor="audit-location"
-                        className="block text-sm font-medium text-slate-300 mb-1.5"
+                        className="block text-sm font-medium text-slate-200 mb-1.5"
                       >
                         City, State
                       </label>
@@ -468,13 +468,13 @@ export default function FreeAuditPage() {
                             location: e.target.value,
                           }))
                         }
-                        className="bg-slate-800 border-slate-700 text-white placeholder:text-slate-500"
+                        className="bg-slate-800 border-slate-700 text-white placeholder:text-slate-200"
                       />
                     </div>
                     <div>
                       <label
                         htmlFor="audit-email"
-                        className="block text-sm font-medium text-slate-300 mb-1.5"
+                        className="block text-sm font-medium text-slate-200 mb-1.5"
                       >
                         Email
                       </label>
@@ -486,14 +486,14 @@ export default function FreeAuditPage() {
                         onChange={(e) =>
                           setForm((f) => ({ ...f, email: e.target.value }))
                         }
-                        className="bg-slate-800 border-slate-700 text-white placeholder:text-slate-500"
+                        className="bg-slate-800 border-slate-700 text-white placeholder:text-slate-200"
                       />
                     </div>
                   </div>
                   <div>
                     <label
                       htmlFor="audit-phone"
-                      className="block text-sm font-medium text-slate-300 mb-1.5"
+                      className="block text-sm font-medium text-slate-200 mb-1.5"
                     >
                       Phone
                     </label>
@@ -505,7 +505,7 @@ export default function FreeAuditPage() {
                       onChange={(e) =>
                         setForm((f) => ({ ...f, phone: e.target.value }))
                       }
-                      className="bg-slate-800 border-slate-700 text-white placeholder:text-slate-500"
+                      className="bg-slate-800 border-slate-700 text-white placeholder:text-slate-200"
                     />
                   </div>
                   <Button
@@ -517,7 +517,7 @@ export default function FreeAuditPage() {
                     Run My Free Audit <ArrowRight size={16} className="ml-2" />
                   </Button>
                 </form>
-                <div className="flex items-center justify-center gap-6 mt-6 text-xs text-slate-500">
+                <div className="flex items-center justify-center gap-6 mt-6 text-xs text-slate-200">
                   <span className="flex items-center gap-1">
                     <Shield size={11} /> No credit card
                   </span>
@@ -552,7 +552,7 @@ export default function FreeAuditPage() {
                   <h2 className="text-xl font-bold text-white">
                     Auditing {form.businessName || "Your Business"}
                   </h2>
-                  <p className="text-slate-400 text-sm mt-1">
+                  <p className="text-slate-200 text-sm mt-1">
                     This takes about 20-30 seconds...
                   </p>
                 </div>
@@ -606,7 +606,7 @@ export default function FreeAuditPage() {
                               ? "text-emerald-400"
                               : isActive
                                 ? "text-indigo-300"
-                                : "text-slate-500"
+                                : "text-slate-200"
                           }`}
                         >
                           {s.label}
@@ -630,7 +630,7 @@ export default function FreeAuditPage() {
               {/* Report Header */}
               <div className="bg-slate-900 border border-slate-800 rounded-2xl p-8 shadow-2xl mb-6">
                 <div className="text-center">
-                  <p className="text-slate-400 text-sm mb-2">
+                  <p className="text-slate-200 text-sm mb-2">
                     Business Audit Report for
                   </p>
                   <h2 className="text-2xl font-bold text-white mb-6">
@@ -646,7 +646,7 @@ export default function FreeAuditPage() {
                       >
                         {scores.grade}
                       </span>
-                      <p className="text-slate-400 text-sm mt-1">
+                      <p className="text-slate-200 text-sm mt-1">
                         {scores.overall >= 80
                           ? "Strong online presence"
                           : scores.overall >= 60
@@ -667,7 +667,7 @@ export default function FreeAuditPage() {
                   >
                     <div className="flex items-center gap-2 mb-3">
                       <Icon size={15} className="text-indigo-400" />
-                      <p className="text-xs font-medium text-slate-400">
+                      <p className="text-xs font-medium text-slate-200">
                         {label}
                       </p>
                     </div>
@@ -721,7 +721,7 @@ export default function FreeAuditPage() {
                       )}
                       <span
                         className={`text-sm capitalize ${
-                          present ? "text-slate-300" : "text-slate-500"
+                          present ? "text-slate-200" : "text-slate-200"
                         }`}
                       >
                         {platform === "googleMaps"
@@ -773,7 +773,7 @@ export default function FreeAuditPage() {
                           <p className="text-sm font-semibold text-white mb-0.5">
                             {rec.title}
                           </p>
-                          <p className="text-xs text-slate-400 leading-relaxed">
+                          <p className="text-xs text-slate-200 leading-relaxed">
                             {rec.body}
                           </p>
                         </div>
@@ -840,7 +840,7 @@ export default function FreeAuditPage() {
                       placeholder="Confirm your email address"
                       value={confirmEmail}
                       onChange={(e) => setConfirmEmail(e.target.value)}
-                      className="bg-slate-800 border-slate-700 text-white placeholder:text-slate-500 flex-1"
+                      className="bg-slate-800 border-slate-700 text-white placeholder:text-slate-200 flex-1"
                       data-ocid="free-audit.input"
                     />
                     <Button
@@ -859,7 +859,7 @@ export default function FreeAuditPage() {
               <div className="text-center mt-8">
                 <Button
                   variant="ghost"
-                  className="text-slate-500 hover:text-slate-300"
+                  className="text-slate-200 hover:text-slate-200"
                   onClick={() => {
                     setStep("form");
                     setScores(null);
@@ -875,7 +875,7 @@ export default function FreeAuditPage() {
       </div>
 
       {/* Footer */}
-      <footer className="border-t border-slate-800 text-slate-500 text-xs py-6 px-6 text-center">
+      <footer className="border-t border-slate-800 text-slate-200 text-xs py-6 px-6 text-center">
         &copy; {new Date().getFullYear()} Booked Ranked Fundable. Built with
         love using{" "}
         <a

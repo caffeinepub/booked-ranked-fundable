@@ -47,7 +47,7 @@ export default function HeroSection({
             </span>
           </h1>
 
-          <p className="text-lg md:text-xl text-slate-300 mb-10 max-w-3xl mx-auto leading-relaxed">
+          <p className="text-lg md:text-xl text-slate-200 mb-10 max-w-3xl mx-auto leading-relaxed">
             {subheadline}
           </p>
 
@@ -79,7 +79,7 @@ export default function HeroSection({
           {/* Trust strip */}
           <div className="flex items-center justify-center gap-2 mb-10">
             <Shield size={13} className="text-indigo-400" />
-            <span className="text-xs text-slate-400">
+            <span className="text-xs text-slate-200">
               Built on ICP · Tamper-resistant infrastructure · Certified data
               integrity
             </span>
@@ -99,7 +99,7 @@ export default function HeroSection({
                     size={16}
                     className="text-indigo-400 mt-0.5 flex-shrink-0"
                   />
-                  <span className="text-sm text-slate-300">{bullet}</span>
+                  <span className="text-sm text-slate-200">{bullet}</span>
                 </div>
               ))}
             </motion.div>

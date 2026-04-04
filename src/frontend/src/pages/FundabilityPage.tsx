@@ -16,7 +16,7 @@ function ScoreGauge({ score }: { score: number }) {
   return (
     <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-sm font-semibold text-gray-500">
+        <h3 className="text-sm font-semibold text-gray-200">
           Fundability Score
         </h3>
         <span
@@ -27,7 +27,7 @@ function ScoreGauge({ score }: { score: number }) {
       </div>
       <div className="flex items-end gap-4 mb-4">
         <span className="text-5xl font-bold text-gray-900">{score}</span>
-        <span className="text-gray-400 mb-1">/100</span>
+        <span className="text-gray-200 mb-1">/100</span>
       </div>
       <div className="h-3 bg-gray-100 rounded-full overflow-hidden">
         <div
@@ -35,7 +35,7 @@ function ScoreGauge({ score }: { score: number }) {
           style={{ width: `${score}%` }}
         />
       </div>
-      <div className="flex justify-between text-xs text-gray-400 mt-1">
+      <div className="flex justify-between text-xs text-gray-200 mt-1">
         <span>Starter</span>
         <span>Builder</span>
         <span>Bankable</span>
@@ -64,7 +64,7 @@ export default function FundabilityPage() {
           <p className="text-sm font-semibold text-gray-700">
             Checklist Progress
           </p>
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-gray-200">
             {completed}/{items.length} complete
           </p>
         </div>
@@ -74,7 +74,7 @@ export default function FundabilityPage() {
             style={{ width: `${pct}%` }}
           />
         </div>
-        <p className="text-xs text-gray-400 mt-1">{pct}% complete</p>
+        <p className="text-xs text-gray-200 mt-1">{pct}% complete</p>
       </div>
 
       {/* Checklist by category */}
@@ -95,11 +95,11 @@ export default function FundabilityPage() {
                       className="text-emerald-500 flex-shrink-0"
                     />
                   ) : (
-                    <Circle size={17} className="text-gray-300 flex-shrink-0" />
+                    <Circle size={17} className="text-gray-200 flex-shrink-0" />
                   )}
                   <span
                     className={`text-sm ${
-                      item.completed ? "text-gray-700" : "text-gray-500"
+                      item.completed ? "text-gray-700" : "text-gray-200"
                     }`}
                   >
                     {item.item}

@@ -75,7 +75,7 @@ export default function ReportsPage() {
             key={label}
             className={`bg-white rounded-xl border border-gray-200 border-t-4 ${color} shadow-sm p-4`}
           >
-            <p className="text-xs text-gray-500 font-medium">{label}</p>
+            <p className="text-xs text-gray-200 font-medium">{label}</p>
             <p className="text-2xl font-bold text-gray-900 mt-1">{value}</p>
             <p className="text-xs text-emerald-600 mt-1">{change}</p>
           </div>

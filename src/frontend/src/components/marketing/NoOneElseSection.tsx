@@ -32,7 +32,7 @@ export default function NoOneElseSection() {
             <br className="hidden md:block" /> and Fundability — On
             Next-Generation Infrastructure
           </h2>
-          <p className="text-slate-400 max-w-2xl mx-auto text-base leading-relaxed">
+          <p className="text-slate-200 max-w-2xl mx-auto text-base leading-relaxed">
             No other platform in the local service industry combines all three
             growth engines in one place, built on the Internet Computer Protocol
             — the most advanced blockchain infrastructure ever developed.

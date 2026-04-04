@@ -36,7 +36,7 @@ export default function TrustInfrastructureSection() {
           <h2 className="text-2xl md:text-3xl font-bold text-white mb-3">
             Built on Next-Generation Infrastructure
           </h2>
-          <p className="text-slate-400 max-w-2xl mx-auto text-sm leading-relaxed">
+          <p className="text-slate-200 max-w-2xl mx-auto text-sm leading-relaxed">
             While every other platform stores your data on conventional cloud
             servers, we built on the Internet Computer Protocol — the most
             advanced blockchain infrastructure ever developed. Your business
@@ -62,7 +62,7 @@ export default function TrustInfrastructureSection() {
                 <h3 className="font-semibold text-white text-sm mb-2">
                   {point.title}
                 </h3>
-                <p className="text-xs text-slate-400 leading-relaxed">
+                <p className="text-xs text-slate-200 leading-relaxed">
                   {point.description}
                 </p>
               </motion.div>

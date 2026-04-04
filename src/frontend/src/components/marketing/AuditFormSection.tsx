@@ -50,7 +50,7 @@ export default function AuditFormSection({
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
             {headline}
           </h2>
-          <p className="text-slate-400">{subcopy}</p>
+          <p className="text-slate-200">{subcopy}</p>
         </div>
 
         <div className="bg-slate-900 border border-white/8 rounded-2xl p-8">
@@ -65,7 +65,7 @@ export default function AuditFormSection({
               <h3 className="text-xl font-bold text-white mb-3">
                 You're on the list!
               </h3>
-              <p className="text-slate-400 max-w-sm mx-auto">
+              <p className="text-slate-200 max-w-sm mx-auto">
                 We'll review your business and send your personalized growth
                 audit report within 24 hours.
               </p>
@@ -83,7 +83,7 @@ export default function AuditFormSection({
                 <div className="space-y-1.5">
                   <Label
                     htmlFor="audit-business"
-                    className="text-slate-300 text-sm"
+                    className="text-slate-200 text-sm"
                   >
                     Business Name *
                   </Label>
@@ -96,13 +96,13 @@ export default function AuditFormSection({
                       setForm((p) => ({ ...p, businessName: e.target.value }))
                     }
                     required
-                    className="bg-slate-800 border-white/10 text-white placeholder:text-slate-500"
+                    className="bg-slate-800 border-white/10 text-white placeholder:text-slate-200"
                   />
                 </div>
                 <div className="space-y-1.5">
                   <Label
                     htmlFor="audit-website"
-                    className="text-slate-300 text-sm"
+                    className="text-slate-200 text-sm"
                   >
                     Website URL *
                   </Label>
@@ -116,13 +116,13 @@ export default function AuditFormSection({
                       setForm((p) => ({ ...p, website: e.target.value }))
                     }
                     required
-                    className="bg-slate-800 border-white/10 text-white placeholder:text-slate-500"
+                    className="bg-slate-800 border-white/10 text-white placeholder:text-slate-200"
                   />
                 </div>
               </div>
 
               <div className="space-y-1.5">
-                <Label htmlFor="audit-email" className="text-slate-300 text-sm">
+                <Label htmlFor="audit-email" className="text-slate-200 text-sm">
                   Email Address *
                 </Label>
                 <Input
@@ -135,7 +135,7 @@ export default function AuditFormSection({
                     setForm((p) => ({ ...p, email: e.target.value }))
                   }
                   required
-                  className="bg-slate-800 border-white/10 text-white placeholder:text-slate-500"
+                  className="bg-slate-800 border-white/10 text-white placeholder:text-slate-200"
                 />
               </div>
 
@@ -143,7 +143,7 @@ export default function AuditFormSection({
                 <div className="space-y-1.5">
                   <Label
                     htmlFor="audit-phone"
-                    className="text-slate-300 text-sm"
+                    className="text-slate-200 text-sm"
                   >
                     Phone (optional)
                   </Label>
@@ -156,13 +156,13 @@ export default function AuditFormSection({
                     onChange={(e) =>
                       setForm((p) => ({ ...p, phone: e.target.value }))
                     }
-                    className="bg-slate-800 border-white/10 text-white placeholder:text-slate-500"
+                    className="bg-slate-800 border-white/10 text-white placeholder:text-slate-200"
                   />
                 </div>
                 <div className="space-y-1.5">
                   <Label
                     htmlFor="audit-area"
-                    className="text-slate-300 text-sm"
+                    className="text-slate-200 text-sm"
                   >
                     Service Area (optional)
                   </Label>
@@ -174,7 +174,7 @@ export default function AuditFormSection({
                     onChange={(e) =>
                       setForm((p) => ({ ...p, serviceArea: e.target.value }))
                     }
-                    className="bg-slate-800 border-white/10 text-white placeholder:text-slate-500"
+                    className="bg-slate-800 border-white/10 text-white placeholder:text-slate-200"
                   />
                 </div>
               </div>
@@ -194,7 +194,7 @@ export default function AuditFormSection({
                 )}
               </Button>
 
-              <p className="text-xs text-slate-500 text-center">
+              <p className="text-xs text-slate-200 text-center">
                 We'll analyze your business and send a personalized report
                 within 24 hours. No spam, ever.
               </p>

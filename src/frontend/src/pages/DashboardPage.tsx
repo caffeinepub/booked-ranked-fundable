@@ -158,7 +158,7 @@ export default function DashboardPage() {
           <button
             type="button"
             onClick={() => setGreetingDismissed(true)}
-            className="absolute top-3 right-3 text-gray-400 hover:text-gray-600"
+            className="absolute top-3 right-3 text-gray-200 hover:text-gray-600"
             aria-label="Dismiss"
           >
             <X size={16} />
@@ -208,7 +208,7 @@ export default function DashboardPage() {
         <h2 className="text-2xl font-bold text-gray-900">
           {isDemoMode && demoInfo ? demoInfo.businessName : "Dashboard"}
         </h2>
-        <p className="text-gray-500 text-sm mt-1">
+        <p className="text-gray-200 text-sm mt-1">
           {isDemoMode
             ? `${demoInfo?.niche} business simulation — ${demoInfo?.city}`
             : "Here's what's happening with your business today."}
@@ -219,14 +219,14 @@ export default function DashboardPage() {
         {KPI_CARDS.map(({ title, value, icon: Icon, color, sub }) => (
           <Card key={title} className={`border-t-4 ${color} shadow-sm`}>
             <CardHeader className="pb-1 pt-4 px-4">
-              <CardTitle className="text-xs font-medium text-gray-500 flex items-center justify-between">
+              <CardTitle className="text-xs font-medium text-gray-200 flex items-center justify-between">
                 {title}
-                <Icon size={16} className="text-gray-400" />
+                <Icon size={16} className="text-gray-200" />
               </CardTitle>
             </CardHeader>
             <CardContent className="px-4 pb-4">
               <p className="text-2xl font-bold text-gray-900">{value}</p>
-              <p className="text-xs text-gray-500 mt-1">{sub}</p>
+              <p className="text-xs text-gray-200 mt-1">{sub}</p>
             </CardContent>
           </Card>
         ))}
@@ -235,7 +235,7 @@ export default function DashboardPage() {
       {/* Quick Stats Row */}
       <div className="flex flex-wrap gap-2">
         <span className="inline-flex items-center gap-1.5 bg-gray-100 text-gray-600 text-xs font-medium px-3 py-1.5 rounded-full">
-          <Activity size={12} className="text-gray-400" />
+          <Activity size={12} className="text-gray-200" />
           Last audit: 3 days ago
         </span>
         <span className="inline-flex items-center gap-1.5 bg-amber-50 text-amber-700 text-xs font-medium px-3 py-1.5 rounded-full">
@@ -315,9 +315,9 @@ export default function DashboardPage() {
                   <p className="text-sm font-medium text-gray-900">
                     {item.name}
                   </p>
-                  <p className="text-xs text-gray-500">{item.action}</p>
+                  <p className="text-xs text-gray-200">{item.action}</p>
                 </div>
-                <span className="text-xs text-gray-400">{item.time}</span>
+                <span className="text-xs text-gray-200">{item.time}</span>
               </div>
             ))}
           </div>

@@ -171,7 +171,7 @@ export default function HomePage() {
                 Get Fundable.
               </span>
             </h1>
-            <p className="text-lg text-slate-300 mb-10 max-w-2xl mx-auto leading-relaxed">
+            <p className="text-lg text-slate-200 mb-10 max-w-2xl mx-auto leading-relaxed">
               One platform for bookings, rankings, reputation, and fundability —
               built for local service businesses that want to grow without
               juggling five different tools.
@@ -214,7 +214,7 @@ export default function HomePage() {
             ].map(({ icon: Icon, text }) => (
               <div
                 key={text}
-                className="flex items-center gap-2 text-slate-400 text-sm"
+                className="flex items-center gap-2 text-slate-200 text-sm"
               >
                 <Icon size={14} className="text-indigo-400" />
                 <span>{text}</span>
@@ -235,12 +235,12 @@ export default function HomePage() {
           <h2 className="text-3xl font-bold text-gray-900 mb-3">
             See What's Costing Your Business Jobs Right Now
           </h2>
-          <p className="text-gray-500 mb-8 max-w-xl mx-auto">
+          <p className="text-gray-600 mb-8 max-w-xl mx-auto">
             Get an instant audit of your website, SEO, and local presence. No
             signup, no credit card.
           </p>
           <FreeAuditBar />
-          <div className="flex items-center justify-center gap-6 mt-5 text-xs text-gray-400 flex-wrap">
+          <div className="flex items-center justify-center gap-6 mt-5 text-xs text-gray-600 flex-wrap">
             <span className="flex items-center gap-1">
               <Shield size={11} /> No credit card required
             </span>
@@ -269,7 +269,7 @@ export default function HomePage() {
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
               Every Tool Your Business Needs. One System.
             </h2>
-            <p className="text-gray-500 max-w-xl mx-auto">
+            <p className="text-gray-600 max-w-xl mx-auto">
               Most local businesses run 4-6 disconnected tools. We built
               everything into one platform so nothing falls through the cracks.
             </p>
@@ -298,7 +298,7 @@ export default function HomePage() {
                   <h3 className="text-lg font-bold text-gray-900 mb-3">
                     {f.subtitle}
                   </h3>
-                  <p className="text-sm text-gray-500 mb-4 leading-relaxed">
+                  <p className="text-sm text-gray-600 mb-4 leading-relaxed">
                     {f.description}
                   </p>
                   <ul className="space-y-2">
@@ -352,7 +352,7 @@ export default function HomePage() {
                   <h3 className="text-lg font-bold text-gray-900 mb-3">
                     {step.title}
                   </h3>
-                  <p className="text-sm text-gray-500 leading-relaxed">
+                  <p className="text-sm text-gray-600 leading-relaxed">
                     {step.desc}
                   </p>
                 </motion.div>
@@ -377,7 +377,7 @@ export default function HomePage() {
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
               Why Local Businesses Choose BRF
             </h2>
-            <p className="text-slate-400 max-w-xl mx-auto">
+            <p className="text-slate-200 max-w-xl mx-auto">
               Most platforms solve one problem. We built the only system that
               solves all three — bookings, rankings, and fundability — in one
               place.
@@ -388,10 +388,10 @@ export default function HomePage() {
             <table className="w-full">
               <thead>
                 <tr className="border-b border-white/10">
-                  <th className="text-left py-4 pr-6 text-sm font-semibold text-slate-400 w-1/3">
+                  <th className="text-left py-4 pr-6 text-sm font-semibold text-slate-200 w-1/3">
                     What You're Dealing With
                   </th>
-                  <th className="text-center py-4 px-4 text-sm font-semibold text-slate-400">
+                  <th className="text-center py-4 px-4 text-sm font-semibold text-slate-200">
                     Typical Tools
                   </th>
                   <th className="text-center py-4 pl-4 text-sm font-semibold text-indigo-300">
@@ -405,10 +405,10 @@ export default function HomePage() {
                     key={row.aspect}
                     className={`border-b border-white/5 ${i % 2 === 0 ? "" : "bg-white/2"}`}
                   >
-                    <td className="py-4 pr-6 text-sm font-medium text-slate-300">
+                    <td className="py-4 pr-6 text-sm font-medium text-slate-200">
                       {row.aspect}
                     </td>
-                    <td className="py-4 px-4 text-sm text-slate-500 text-center">
+                    <td className="py-4 px-4 text-sm text-slate-200 text-center">
                       <div className="flex items-start gap-2 justify-center">
                         <XCircle
                           size={14}
@@ -417,7 +417,7 @@ export default function HomePage() {
                         <span>{row.others}</span>
                       </div>
                     </td>
-                    <td className="py-4 pl-4 text-sm text-slate-300 text-center">
+                    <td className="py-4 pl-4 text-sm text-slate-200 text-center">
                       <div className="flex items-start gap-2 justify-center">
                         <CheckCircle2
                           size={14}
@@ -456,7 +456,7 @@ export default function HomePage() {
                 Ready to Stop Losing Jobs to Competitors?
               </span>
             </h2>
-            <p className="text-slate-300 mb-10 text-lg max-w-xl mx-auto">
+            <p className="text-slate-200 mb-10 text-lg max-w-xl mx-auto">
               Get your free growth audit today. See exactly where leads are
               being lost and what it takes to fix it.
             </p>

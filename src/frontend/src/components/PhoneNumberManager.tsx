@@ -54,7 +54,7 @@ export function PhoneStatusBadge({ tenant }: { tenant: TenantEntry }) {
   return (
     <span className="inline-flex items-center gap-1">
       <span className="w-2 h-2 rounded-full bg-slate-500" />
-      <span className="text-xs text-slate-500 font-medium">No number</span>
+      <span className="text-xs text-slate-200 font-medium">No number</span>
     </span>
   );
 }
@@ -141,7 +141,7 @@ export function PhoneNumberManager({ tenant, index }: PhoneNumberManagerProps) {
       {/* Summary row */}
       <div className="flex items-center justify-between px-4 py-2">
         <div className="flex items-center gap-3">
-          <Phone size={13} className="text-slate-500" />
+          <Phone size={13} className="text-slate-200" />
           <PhoneStatusBadge tenant={tenant} />
           <TooltipProvider delayDuration={200}>
             <Tooltip>
@@ -195,12 +195,12 @@ export function PhoneNumberManager({ tenant, index }: PhoneNumberManagerProps) {
                     </p>
                     {tenant.phoneNumberType === "forward" &&
                       tenant.forwardingFromNumber && (
-                        <p className="text-xs text-slate-500 mt-0.5">
+                        <p className="text-xs text-slate-200 mt-0.5">
                           Forwarding from: {tenant.forwardingFromNumber}
                         </p>
                       )}
                     {tenant.phoneNumberType === "port" && (
-                      <p className="text-xs text-slate-500 mt-0.5">
+                      <p className="text-xs text-slate-200 mt-0.5">
                         Ported number
                       </p>
                     )}
@@ -214,12 +214,12 @@ export function PhoneNumberManager({ tenant, index }: PhoneNumberManagerProps) {
                       Pending
                     </p>
                     {tenant.phoneNumberType === "port" ? (
-                      <p className="text-xs text-slate-400">
+                      <p className="text-xs text-slate-200">
                         Porting {tenant.portingNumber} \u2014 typically 2\u20135
                         business days
                       </p>
                     ) : (
-                      <p className="text-xs text-slate-400">
+                      <p className="text-xs text-slate-200">
                         Number provisioning in progress\u2026
                       </p>
                     )}
@@ -263,7 +263,7 @@ export function PhoneNumberManager({ tenant, index }: PhoneNumberManagerProps) {
             {/* New Local Number */}
             <TabsContent value="new" className="mt-3 space-y-3">
               <div>
-                <Label className="text-xs text-slate-400 mb-1.5 block">
+                <Label className="text-xs text-slate-200 mb-1.5 block">
                   Area Code
                 </Label>
                 <div className="flex gap-2">
@@ -315,7 +315,7 @@ export function PhoneNumberManager({ tenant, index }: PhoneNumberManagerProps) {
             {/* Port Existing */}
             <TabsContent value="port" className="mt-3 space-y-3">
               <div>
-                <Label className="text-xs text-slate-400 mb-1.5 block">
+                <Label className="text-xs text-slate-200 mb-1.5 block">
                   Current Business Number to Port
                 </Label>
                 <div className="flex gap-2">
@@ -351,7 +351,7 @@ export function PhoneNumberManager({ tenant, index }: PhoneNumberManagerProps) {
             {/* Call Forwarding */}
             <TabsContent value="forward" className="mt-3 space-y-3">
               <div>
-                <Label className="text-xs text-slate-400 mb-1.5 block">
+                <Label className="text-xs text-slate-200 mb-1.5 block">
                   Client\u2019s Real Business Number
                 </Label>
                 <div className="flex gap-2">

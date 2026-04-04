@@ -179,7 +179,7 @@ export default function AiBusinessManagerPanel() {
               <h2 className="text-sm font-semibold text-white">
                 AI Business Manager
               </h2>
-              <p className="text-xs text-gray-400">
+              <p className="text-xs text-gray-200">
                 Your intelligent growth advisor
               </p>
             </div>
@@ -188,7 +188,7 @@ export default function AiBusinessManagerPanel() {
             type="button"
             onClick={() => setAiPanelOpen(false)}
             data-ocid="ai.panel.close_button"
-            className="p-1.5 rounded-lg hover:bg-gray-800 text-gray-400 hover:text-white transition-colors"
+            className="p-1.5 rounded-lg hover:bg-gray-800 text-gray-200 hover:text-white transition-colors"
           >
             <X size={16} />
           </button>
@@ -240,7 +240,7 @@ export default function AiBusinessManagerPanel() {
 
         {/* Quick Prompts */}
         <div className="px-4 pb-2">
-          <p className="text-[10px] text-gray-500 uppercase tracking-wider mb-2">
+          <p className="text-[10px] text-gray-200 uppercase tracking-wider mb-2">
             Quick prompts
           </p>
           <div className="flex flex-wrap gap-1.5">
@@ -250,7 +250,7 @@ export default function AiBusinessManagerPanel() {
                 type="button"
                 onClick={() => handlePrompt(p)}
                 data-ocid={`ai.panel.${p.key}.button`}
-                className="text-xs bg-gray-800 hover:bg-indigo-700 text-gray-300 hover:text-white px-3 py-1.5 rounded-full transition-colors border border-gray-700 hover:border-indigo-500"
+                className="text-xs bg-gray-800 hover:bg-indigo-700 text-gray-200 hover:text-white px-3 py-1.5 rounded-full transition-colors border border-gray-700 hover:border-indigo-500"
               >
                 {p.label}
               </button>
@@ -272,7 +272,7 @@ export default function AiBusinessManagerPanel() {
                 }
               }}
               placeholder="Ask me anything about your business..."
-              className="flex-1 min-h-[44px] max-h-[120px] bg-gray-800 border-gray-700 text-gray-100 placeholder:text-gray-500 resize-none text-sm focus-visible:ring-indigo-500"
+              className="flex-1 min-h-[44px] max-h-[120px] bg-gray-800 border-gray-700 text-gray-100 placeholder:text-gray-200 resize-none text-sm focus-visible:ring-indigo-500"
               rows={1}
             />
             <Button

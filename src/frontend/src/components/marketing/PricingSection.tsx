@@ -77,7 +77,7 @@ export default function PricingSection() {
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
             Choose Your Growth Level
           </h2>
-          <p className="text-slate-400 max-w-xl mx-auto">
+          <p className="text-slate-200 max-w-xl mx-auto">
             Every plan includes setup, integrations, and configuration — plus
             ongoing support to make sure it works.
           </p>
@@ -108,16 +108,16 @@ export default function PricingSection() {
                 <h3 className="font-bold text-white text-lg mb-1">
                   {plan.name}
                 </h3>
-                <p className="text-slate-400 text-sm mb-5">
+                <p className="text-slate-200 text-sm mb-5">
                   {plan.description}
                 </p>
                 <div className="flex items-end gap-1 mb-1">
                   <span className="text-4xl font-bold text-white">
                     {plan.price}
                   </span>
-                  <span className="text-slate-400 pb-1">/month</span>
+                  <span className="text-slate-200 pb-1">/month</span>
                 </div>
-                <p className="text-xs text-slate-500">
+                <p className="text-xs text-slate-200">
                   + {plan.onboarding} one-time setup, integrations &amp;
                   configuration
                 </p>
@@ -130,7 +130,7 @@ export default function PricingSection() {
                       size={15}
                       className="text-indigo-400 mt-0.5 flex-shrink-0"
                     />
-                    <span className="text-sm text-slate-300">{feature}</span>
+                    <span className="text-sm text-slate-200">{feature}</span>
                   </li>
                 ))}
               </ul>
@@ -151,7 +151,7 @@ export default function PricingSection() {
           ))}
         </div>
 
-        <p className="text-center text-slate-500 text-sm mt-8">
+        <p className="text-center text-slate-200 text-sm mt-8">
           Need a custom solution for your agency or enterprise?{" "}
           <button
             type="button"

@@ -178,7 +178,7 @@ function StepCard({
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-1 flex-wrap">
-              <span className="text-xs font-medium text-gray-500">
+              <span className="text-xs font-medium text-gray-200">
                 Step {step.stepNumber}
               </span>
               <Badge variant="outline" className="text-xs py-0">
@@ -201,7 +201,7 @@ function StepCard({
               </p>
             )}
             {step.previewText && (
-              <p className="text-xs text-gray-500 mb-1">{step.previewText}</p>
+              <p className="text-xs text-gray-200 mb-1">{step.previewText}</p>
             )}
             <p className="text-xs text-gray-600 line-clamp-2">{step.body}</p>
           </div>
@@ -210,7 +210,7 @@ function StepCard({
           <button
             type="button"
             onClick={() => onEdit(step)}
-            className="flex-shrink-0 text-gray-400 hover:text-indigo-600 transition-colors"
+            className="flex-shrink-0 text-gray-200 hover:text-indigo-600 transition-colors"
           >
             <Edit2 className="h-4 w-4" />
           </button>
@@ -247,7 +247,7 @@ function JourneyModal({
               <StepCard step={step} />
               {idx < campaign.steps.length - 1 && (
                 <div className="flex justify-center my-1">
-                  <ChevronDown className="h-4 w-4 text-gray-300" />
+                  <ChevronDown className="h-4 w-4 text-gray-200" />
                 </div>
               )}
             </div>
@@ -401,7 +401,7 @@ function SequenceViewer({ sequence }: { sequence: OutreachSequence }) {
             className="bg-gray-50 rounded-lg p-3 text-center border"
           >
             <p className="text-lg font-bold text-gray-900">{m.value}</p>
-            <p className="text-xs text-gray-500">{m.label}</p>
+            <p className="text-xs text-gray-200">{m.label}</p>
           </div>
         ))}
       </div>
@@ -410,7 +410,7 @@ function SequenceViewer({ sequence }: { sequence: OutreachSequence }) {
           <StepCard step={step} onEdit={(s) => setEditingStep(s)} />
           {idx < steps.length - 1 && (
             <div className="flex justify-center my-1">
-              <ChevronDown className="h-4 w-4 text-gray-300" />
+              <ChevronDown className="h-4 w-4 text-gray-200" />
             </div>
           )}
         </div>
@@ -686,11 +686,11 @@ function CsvImportModal({
               className={`border-2 border-dashed rounded-xl p-10 text-center transition-colors ${dragging ? "border-indigo-400 bg-indigo-50" : "border-gray-300 bg-gray-50"}`}
               data-ocid="campaigns.csv_import.dropzone"
             >
-              <Upload className="h-10 w-10 text-gray-400 mx-auto mb-3" />
+              <Upload className="h-10 w-10 text-gray-200 mx-auto mb-3" />
               <p className="text-sm font-medium text-gray-700">
                 Drag and drop a CSV file here
               </p>
-              <p className="text-xs text-gray-400 mt-1">
+              <p className="text-xs text-gray-200 mt-1">
                 or{" "}
                 <label className="text-indigo-600 cursor-pointer underline">
                   browse
@@ -716,7 +716,7 @@ function CsvImportModal({
                   {headers.map((h) => (
                     <div key={h} className="flex items-center gap-2 text-sm">
                       <span className="text-gray-600 truncate w-28">{h}</span>
-                      <ChevronRight className="h-3 w-3 text-gray-400 flex-shrink-0" />
+                      <ChevronRight className="h-3 w-3 text-gray-200 flex-shrink-0" />
                       <Select
                         value={mapping[h] || ""}
                         onValueChange={(v) =>
@@ -830,29 +830,29 @@ function ProspectDetailPanel({
       <div className="flex items-center justify-between p-4 border-b">
         <h3 className="font-semibold text-gray-900">{prospect.businessName}</h3>
         <button type="button" onClick={onClose}>
-          <X className="h-5 w-5 text-gray-400 hover:text-gray-600" />
+          <X className="h-5 w-5 text-gray-200 hover:text-gray-600" />
         </button>
       </div>
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         <div className="space-y-2">
           <p className="text-sm">
-            <span className="text-gray-500">Name: </span>
+            <span className="text-gray-200">Name: </span>
             {prospect.firstName} {prospect.lastName}
           </p>
           <p className="text-sm">
-            <span className="text-gray-500">Email: </span>
+            <span className="text-gray-200">Email: </span>
             {prospect.email}
           </p>
           <p className="text-sm">
-            <span className="text-gray-500">Phone: </span>
+            <span className="text-gray-200">Phone: </span>
             {prospect.phone}
           </p>
           <p className="text-sm">
-            <span className="text-gray-500">Niche: </span>
+            <span className="text-gray-200">Niche: </span>
             {prospect.niche}
           </p>
           <p className="text-sm">
-            <span className="text-gray-500">City: </span>
+            <span className="text-gray-200">City: </span>
             {prospect.city}
           </p>
         </div>
@@ -860,7 +860,7 @@ function ProspectDetailPanel({
           <p className="text-sm font-medium text-gray-700 mb-2">
             Sequence Progress
           </p>
-          <p className="text-xs text-gray-500">{sequence?.name}</p>
+          <p className="text-xs text-gray-200">{sequence?.name}</p>
           <div className="flex items-center gap-2 mt-2">
             <div className="flex-1 bg-gray-200 rounded-full h-2">
               <div
@@ -870,7 +870,7 @@ function ProspectDetailPanel({
                 }}
               />
             </div>
-            <span className="text-xs text-gray-500">
+            <span className="text-xs text-gray-200">
               Step {prospect.currentStep}/{sequence?.steps.length ?? 6}
             </span>
           </div>
@@ -891,7 +891,7 @@ function ProspectDetailPanel({
                   <Badge variant="outline" className="text-xs py-0">
                     {e.step}
                   </Badge>
-                  <span className="text-gray-400">{e.time}</span>
+                  <span className="text-gray-200">{e.time}</span>
                 </div>
               </div>
             ))}
@@ -998,7 +998,7 @@ function ProspectOutreachTab() {
               <s.icon className={`h-8 w-8 ${s.color} opacity-80`} />
               <div>
                 <p className="text-2xl font-bold text-gray-900">{s.value}</p>
-                <p className="text-xs text-gray-500">{s.label}</p>
+                <p className="text-xs text-gray-200">{s.label}</p>
               </div>
             </CardContent>
           </Card>
@@ -1091,10 +1091,10 @@ function ProspectOutreachTab() {
                           <p className="font-medium text-gray-900">
                             {p.firstName} {p.lastName}
                           </p>
-                          <p className="text-xs text-gray-500">
+                          <p className="text-xs text-gray-200">
                             {p.businessName}
                           </p>
-                          <p className="text-xs text-gray-400">{p.city}</p>
+                          <p className="text-xs text-gray-200">{p.city}</p>
                         </td>
                         <td className="px-4 py-3">
                           <Badge
@@ -1117,7 +1117,7 @@ function ProspectOutreachTab() {
                             <DropdownMenuTrigger asChild>
                               <button
                                 type="button"
-                                className="text-gray-400 hover:text-gray-600"
+                                className="text-gray-200 hover:text-gray-600"
                               >
                                 <MoreVertical className="h-4 w-4" />
                               </button>
@@ -1152,7 +1152,7 @@ function ProspectOutreachTab() {
                       <tr>
                         <td
                           colSpan={5}
-                          className="px-4 py-8 text-center text-gray-400 text-sm"
+                          className="px-4 py-8 text-center text-gray-200 text-sm"
                           data-ocid="campaigns.prospect.empty_state"
                         >
                           No prospects found
@@ -1182,7 +1182,7 @@ function ProspectOutreachTab() {
                       <p className="font-medium text-sm text-gray-900">
                         {seq.name}
                       </p>
-                      <p className="text-xs text-gray-500 mt-0.5">
+                      <p className="text-xs text-gray-200 mt-0.5">
                         {seq.steps.length} steps
                       </p>
                     </div>
@@ -1200,13 +1200,13 @@ function ProspectOutreachTab() {
                       <p className="font-bold text-gray-900">
                         {seq.performance.openRate}%
                       </p>
-                      <p className="text-gray-500">Open Rate</p>
+                      <p className="text-gray-200">Open Rate</p>
                     </div>
                     <div className="bg-gray-50 rounded p-2 text-center">
                       <p className="font-bold text-gray-900">
                         {seq.performance.conversions}
                       </p>
-                      <p className="text-gray-500">Conversions</p>
+                      <p className="text-gray-200">Conversions</p>
                     </div>
                   </div>
                   <Button
@@ -1229,7 +1229,7 @@ function ProspectOutreachTab() {
             </CardHeader>
             <CardContent className="space-y-3">
               <div>
-                <Label className="text-xs text-gray-500">Sender Name</Label>
+                <Label className="text-xs text-gray-200">Sender Name</Label>
                 <Input
                   value={senderName}
                   onChange={(e) => setSenderName(e.target.value)}
@@ -1238,7 +1238,7 @@ function ProspectOutreachTab() {
                 />
               </div>
               <div>
-                <Label className="text-xs text-gray-500">From Email</Label>
+                <Label className="text-xs text-gray-200">From Email</Label>
                 <Input
                   value={senderEmail}
                   onChange={(e) => setSenderEmail(e.target.value)}
@@ -1246,14 +1246,14 @@ function ProspectOutreachTab() {
                 />
               </div>
               <div>
-                <Label className="text-xs text-gray-500">Reply-To</Label>
+                <Label className="text-xs text-gray-200">Reply-To</Label>
                 <Input
                   value={replyTo}
                   onChange={(e) => setReplyTo(e.target.value)}
                   className="mt-1 h-8 text-sm"
                 />
               </div>
-              <p className="text-xs text-gray-400">
+              <p className="text-xs text-gray-200">
                 Sends via your configured SendGrid/Mailgun integration.
               </p>
               <Button
@@ -1335,7 +1335,7 @@ function ClientCampaignCard({
               <h3 className="font-semibold text-gray-900 text-sm mb-1">
                 {campaign.name}
               </h3>
-              <p className="text-xs text-gray-500 truncate">
+              <p className="text-xs text-gray-200 truncate">
                 {campaign.trigger}
               </p>
             </div>
@@ -1358,7 +1358,7 @@ function ClientCampaignCard({
             >
               {enabled ? "Active" : "Paused"}
             </Badge>
-            <span className="text-xs text-gray-400">
+            <span className="text-xs text-gray-200">
               {campaign.steps.length} steps
             </span>
             {channelSet.map((ch) => (
@@ -1373,19 +1373,19 @@ function ClientCampaignCard({
               <p className="text-base font-bold text-gray-900">
                 {campaign.mockMetrics.contactsInSequence}
               </p>
-              <p className="text-xs text-gray-500">In Sequence</p>
+              <p className="text-xs text-gray-200">In Sequence</p>
             </div>
             <div className="bg-gray-50 rounded-lg p-2 text-center border">
               <p className="text-base font-bold text-gray-900">
                 {campaign.mockMetrics.openRate}%
               </p>
-              <p className="text-xs text-gray-500">Open Rate</p>
+              <p className="text-xs text-gray-200">Open Rate</p>
             </div>
             <div className="bg-gray-50 rounded-lg p-2 text-center border">
               <p className="text-base font-bold text-gray-900">
                 {campaign.mockMetrics.conversionRate}%
               </p>
-              <p className="text-xs text-gray-500">Conversion</p>
+              <p className="text-xs text-gray-200">Conversion</p>
             </div>
           </div>
           <Button
@@ -1462,7 +1462,7 @@ function MyCampaignsTab() {
               <s.icon className={`h-8 w-8 ${s.color} opacity-80`} />
               <div>
                 <p className="text-2xl font-bold text-gray-900">{s.value}</p>
-                <p className="text-xs text-gray-500">{s.label}</p>
+                <p className="text-xs text-gray-200">{s.label}</p>
               </div>
             </CardContent>
           </Card>
@@ -1480,10 +1480,10 @@ function MyCampaignsTab() {
         </div>
       ) : (
         <div
-          className="text-center py-16 text-gray-400"
+          className="text-center py-16 text-gray-200"
           data-ocid="campaigns.my_campaigns.empty_state"
         >
-          <Megaphone className="h-12 w-12 mx-auto mb-3 opacity-30" />
+          <Megaphone className="h-12 w-12 mx-auto mb-3 opacity-80" />
           <p className="text-sm">
             No campaigns available for your account type.
           </p>
@@ -1504,7 +1504,7 @@ export default function CampaignsPage() {
           <Megaphone className="h-6 w-6 text-indigo-600" />
           Campaigns
         </h1>
-        <p className="text-sm text-gray-500 mt-1">
+        <p className="text-sm text-gray-200 mt-1">
           {showAdmin
             ? "Prospect outreach sequences and client lifecycle campaigns"
             : "Automated lifecycle campaigns for your business"}

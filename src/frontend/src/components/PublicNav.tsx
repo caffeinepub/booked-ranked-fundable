@@ -151,7 +151,7 @@ export default function PublicNav() {
                 data-ocid="nav.login.button"
                 variant="ghost"
                 size="sm"
-                className="text-slate-300 hover:text-white hover:bg-white/10 font-medium"
+                className="text-slate-200 hover:text-white hover:bg-white/10 font-medium"
               >
                 Login
               </Button>
@@ -172,7 +172,7 @@ export default function PublicNav() {
             type="button"
             data-ocid="nav.mobile_menu.toggle"
             onClick={() => setMobileOpen((o) => !o)}
-            className="lg:hidden p-2 rounded-lg text-slate-300 hover:text-white hover:bg-white/10 transition-colors"
+            className="lg:hidden p-2 rounded-lg text-slate-200 hover:text-white hover:bg-white/10 transition-colors"
             aria-label="Toggle menu"
           >
             {mobileOpen ? <X size={20} /> : <Menu size={20} />}
@@ -207,7 +207,7 @@ export default function PublicNav() {
                 <button
                   type="button"
                   onClick={closeMobile}
-                  className="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-white/10"
+                  className="p-2 rounded-lg text-slate-200 hover:text-white hover:bg-white/10"
                   aria-label="Close"
                 >
                   <X size={18} />
@@ -236,7 +236,7 @@ export default function PublicNav() {
                     </span>
                     <ChevronDown
                       size={14}
-                      className={`text-slate-400 transition-transform duration-200 ${
+                      className={`text-slate-200 transition-transform duration-200 ${
                         mobileIndustriesOpen ? "rotate-180" : ""
                       }`}
                     />
@@ -259,7 +259,7 @@ export default function PublicNav() {
                               className="flex items-center gap-2.5 px-3 py-2 rounded-lg hover:bg-white/10 transition-colors"
                             >
                               <span className="text-base">{icon}</span>
-                              <span className="text-sm text-slate-300">
+                              <span className="text-sm text-slate-200">
                                 {label}
                               </span>
                             </Link>

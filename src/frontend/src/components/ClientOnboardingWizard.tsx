@@ -40,7 +40,7 @@ function StepHeader({
       </p>
       <h2 className="text-2xl font-bold text-white leading-tight">{title}</h2>
       {subtitle && (
-        <p className="text-slate-400 text-sm mt-2 leading-relaxed">
+        <p className="text-slate-200 text-sm mt-2 leading-relaxed">
           {subtitle}
         </p>
       )}
@@ -69,7 +69,7 @@ function WizardNav({
         variant="ghost"
         onClick={onBack}
         disabled={step === 1}
-        className="text-slate-400 hover:text-white hover:bg-slate-800 gap-1.5"
+        className="text-slate-200 hover:text-white hover:bg-slate-800 gap-1.5"
         data-ocid="onboarding.client.back.button"
       >
         <ChevronLeft size={16} /> Back
@@ -79,7 +79,7 @@ function WizardNav({
           <button
             type="button"
             onClick={onSkip}
-            className="text-slate-500 hover:text-slate-300 text-sm transition-colors"
+            className="text-slate-200 hover:text-slate-200 text-sm transition-colors"
             data-ocid="onboarding.client.skip.button"
           >
             Skip for now
@@ -120,7 +120,7 @@ function Step1({
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <Label className="text-xs text-slate-400 mb-1 block">
+            <Label className="text-xs text-slate-200 mb-1 block">
               Business Name
             </Label>
             <Input
@@ -130,7 +130,7 @@ function Step1({
             />
           </div>
           <div>
-            <Label className="text-xs text-slate-400 mb-1 block">
+            <Label className="text-xs text-slate-200 mb-1 block">
               Business Niche
             </Label>
             <Input
@@ -140,7 +140,7 @@ function Step1({
             />
           </div>
           <div className="sm:col-span-2">
-            <Label className="text-xs text-slate-400 mb-1 block">
+            <Label className="text-xs text-slate-200 mb-1 block">
               City / Service Area
             </Label>
             <Input
@@ -151,18 +151,18 @@ function Step1({
           </div>
         </div>
         <div>
-          <Label className="text-xs text-slate-400 mb-2 block">
+          <Label className="text-xs text-slate-200 mb-2 block">
             Business Logo
           </Label>
           <div className="border-2 border-dashed border-slate-600 rounded-xl p-6 text-center hover:border-indigo-500/60 transition-colors cursor-pointer">
-            <UploadCloud size={24} className="mx-auto text-slate-500 mb-2" />
-            <p className="text-slate-400 text-xs">
+            <UploadCloud size={24} className="mx-auto text-slate-200 mb-2" />
+            <p className="text-slate-200 text-xs">
               Drag & drop your logo or click to browse
             </p>
             <Button
               size="sm"
               variant="outline"
-              className="mt-3 border-slate-600 text-slate-300 hover:text-white text-xs"
+              className="mt-3 border-slate-600 text-slate-200 hover:text-white text-xs"
               data-ocid="onboarding.client.logo.upload_button"
             >
               Upload Logo
@@ -244,14 +244,14 @@ function Step2() {
                 className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${
                   selected === opt.id
                     ? "bg-indigo-500/20 text-indigo-300"
-                    : "bg-slate-700 text-slate-400"
+                    : "bg-slate-700 text-slate-200"
                 }`}
               >
                 {opt.icon}
               </div>
               <div className="flex-1">
                 <p className="text-white font-medium text-sm">{opt.title}</p>
-                <p className="text-slate-400 text-xs mt-0.5 leading-relaxed">
+                <p className="text-slate-200 text-xs mt-0.5 leading-relaxed">
                   {opt.desc}
                 </p>
                 {selected === opt.id && opt.input}
@@ -330,7 +330,7 @@ function Step3({ niche }: { niche: string }) {
                   Active
                 </Badge>
               </div>
-              <p className="text-slate-400 text-xs leading-relaxed">{c.desc}</p>
+              <p className="text-slate-200 text-xs leading-relaxed">{c.desc}</p>
             </div>
           </div>
         ))}
@@ -368,7 +368,7 @@ function Step4({ businessName }: { businessName: string }) {
       />
       {/* Widget preview */}
       <div className="relative bg-slate-800/60 rounded-xl p-4 border border-slate-700">
-        <p className="text-xs text-slate-500 mb-3 uppercase tracking-wide font-medium">
+        <p className="text-xs text-slate-200 mb-3 uppercase tracking-wide font-medium">
           Live Preview
         </p>
         <div className="bg-slate-900 rounded-xl overflow-hidden border border-slate-700 shadow-2xl max-w-xs">
@@ -380,14 +380,14 @@ function Step4({ businessName }: { businessName: string }) {
             <div className="ml-auto w-2 h-2 rounded-full bg-emerald-400" />
           </div>
           <div className="p-3 space-y-2">
-            <div className="bg-slate-700/50 rounded-lg p-2.5 text-xs text-slate-300 max-w-[80%]">
+            <div className="bg-slate-700/50 rounded-lg p-2.5 text-xs text-slate-200 max-w-[80%]">
               Hi! I'm the virtual assistant for {businessName}. How can I help
               you today?
             </div>
             <div className="bg-indigo-600/30 rounded-lg p-2.5 text-xs text-indigo-200 max-w-[80%] ml-auto">
               I need a quote for my project
             </div>
-            <div className="bg-slate-700/50 rounded-lg p-2.5 text-xs text-slate-300 max-w-[90%]">
+            <div className="bg-slate-700/50 rounded-lg p-2.5 text-xs text-slate-200 max-w-[90%]">
               Happy to help! Can I get your name and contact info so we can
               follow up?
             </div>
@@ -396,7 +396,7 @@ function Step4({ businessName }: { businessName: string }) {
       </div>
       {/* Embed code */}
       <div>
-        <Label className="text-xs text-slate-400 mb-2 block">
+        <Label className="text-xs text-slate-200 mb-2 block">
           Your Embed Code
         </Label>
         <div className="relative bg-slate-900 rounded-xl border border-slate-700 p-4 font-mono text-xs text-indigo-300 break-all">
@@ -404,7 +404,7 @@ function Step4({ businessName }: { businessName: string }) {
           <button
             type="button"
             onClick={handleCopy}
-            className="absolute top-3 right-3 p-1.5 rounded-lg bg-slate-700 hover:bg-slate-600 text-slate-400 hover:text-white transition-colors"
+            className="absolute top-3 right-3 p-1.5 rounded-lg bg-slate-700 hover:bg-slate-600 text-slate-200 hover:text-white transition-colors"
             data-ocid="onboarding.client.embedcode.button"
           >
             {copied ? (
@@ -414,9 +414,9 @@ function Step4({ businessName }: { businessName: string }) {
             )}
           </button>
         </div>
-        <p className="text-slate-500 text-xs mt-2">
+        <p className="text-slate-200 text-xs mt-2">
           Paste this just before the{" "}
-          <code className="text-slate-400">&lt;/body&gt;</code> tag on your
+          <code className="text-slate-200">&lt;/body&gt;</code> tag on your
           website.
         </p>
       </div>
@@ -443,26 +443,26 @@ function Step5({ businessName }: { businessName: string }) {
       />
       <div className="space-y-4">
         <div>
-          <Label className="text-xs text-slate-400 mb-1 block">
+          <Label className="text-xs text-slate-200 mb-1 block">
             Business Greeting
           </Label>
           <textarea
             value={greeting}
             onChange={(e) => setGreeting(e.target.value)}
             rows={3}
-            className="w-full bg-slate-800/60 border border-slate-600 rounded-xl p-3 text-white text-sm resize-none focus:outline-none focus:border-indigo-500 placeholder:text-slate-500"
+            className="w-full bg-slate-800/60 border border-slate-600 rounded-xl p-3 text-white text-sm resize-none focus:outline-none focus:border-indigo-500 placeholder:text-slate-200"
             data-ocid="onboarding.client.greeting.textarea"
           />
         </div>
         <div>
-          <Label className="text-xs text-slate-400 mb-1 block">
+          <Label className="text-xs text-slate-200 mb-1 block">
             After-Hours Message
           </Label>
           <textarea
             value={afterHours}
             onChange={(e) => setAfterHours(e.target.value)}
             rows={3}
-            className="w-full bg-slate-800/60 border border-slate-600 rounded-xl p-3 text-white text-sm resize-none focus:outline-none focus:border-indigo-500 placeholder:text-slate-500"
+            className="w-full bg-slate-800/60 border border-slate-600 rounded-xl p-3 text-white text-sm resize-none focus:outline-none focus:border-indigo-500 placeholder:text-slate-200"
             data-ocid="onboarding.client.afterhours.textarea"
           />
         </div>
@@ -471,7 +471,7 @@ function Step5({ businessName }: { businessName: string }) {
             <p className="text-white text-sm font-medium">
               Emergency Call Routing
             </p>
-            <p className="text-slate-400 text-xs mt-0.5">
+            <p className="text-slate-200 text-xs mt-0.5">
               Route urgent calls directly to your phone, bypassing the AI queue
             </p>
           </div>
@@ -528,7 +528,7 @@ function Step6() {
                 Google Profile Connected!
               </p>
             </div>
-            <p className="text-slate-400 text-sm">
+            <p className="text-slate-200 text-sm">
               We'll start monitoring your reviews, rankings, and listing health
               automatically.
             </p>
@@ -536,7 +536,7 @@ function Step6() {
         ) : (
           <>
             <p className="text-white font-medium mb-1">Connect with Google</p>
-            <p className="text-slate-400 text-sm mb-5">
+            <p className="text-slate-200 text-sm mb-5">
               Authorize read-only access to your Google Business Profile data.
             </p>
             <Button
@@ -623,12 +623,12 @@ function Step7() {
           </svg>
           <div className="absolute inset-0 flex flex-col items-center justify-center">
             <span className="text-2xl font-bold text-white">67</span>
-            <span className="text-slate-400 text-[10px]">/100</span>
+            <span className="text-slate-200 text-[10px]">/100</span>
           </div>
         </div>
         <div>
           <p className="text-white font-semibold mb-1">Fundability Score</p>
-          <p className="text-slate-400 text-xs leading-relaxed">
+          <p className="text-slate-200 text-xs leading-relaxed">
             Your business is in the top 33% of local businesses — but there are
             2 key gaps holding you back from premium financing.
           </p>
@@ -642,7 +642,7 @@ function Step7() {
             data-ocid={`onboarding.client.fundability.item.${i + 1}`}
           >
             <div className="flex items-center justify-between mb-1">
-              <span className="text-slate-300 text-xs">{p.name}</span>
+              <span className="text-slate-200 text-xs">{p.name}</span>
               <span className="text-white text-xs font-semibold">
                 {p.score}%
               </span>
@@ -663,7 +663,7 @@ function Step7() {
           <p className="text-amber-300 text-sm font-medium">
             Top Priority Action
           </p>
-          <p className="text-slate-300 text-xs mt-1">
+          <p className="text-slate-200 text-xs mt-1">
             Open a dedicated business checking account to increase your
             fundability score by +12 points and unlock access to $50K–$250K in
             business financing.
@@ -693,7 +693,7 @@ function Step8({
         <h2 className="text-3xl font-bold text-white">
           You're Live, {firstName}!
         </h2>
-        <p className="text-slate-400 text-sm mt-2">
+        <p className="text-slate-200 text-sm mt-2">
           Your platform is fully configured and running. Here's your AI Business
           Manager briefing.
         </p>
@@ -757,7 +757,7 @@ function Step8({
             <div className={`${stat.color} flex justify-center mb-1`}>
               {stat.icon}
             </div>
-            <p className="text-slate-300 text-[11px] font-medium">
+            <p className="text-slate-200 text-[11px] font-medium">
               {stat.label}
             </p>
           </div>
@@ -851,7 +851,7 @@ export default function ClientOnboardingWizard() {
               <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold text-xs">
                 BRF
               </div>
-              <span className="text-slate-400 text-sm">Setup Wizard</span>
+              <span className="text-slate-200 text-sm">Setup Wizard</span>
             </div>
             <div className="flex gap-1.5">
               {Array.from({ length: TOTAL_STEPS }, (_, i) => i).map(

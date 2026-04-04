@@ -71,7 +71,7 @@ export default function LoginPage() {
         <h1 className="text-3xl font-bold text-white">
           Booked Ranked Fundable
         </h1>
-        <p className="text-slate-400 text-sm mt-2">
+        <p className="text-slate-200 text-sm mt-2">
           Choose how you'd like to access the platform
         </p>
       </div>
@@ -99,14 +99,14 @@ export default function LoginPage() {
               <h2 className="text-white font-semibold text-sm">
                 Platform Administration
               </h2>
-              <p className="text-slate-500 text-xs">Full admin access</p>
+              <p className="text-slate-200 text-xs">Full admin access</p>
             </div>
           </button>
 
           {activePath === "admin" ? (
             <div className="space-y-3">
               <div>
-                <Label className="text-xs font-medium text-slate-300 mb-1 block">
+                <Label className="text-xs font-medium text-slate-200 mb-1 block">
                   Username
                 </Label>
                 <Input
@@ -116,12 +116,12 @@ export default function LoginPage() {
                     setAdminError("");
                   }}
                   placeholder="Admin username"
-                  className="bg-slate-700/60 border-slate-600 text-white placeholder:text-slate-500 focus:border-amber-500 h-9 text-sm"
+                  className="bg-slate-700/60 border-slate-600 text-white placeholder:text-slate-200 focus:border-amber-500 h-9 text-sm"
                   data-ocid="admin.username.input"
                 />
               </div>
               <div>
-                <Label className="text-xs font-medium text-slate-300 mb-1 block">
+                <Label className="text-xs font-medium text-slate-200 mb-1 block">
                   Email
                 </Label>
                 <Input
@@ -132,12 +132,12 @@ export default function LoginPage() {
                     setAdminError("");
                   }}
                   placeholder="Admin email"
-                  className="bg-slate-700/60 border-slate-600 text-white placeholder:text-slate-500 focus:border-amber-500 h-9 text-sm"
+                  className="bg-slate-700/60 border-slate-600 text-white placeholder:text-slate-200 focus:border-amber-500 h-9 text-sm"
                   data-ocid="admin.email.input"
                 />
               </div>
               <div>
-                <Label className="text-xs font-medium text-slate-300 mb-1 block">
+                <Label className="text-xs font-medium text-slate-200 mb-1 block">
                   Password
                 </Label>
                 <Input
@@ -148,7 +148,7 @@ export default function LoginPage() {
                     setAdminError("");
                   }}
                   placeholder="Password"
-                  className="bg-slate-700/60 border-slate-600 text-white placeholder:text-slate-500 focus:border-amber-500 h-9 text-sm"
+                  className="bg-slate-700/60 border-slate-600 text-white placeholder:text-slate-200 focus:border-amber-500 h-9 text-sm"
                   onKeyDown={(e) => e.key === "Enter" && handleAdminLogin()}
                   data-ocid="admin.password.input"
                 />
@@ -170,7 +170,7 @@ export default function LoginPage() {
               </Button>
             </div>
           ) : (
-            <p className="text-slate-500 text-xs">Click to expand login</p>
+            <p className="text-slate-200 text-xs">Click to expand login</p>
           )}
         </div>
 
@@ -196,14 +196,14 @@ export default function LoginPage() {
               <h2 className="text-white font-semibold text-sm">
                 Client Dashboard
               </h2>
-              <p className="text-slate-500 text-xs">For active subscribers</p>
+              <p className="text-slate-200 text-xs">For active subscribers</p>
             </div>
           </button>
 
           {activePath === "client" ? (
             <div className="space-y-3">
               <div>
-                <Label className="text-xs font-medium text-slate-300 mb-1 block">
+                <Label className="text-xs font-medium text-slate-200 mb-1 block">
                   Email
                 </Label>
                 <Input
@@ -214,12 +214,12 @@ export default function LoginPage() {
                     setClientError("");
                   }}
                   placeholder="your@email.com"
-                  className="bg-slate-700/60 border-slate-600 text-white placeholder:text-slate-500 focus:border-indigo-500 h-9 text-sm"
+                  className="bg-slate-700/60 border-slate-600 text-white placeholder:text-slate-200 focus:border-indigo-500 h-9 text-sm"
                   data-ocid="client.email.input"
                 />
               </div>
               <div>
-                <Label className="text-xs font-medium text-slate-300 mb-1 block">
+                <Label className="text-xs font-medium text-slate-200 mb-1 block">
                   Password
                 </Label>
                 <Input
@@ -230,7 +230,7 @@ export default function LoginPage() {
                     setClientError("");
                   }}
                   placeholder="Password"
-                  className="bg-slate-700/60 border-slate-600 text-white placeholder:text-slate-500 focus:border-indigo-500 h-9 text-sm"
+                  className="bg-slate-700/60 border-slate-600 text-white placeholder:text-slate-200 focus:border-indigo-500 h-9 text-sm"
                   onKeyDown={(e) => e.key === "Enter" && handleClientLogin()}
                   data-ocid="client.password.input"
                 />
@@ -250,7 +250,7 @@ export default function LoginPage() {
               >
                 Sign In
               </Button>
-              <p className="text-slate-500 text-xs text-center pt-1">
+              <p className="text-slate-200 text-xs text-center pt-1">
                 Not a client yet?{" "}
                 <Link
                   to="/pricing"
@@ -261,7 +261,7 @@ export default function LoginPage() {
               </p>
             </div>
           ) : (
-            <p className="text-slate-500 text-xs">Click to expand login</p>
+            <p className="text-slate-200 text-xs">Click to expand login</p>
           )}
         </div>
 
@@ -285,7 +285,7 @@ export default function LoginPage() {
               </p>
             </div>
           </div>
-          <p className="text-slate-300 text-xs leading-relaxed mb-5">
+          <p className="text-slate-200 text-xs leading-relaxed mb-5">
             Enter your business details and we'll generate a live, personalized
             simulation of your dashboard — fully white-labeled to your business
             in 60 seconds.

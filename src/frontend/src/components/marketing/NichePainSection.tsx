@@ -31,7 +31,7 @@ export default function NichePainSection({
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
             What's Costing Your {nicheName} Business Jobs Right Now
           </h2>
-          <p className="text-slate-400 max-w-xl mx-auto">
+          <p className="text-slate-200 max-w-xl mx-auto">
             These aren't minor inconveniences. Each one is revenue leaving your
             business every single day.
           </p>
@@ -52,7 +52,7 @@ export default function NichePainSection({
                 <AlertTriangle size={18} className="text-red-400" />
               </div>
               <h3 className="font-semibold text-white mb-2">{pain.title}</h3>
-              <p className="text-sm text-slate-400 leading-relaxed">
+              <p className="text-sm text-slate-200 leading-relaxed">
                 {pain.description}
               </p>
             </motion.div>

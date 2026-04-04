@@ -35,7 +35,7 @@ const NICHES = [
     icon: Leaf,
     color: "text-emerald-400",
   },
-  { value: "Roofing", label: "Roofing", icon: Wind, color: "text-slate-400" },
+  { value: "Roofing", label: "Roofing", icon: Wind, color: "text-slate-200" },
 ];
 
 export default function DemoLoginPage() {
@@ -80,7 +80,7 @@ export default function DemoLoginPage() {
           <h1 className="text-2xl font-bold text-white">
             Let's personalize your demo
           </h1>
-          <p className="text-slate-400 text-sm mt-2">
+          <p className="text-slate-200 text-sm mt-2">
             We'll build a live simulation of the platform using your business
             details.
           </p>
@@ -90,7 +90,7 @@ export default function DemoLoginPage() {
         <div className="bg-slate-800/80 backdrop-blur border border-slate-700 rounded-2xl p-6 space-y-5 shadow-xl">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label className="text-xs font-medium text-slate-300 mb-1.5 block">
+              <Label className="text-xs font-medium text-slate-200 mb-1.5 block">
                 First Name
               </Label>
               <Input
@@ -100,14 +100,14 @@ export default function DemoLoginPage() {
                   setErrors((p) => ({ ...p, firstName: "" }));
                 }}
                 placeholder="Your first name"
-                className="bg-slate-700/60 border-slate-600 text-white placeholder:text-slate-500 focus:border-purple-500 h-9 text-sm"
+                className="bg-slate-700/60 border-slate-600 text-white placeholder:text-slate-200 focus:border-purple-500 h-9 text-sm"
               />
               {errors.firstName && (
                 <p className="text-red-400 text-xs mt-1">{errors.firstName}</p>
               )}
             </div>
             <div>
-              <Label className="text-xs font-medium text-slate-300 mb-1.5 block">
+              <Label className="text-xs font-medium text-slate-200 mb-1.5 block">
                 City / Area
               </Label>
               <Input
@@ -117,7 +117,7 @@ export default function DemoLoginPage() {
                   setErrors((p) => ({ ...p, city: "" }));
                 }}
                 placeholder="e.g. San Diego"
-                className="bg-slate-700/60 border-slate-600 text-white placeholder:text-slate-500 focus:border-purple-500 h-9 text-sm"
+                className="bg-slate-700/60 border-slate-600 text-white placeholder:text-slate-200 focus:border-purple-500 h-9 text-sm"
               />
               {errors.city && (
                 <p className="text-red-400 text-xs mt-1">{errors.city}</p>
@@ -126,7 +126,7 @@ export default function DemoLoginPage() {
           </div>
 
           <div>
-            <Label className="text-xs font-medium text-slate-300 mb-1.5 block">
+            <Label className="text-xs font-medium text-slate-200 mb-1.5 block">
               Business Name
             </Label>
             <Input
@@ -136,7 +136,7 @@ export default function DemoLoginPage() {
                 setErrors((p) => ({ ...p, businessName: "" }));
               }}
               placeholder="e.g. Pacific Coast Plumbing"
-              className="bg-slate-700/60 border-slate-600 text-white placeholder:text-slate-500 focus:border-purple-500 h-9 text-sm"
+              className="bg-slate-700/60 border-slate-600 text-white placeholder:text-slate-200 focus:border-purple-500 h-9 text-sm"
             />
             {errors.businessName && (
               <p className="text-red-400 text-xs mt-1">{errors.businessName}</p>
@@ -144,7 +144,7 @@ export default function DemoLoginPage() {
           </div>
 
           <div>
-            <Label className="text-xs font-medium text-slate-300 mb-2 block">
+            <Label className="text-xs font-medium text-slate-200 mb-2 block">
               Business Type
             </Label>
             <div className="grid grid-cols-2 gap-2">
@@ -159,7 +159,7 @@ export default function DemoLoginPage() {
                   className={`flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm border transition-colors ${
                     niche === value
                       ? "bg-purple-600/30 border-purple-500 text-white font-medium"
-                      : "bg-slate-700/40 border-slate-600 text-slate-300 hover:border-purple-400"
+                      : "bg-slate-700/40 border-slate-600 text-slate-200 hover:border-purple-400"
                   }`}
                 >
                   <Icon
@@ -182,7 +182,7 @@ export default function DemoLoginPage() {
             Launch My Demo →
           </Button>
 
-          <p className="text-center text-xs text-slate-500">
+          <p className="text-center text-xs text-slate-200">
             This is a simulated environment. No real data will be sent.
           </p>
         </div>
@@ -190,7 +190,7 @@ export default function DemoLoginPage() {
         <div className="text-center mt-6">
           <a
             href="/login"
-            className="text-slate-500 text-xs hover:text-slate-300"
+            className="text-slate-200 text-xs hover:text-slate-200"
           >
             ← Back to login
           </a>

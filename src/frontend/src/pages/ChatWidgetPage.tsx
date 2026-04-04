@@ -191,7 +191,7 @@ function WidgetPreview({ config }: { config: WidgetState }) {
   return (
     <div className="relative w-full h-[520px] bg-gray-100 rounded-xl border border-gray-200 overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-br from-gray-50 to-gray-100" />
-      <p className="absolute top-3 left-1/2 -translate-x-1/2 text-xs text-gray-400 font-medium">
+      <p className="absolute top-3 left-1/2 -translate-x-1/2 text-xs text-gray-200 font-medium">
         Widget Preview
       </p>
 
@@ -534,7 +534,7 @@ export default function ChatWidgetPage() {
                 <div key={key} className="flex items-center justify-between">
                   <div>
                     <p className="text-sm font-medium text-gray-800">{label}</p>
-                    <p className="text-xs text-gray-500">{desc}</p>
+                    <p className="text-xs text-gray-200">{desc}</p>
                   </div>
                   <Switch
                     checked={config[key]}
@@ -573,7 +573,7 @@ export default function ChatWidgetPage() {
                 <Copy size={13} /> Copy
               </Button>
             </div>
-            <p className="text-xs text-gray-500 mb-3">
+            <p className="text-xs text-gray-200 mb-3">
               Paste this into your website's{" "}
               <code className="bg-gray-100 px-1 rounded">&lt;body&gt;</code>{" "}
               tag.
@@ -591,7 +591,7 @@ export default function ChatWidgetPage() {
               Live Preview
             </h3>
             <WidgetPreview config={config} />
-            <p className="text-xs text-gray-400 text-center mt-3">
+            <p className="text-xs text-gray-200 text-center mt-3">
               Click the chat bubble to test the widget experience
             </p>
           </div>

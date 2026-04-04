@@ -178,7 +178,7 @@ export default function AdminPage() {
             <CardTitle className="text-base font-semibold">
               Tenant Management
             </CardTitle>
-            <p className="text-xs text-slate-500 mt-0.5">
+            <p className="text-xs text-slate-200 mt-0.5">
               Manage clients and provision dedicated phone numbers per account.
             </p>
           </div>
@@ -294,7 +294,7 @@ export default function AdminPage() {
                       <span className="font-semibold text-sm text-white truncate">
                         {tenant.name}
                       </span>
-                      <span className="text-xs text-slate-500 shrink-0">
+                      <span className="text-xs text-slate-200 shrink-0">
                         {tenant.type}
                       </span>
                       {/* Phone status badge inline */}
@@ -310,7 +310,7 @@ export default function AdminPage() {
                   {/* Controls */}
                   <div className="flex items-center gap-3 shrink-0">
                     <div className="flex items-center gap-1.5">
-                      <span className="text-xs text-slate-500 hidden sm:inline">
+                      <span className="text-xs text-slate-200 hidden sm:inline">
                         Social
                       </span>
                       <Switch
@@ -346,7 +346,7 @@ export default function AdminPage() {
             {tenants.length === 0 && (
               <div
                 data-ocid="admin.tenants.empty_state"
-                className="text-center text-slate-500 py-10 rounded-xl border border-white/5 bg-white/[0.02]"
+                className="text-center text-slate-200 py-10 rounded-xl border border-white/5 bg-white/[0.02]"
               >
                 No tenants yet. Add one above.
               </div>
@@ -361,7 +361,7 @@ export default function AdminPage() {
           <CardTitle className="text-base font-semibold">
             Score Override Panel
           </CardTitle>
-          <p className="text-sm text-slate-500">
+          <p className="text-sm text-slate-200">
             Override audit and fundability scores for any tenant.
           </p>
         </CardHeader>
@@ -455,7 +455,7 @@ export default function AdminPage() {
           <CardTitle className="text-base font-semibold">
             Module Access Control
           </CardTitle>
-          <p className="text-sm text-slate-500">
+          <p className="text-sm text-slate-200">
             Enable or disable optional modules per tenant.
           </p>
         </CardHeader>

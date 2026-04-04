@@ -89,7 +89,7 @@ export default function LeadsPage() {
             className="bg-white rounded-lg border border-gray-200 p-4 text-center shadow-sm"
           >
             <p className="text-2xl font-bold text-gray-900">{val}</p>
-            <p className="text-xs text-gray-500 capitalize mt-0.5">{key}</p>
+            <p className="text-xs text-gray-200 capitalize mt-0.5">{key}</p>
           </div>
         ))}
       </div>
@@ -124,7 +124,7 @@ export default function LeadsPage() {
               ].map((h) => (
                 <th
                   key={h}
-                  className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide"
+                  className="text-left px-4 py-3 text-xs font-semibold text-gray-200 uppercase tracking-wide"
                 >
                   {h}
                 </th>
@@ -150,14 +150,14 @@ export default function LeadsPage() {
                     {lead.status}
                   </span>
                 </td>
-                <td className="px-4 py-3 text-gray-500">
+                <td className="px-4 py-3 text-gray-200">
                   {formatDate(lead.createdAt)}
                 </td>
                 <td className="px-4 py-3">
                   <button
                     type="button"
                     onClick={() => handleDelete(lead.id)}
-                    className="p-1.5 rounded hover:bg-red-50 text-gray-400 hover:text-red-500 transition-colors"
+                    className="p-1.5 rounded hover:bg-red-50 text-gray-200 hover:text-red-500 transition-colors"
                   >
                     <Trash2 size={14} />
                   </button>
@@ -167,7 +167,7 @@ export default function LeadsPage() {
           </tbody>
         </table>
         {leads.length === 0 && (
-          <p className="text-center text-gray-500 py-10 text-sm">
+          <p className="text-center text-gray-200 py-10 text-sm">
             No leads yet. Add your first lead!
           </p>
         )}

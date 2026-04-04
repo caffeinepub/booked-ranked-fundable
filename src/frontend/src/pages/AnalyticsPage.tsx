@@ -133,7 +133,7 @@ export default function AnalyticsPage() {
         <div className="absolute inset-0 bg-gradient-to-r from-slate-900/80 to-indigo-900/40 flex items-center px-6">
           <div>
             <h2 className="text-2xl font-bold text-white">Website Analytics</h2>
-            <p className="text-slate-300 text-sm mt-1">
+            <p className="text-slate-200 text-sm mt-1">
               Real-time performance metrics and traffic insights
             </p>
           </div>
@@ -146,7 +146,7 @@ export default function AnalyticsPage() {
           <Card key={label} className="shadow-sm">
             <CardContent className="p-4">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-xs text-gray-500 font-medium">
+                <span className="text-xs text-gray-200 font-medium">
                   {label}
                 </span>
                 <div className="flex items-center gap-1.5">
@@ -159,7 +159,7 @@ export default function AnalyticsPage() {
                 </div>
               </div>
               <p className="text-sm font-semibold text-gray-900">{value}</p>
-              <p className="text-xs text-gray-400 mt-1">{sub}</p>
+              <p className="text-xs text-gray-200 mt-1">{sub}</p>
             </CardContent>
           </Card>
         ))}
@@ -328,7 +328,7 @@ export default function AnalyticsPage() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-xs text-gray-500 mb-3">
+          <p className="text-xs text-gray-200 mb-3">
             Paste this script tag in the <code>&lt;head&gt;</code> of your
             website to enable real-time analytics tracking.
           </p>

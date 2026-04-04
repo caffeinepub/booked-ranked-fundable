@@ -6,7 +6,7 @@ export default function PublicFooter() {
     typeof window !== "undefined" ? window.location.hostname : "";
 
   return (
-    <footer className="bg-slate-950 text-slate-400 border-t border-white/5">
+    <footer className="bg-slate-950 text-slate-200 border-t border-white/5">
       <div className="max-w-7xl mx-auto px-6 py-14 grid grid-cols-2 md:grid-cols-5 gap-10">
         <div className="col-span-2">
           <div className="flex items-center gap-2 mb-4">
@@ -17,14 +17,14 @@ export default function PublicFooter() {
               Booked Ranked Fundable
             </span>
           </div>
-          <p className="text-sm text-slate-500 leading-relaxed max-w-xs">
+          <p className="text-sm text-slate-200 leading-relaxed max-w-xs">
             Built for local service businesses that need more bookings, better
             rankings, and a stronger foundation for growth.
           </p>
         </div>
 
         <div>
-          <p className="text-xs font-semibold text-slate-300 uppercase tracking-wider mb-4">
+          <p className="text-xs font-semibold text-slate-200 uppercase tracking-wider mb-4">
             Industries
           </p>
           <ul className="space-y-2.5 text-sm">
@@ -77,7 +77,7 @@ export default function PublicFooter() {
         </div>
 
         <div>
-          <p className="text-xs font-semibold text-slate-300 uppercase tracking-wider mb-4">
+          <p className="text-xs font-semibold text-slate-200 uppercase tracking-wider mb-4">
             Platform
           </p>
           <ul className="space-y-2.5 text-sm">
@@ -106,7 +106,7 @@ export default function PublicFooter() {
         </div>
 
         <div>
-          <p className="text-xs font-semibold text-slate-300 uppercase tracking-wider mb-4">
+          <p className="text-xs font-semibold text-slate-200 uppercase tracking-wider mb-4">
             Company
           </p>
           <ul className="space-y-2.5 text-sm">

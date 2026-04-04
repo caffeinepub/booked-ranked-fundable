@@ -64,7 +64,7 @@ export default function ThreeEnginesSection({
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
             Everything Your Business Needs to Grow
           </h2>
-          <p className="text-slate-400 max-w-xl mx-auto">
+          <p className="text-slate-200 max-w-xl mx-auto">
             Each engine solves a core growth problem. Together, they transform
             how your business attracts, converts, and funds growth.
           </p>
@@ -106,7 +106,7 @@ export default function ThreeEnginesSection({
                 <h3 className="text-lg font-bold text-white mb-3">
                   {engine.headline}
                 </h3>
-                <p className="text-sm text-slate-400 leading-relaxed">
+                <p className="text-sm text-slate-200 leading-relaxed">
                   {engine.description}
                 </p>
               </motion.div>

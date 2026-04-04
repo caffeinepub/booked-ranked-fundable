@@ -373,9 +373,9 @@ export default function ReviewRequestsPage() {
             className="bg-white rounded-xl border border-gray-200 p-12 text-center"
             data-ocid="reviewrequests.empty_state"
           >
-            <MessageSquare size={40} className="text-gray-300 mx-auto mb-3" />
-            <p className="text-gray-500 font-medium">No review requests yet</p>
-            <p className="text-xs text-gray-400 mt-1">
+            <MessageSquare size={40} className="text-gray-200 mx-auto mb-3" />
+            <p className="text-gray-200 font-medium">No review requests yet</p>
+            <p className="text-xs text-gray-200 mt-1">
               Send your first request from the Send Request tab
             </p>
           </div>
@@ -405,15 +405,15 @@ export default function ReviewRequestsPage() {
                           {sc.label}
                         </span>
                         {req.platform && (
-                          <span className="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">
+                          <span className="text-xs text-gray-200 bg-gray-100 px-2 py-0.5 rounded-full">
                             {req.platform}
                           </span>
                         )}
                       </div>
-                      <p className="text-xs text-gray-500 mt-1">
+                      <p className="text-xs text-gray-200 mt-1">
                         {req.serviceCompleted}
                       </p>
-                      <div className="flex items-center gap-3 mt-1 text-xs text-gray-400">
+                      <div className="flex items-center gap-3 mt-1 text-xs text-gray-200">
                         <span>{req.phone}</span>
                         {req.email && <span>{req.email}</span>}
                         <span className="flex items-center gap-1">

@@ -257,11 +257,11 @@ export default function AuditPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between flex-wrap gap-3">
-        <p className="text-sm text-gray-500">Last updated: March 28, 2026</p>
+        <p className="text-sm text-gray-200">Last updated: March 28, 2026</p>
         <div className="flex items-center gap-2 flex-wrap">
           {showUrlInput && (
             <div className="flex items-center gap-2">
-              <Globe size={14} className="text-gray-400 flex-shrink-0" />
+              <Globe size={14} className="text-gray-200 flex-shrink-0" />
               <Input
                 data-ocid="audit.input"
                 placeholder="https://yourbusiness.com"
@@ -315,7 +315,7 @@ export default function AuditPage() {
             <CardTitle className="text-sm font-semibold text-gray-700">
               Live Audit Progress
               {websiteInput && (
-                <span className="font-normal text-gray-400 ml-2 text-xs">
+                <span className="font-normal text-gray-200 ml-2 text-xs">
                   — {websiteInput}
                 </span>
               )}
@@ -346,7 +346,7 @@ export default function AuditPage() {
                     <CheckCircle size={18} className="text-emerald-500" />
                   )}
                   {step.status === "pending" && (
-                    <Circle size={18} className="text-gray-300" />
+                    <Circle size={18} className="text-gray-200" />
                   )}
                 </div>
                 <div className="flex-1 min-w-0">
@@ -357,7 +357,7 @@ export default function AuditPage() {
                           ? "text-gray-800"
                           : step.status === "checking"
                             ? "text-indigo-700"
-                            : "text-gray-400"
+                            : "text-gray-200"
                       }`}
                     >
                       {step.label}
@@ -420,7 +420,7 @@ export default function AuditPage() {
             >
               {scoreLabel(liveScore)}
             </p>
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs text-gray-200 mt-1">
               Based on real PageSpeed data + audit signals
             </p>
           </CardContent>
@@ -429,7 +429,7 @@ export default function AuditPage() {
 
       {/* Overall Score */}
       <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 flex flex-col items-center">
-        <h3 className="text-sm font-semibold text-gray-500 mb-3">
+        <h3 className="text-sm font-semibold text-gray-200 mb-3">
           Overall SEO Score
         </h3>
         <ScoreArc score={displayScore} />

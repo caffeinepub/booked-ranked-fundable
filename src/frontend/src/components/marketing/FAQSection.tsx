@@ -31,7 +31,7 @@ export default function FAQSection({
           className="text-center mb-12"
         >
           <h2 className="text-3xl font-bold text-white mb-4">{headline}</h2>
-          <p className="text-slate-400">
+          <p className="text-slate-200">
             Have more questions? Get your free audit and we'll walk you through
             everything.
           </p>
@@ -53,7 +53,7 @@ export default function FAQSection({
               <AccordionTrigger className="text-white text-sm font-medium text-left py-5 hover:no-underline">
                 {faq.question}
               </AccordionTrigger>
-              <AccordionContent className="text-slate-400 text-sm pb-5 leading-relaxed">
+              <AccordionContent className="text-slate-200 text-sm pb-5 leading-relaxed">
                 {faq.answer}
               </AccordionContent>
             </AccordionItem>

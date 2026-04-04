@@ -241,7 +241,7 @@ export default function SocialMediaPage() {
             <h2 className="text-xl font-bold text-gray-900 mb-2">
               Social Media Management
             </h2>
-            <p className="text-sm text-gray-500 max-w-sm mb-6">
+            <p className="text-sm text-gray-200 max-w-sm mb-6">
               Automate your content, ads, and review responses — all from one
               place. Ask your agency to unlock this module.
             </p>
@@ -288,7 +288,7 @@ export default function SocialMediaPage() {
             </Button>
           </div>
           {/* Background preview (blurred) */}
-          <div className="p-6 opacity-30 pointer-events-none select-none">
+          <div className="p-6 opacity-80 pointer-events-none select-none">
             <div className="h-8 w-48 bg-gray-200 rounded mb-4" />
             <div className="grid grid-cols-7 gap-2">
               {[
@@ -327,7 +327,7 @@ export default function SocialMediaPage() {
     <div className="space-y-6 max-w-4xl mx-auto">
       <div>
         <h1 className="text-2xl font-bold text-gray-900">Social Media</h1>
-        <p className="text-sm text-gray-500 mt-1">
+        <p className="text-sm text-gray-200 mt-1">
           Content calendar, AI post generator, ad copy, and review responses
         </p>
       </div>
@@ -372,7 +372,7 @@ export default function SocialMediaPage() {
                     {DAYS.map((d) => (
                       <div
                         key={d}
-                        className="text-xs font-semibold text-gray-500 text-center"
+                        className="text-xs font-semibold text-gray-200 text-center"
                       >
                         {d}
                       </div>
@@ -391,7 +391,7 @@ export default function SocialMediaPage() {
                               <div className="h-full bg-indigo-50 border border-indigo-200 rounded-lg p-1.5">
                                 <div className="flex items-center gap-1 mb-1">
                                   <PlatformIcon platform={post.platform} />
-                                  <span className="text-[10px] text-gray-400">
+                                  <span className="text-[10px] text-gray-200">
                                     {post.time}
                                   </span>
                                 </div>
@@ -406,7 +406,7 @@ export default function SocialMediaPage() {
                                 data-ocid="social.calendar.button"
                                 className="h-full w-full border border-dashed border-gray-200 rounded-lg flex items-center justify-center hover:border-indigo-300 hover:bg-indigo-50 transition-colors"
                               >
-                                <Plus size={14} className="text-gray-300" />
+                                <Plus size={14} className="text-gray-200" />
                               </button>
                             )}
                           </div>
@@ -525,7 +525,7 @@ export default function SocialMediaPage() {
                       type="button"
                       data-ocid="social.copy.button"
                       onClick={() => copyToClipboard(generatedPost, "Post")}
-                      className="shrink-0 p-1.5 hover:bg-gray-200 rounded text-gray-400 hover:text-gray-700"
+                      className="shrink-0 p-1.5 hover:bg-gray-200 rounded text-gray-200 hover:text-gray-700"
                     >
                       <Copy size={14} />
                     </button>
@@ -617,7 +617,7 @@ export default function SocialMediaPage() {
               {generatedAd && (
                 <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 space-y-3">
                   <div className="flex items-center justify-between">
-                    <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
+                    <p className="text-xs font-semibold text-gray-200 uppercase tracking-wide">
                       Ad Preview
                     </p>
                     <button
@@ -629,7 +629,7 @@ export default function SocialMediaPage() {
                           "Ad Copy",
                         )
                       }
-                      className="p-1.5 hover:bg-gray-200 rounded text-gray-400 hover:text-gray-700"
+                      className="p-1.5 hover:bg-gray-200 rounded text-gray-200 hover:text-gray-700"
                     >
                       <Copy size={14} />
                     </button>
@@ -643,7 +643,7 @@ export default function SocialMediaPage() {
                         <p className="text-xs font-semibold text-gray-800">
                           Your Business
                         </p>
-                        <p className="text-[10px] text-gray-400">Sponsored</p>
+                        <p className="text-[10px] text-gray-200">Sponsored</p>
                       </div>
                     </div>
                     <p className="text-xs text-gray-700">
@@ -660,7 +660,7 @@ export default function SocialMediaPage() {
                   </div>
                   <div className="grid grid-cols-3 gap-2 text-xs">
                     <div className="bg-white border rounded p-2">
-                      <p className="text-gray-400 text-[10px]">
+                      <p className="text-gray-200 text-[10px]">
                         Headline (30 chars)
                       </p>
                       <p className="font-medium text-gray-700 truncate">
@@ -668,13 +668,13 @@ export default function SocialMediaPage() {
                       </p>
                     </div>
                     <div className="bg-white border rounded p-2">
-                      <p className="text-gray-400 text-[10px]">Primary Text</p>
+                      <p className="text-gray-200 text-[10px]">Primary Text</p>
                       <p className="font-medium text-gray-700 truncate">
                         {generatedAd.primary.slice(0, 40)}...
                       </p>
                     </div>
                     <div className="bg-white border rounded p-2">
-                      <p className="text-gray-400 text-[10px]">CTA</p>
+                      <p className="text-gray-200 text-[10px]">CTA</p>
                       <p className="font-medium text-gray-700">
                         {generatedAd.cta}
                       </p>

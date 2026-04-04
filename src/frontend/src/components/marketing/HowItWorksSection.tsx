@@ -26,7 +26,7 @@ export default function HowItWorksSection({ steps }: HowItWorksSectionProps) {
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
             How It Works
           </h2>
-          <p className="text-slate-400 max-w-xl mx-auto">
+          <p className="text-slate-200 max-w-xl mx-auto">
             Three steps from audit to growth. No complex setup, no long
             contracts.
           </p>
@@ -55,7 +55,7 @@ export default function HowItWorksSection({ steps }: HowItWorksSectionProps) {
                 <h3 className="text-lg font-bold text-white mb-3">
                   {step.title}
                 </h3>
-                <p className="text-sm text-slate-400 leading-relaxed">
+                <p className="text-sm text-slate-200 leading-relaxed">
                   {step.description}
                 </p>
               </motion.div>

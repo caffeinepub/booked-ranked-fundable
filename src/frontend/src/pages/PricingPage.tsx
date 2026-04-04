@@ -58,7 +58,7 @@ export default function PricingPage() {
             <h1 className="text-4xl md:text-5xl font-bold text-white mb-5">
               Invest in Growth. Not Just Software.
             </h1>
-            <p className="text-slate-400 text-lg max-w-xl mx-auto">
+            <p className="text-slate-200 text-lg max-w-xl mx-auto">
               Every plan is a complete growth system — not a collection of
               features you have to figure out yourself.
             </p>
