@@ -187,14 +187,14 @@ export default function HomePage() {
                   <ArrowRight size={16} className="ml-2" />
                 </Button>
               </Link>
-              <Link to="/pricing">
+              <Link to="/demo-login">
                 <Button
                   data-ocid="home.secondary_button"
                   size="lg"
                   variant="outline"
-                  className="border-white/30 text-white hover:bg-white/10 h-12 px-7 text-base"
+                  className="bg-transparent border-white/30 text-white hover:bg-white/10 h-12 px-7 text-base"
                 >
-                  See Pricing
+                  See It Live →
                 </Button>
               </Link>
             </div>
@@ -471,14 +471,14 @@ export default function HomePage() {
                   <ArrowRight size={16} className="ml-2" />
                 </Button>
               </Link>
-              <Link to="/login">
+              <Link to="/demo-login">
                 <Button
                   data-ocid="home.cta.secondary_button"
                   size="lg"
                   variant="outline"
-                  className="border-white/30 text-white hover:bg-white/10 h-12 px-8 text-base"
+                  className="bg-transparent border-white/30 text-white hover:bg-white/10 h-12 px-8 text-base"
                 >
-                  Sign In to Dashboard
+                  Try Live Demo →
                 </Button>
               </Link>
             </div>

@@ -51,7 +51,7 @@ export default function FinalCTASection({
                 data-ocid="final_cta.secondary_button"
                 size="lg"
                 variant="outline"
-                className="border-white/25 text-white hover:bg-white/10 h-12 px-8"
+                className="bg-transparent border-white/25 text-white hover:bg-white/10 h-12 px-8"
               >
                 Book Demo
               </Button>

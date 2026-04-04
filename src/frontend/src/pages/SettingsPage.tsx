@@ -1,4 +1,5 @@
-import { CheckCircle, Eye, EyeOff, Loader2 } from "lucide-react";
+import { useNavigate } from "@tanstack/react-router";
+import { CheckCircle, Eye, EyeOff, Loader2, RotateCcw } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "../components/ui/button";
@@ -87,10 +88,8 @@ function IntegrationSection({
   const handleTest = async () => {
     setStatus("testing");
     await onTest();
-    // Status set inside onTest via returned value
   };
 
-  // expose setStatus to parent via children render
   return (
     <div className="border border-gray-200 rounded-xl p-5 space-y-4">
       <div className="flex items-start justify-between gap-3">
@@ -359,8 +358,15 @@ function AiConfigTab() {
 }
 
 export default function SettingsPage() {
-  const { currentTenantId, isAdmin, isAdminUser } = useApp();
+  const {
+    currentTenantId,
+    isAdmin,
+    isAdminUser,
+    resetOnboarding,
+    resetAgencyOnboarding,
+  } = useApp();
   const { actor } = useActor();
+  const navigate = useNavigate();
   const tenant = TENANTS.find((t) => t.id === currentTenantId);
 
   const [form, setForm] = useState({
@@ -458,6 +464,16 @@ export default function SettingsPage() {
     }
   };
 
+  const handleRestartWizard = () => {
+    if (isAdmin || isAdminUser) {
+      resetAgencyOnboarding();
+    } else {
+      resetOnboarding(currentTenantId);
+    }
+    toast.success("Setup wizard reset. Redirecting...");
+    setTimeout(() => navigate({ to: "/onboarding" }), 800);
+  };
+
   // Test connection helpers
   const [, , testStripe] = useTestConnection(() => stripeKeys.secret);
   const [, , testTwilio] = useTestConnection(() => agencySettings.twilioSid);
@@ -495,59 +511,89 @@ export default function SettingsPage() {
 
       {/* Profile Tab */}
       <TabsContent value="profile">
-        <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 max-w-2xl space-y-4">
-          <h3 className="text-sm font-semibold text-gray-800">
-            Business Profile
-          </h3>
-          <div>
-            <Label>Business Name</Label>
-            <Input
-              value={form.name}
-              onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
-              className="mt-1"
-              data-ocid="settings.name.input"
-            />
+        <div className="space-y-4 max-w-2xl">
+          <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 space-y-4">
+            <h3 className="text-sm font-semibold text-gray-800">
+              Business Profile
+            </h3>
+            <div>
+              <Label>Business Name</Label>
+              <Input
+                value={form.name}
+                onChange={(e) =>
+                  setForm((f) => ({ ...f, name: e.target.value }))
+                }
+                className="mt-1"
+                data-ocid="settings.name.input"
+              />
+            </div>
+            <div>
+              <Label>Phone</Label>
+              <Input
+                value={form.phone}
+                onChange={(e) =>
+                  setForm((f) => ({ ...f, phone: e.target.value }))
+                }
+                className="mt-1"
+                data-ocid="settings.phone.input"
+              />
+            </div>
+            <div>
+              <Label>Website</Label>
+              <Input
+                value={form.website}
+                onChange={(e) =>
+                  setForm((f) => ({ ...f, website: e.target.value }))
+                }
+                className="mt-1"
+                data-ocid="settings.website.input"
+              />
+            </div>
+            <div>
+              <Label>Address</Label>
+              <Input
+                value={form.address}
+                onChange={(e) =>
+                  setForm((f) => ({ ...f, address: e.target.value }))
+                }
+                className="mt-1"
+                data-ocid="settings.address.input"
+              />
+            </div>
+            <Button
+              onClick={handleSave}
+              className="bg-indigo-600 hover:bg-indigo-700 text-white"
+              data-ocid="settings.save.button"
+            >
+              Save Profile
+            </Button>
           </div>
-          <div>
-            <Label>Phone</Label>
-            <Input
-              value={form.phone}
-              onChange={(e) =>
-                setForm((f) => ({ ...f, phone: e.target.value }))
-              }
-              className="mt-1"
-              data-ocid="settings.phone.input"
-            />
+
+          {/* Onboarding Wizard Card */}
+          <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <h3 className="text-sm font-semibold text-gray-800">
+                  Onboarding Wizard
+                </h3>
+                <p className="text-xs text-gray-500 mt-1 leading-relaxed">
+                  Re-run the step-by-step setup wizard to update your business
+                  profile, phone setup, campaigns, chat widget, and
+                  integrations.
+                </p>
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleRestartWizard}
+                className="shrink-0 gap-1.5 text-indigo-600 border-indigo-200 hover:bg-indigo-50"
+                data-ocid="settings.wizard.restart.button"
+              >
+                <RotateCcw size={13} />
+                Restart Setup Wizard
+              </Button>
+            </div>
           </div>
-          <div>
-            <Label>Website</Label>
-            <Input
-              value={form.website}
-              onChange={(e) =>
-                setForm((f) => ({ ...f, website: e.target.value }))
-              }
-              className="mt-1"
-              data-ocid="settings.website.input"
-            />
-          </div>
-          <div>
-            <Label>Address</Label>
-            <Input
-              value={form.address}
-              onChange={(e) =>
-                setForm((f) => ({ ...f, address: e.target.value }))
-              }
-              className="mt-1"
-              data-ocid="settings.address.input"
-            />
-          </div>
-          <Button
-            onClick={handleSave}
-            className="bg-indigo-600 hover:bg-indigo-700 text-white"
-            data-ocid="settings.save.button"
-          >
-            Save Profile
-          </Button>
         </div>
       </TabsContent>
 

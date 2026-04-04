@@ -351,7 +351,7 @@ export default function FreeAuditPage() {
           <Button
             variant="outline"
             size="sm"
-            className="border-slate-700 text-slate-300 hover:bg-slate-800"
+            className="bg-transparent border-slate-700 text-slate-300 hover:bg-slate-800"
           >
             Sign In
           </Button>

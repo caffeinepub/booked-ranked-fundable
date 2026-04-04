@@ -66,7 +66,7 @@ export default function HeroSection({
               data-ocid="hero.secondary_button"
               size="lg"
               variant="outline"
-              className="border-white/25 text-white hover:bg-white/10 h-13 px-8 text-base"
+              className="bg-transparent border-white/25 text-white hover:bg-white/10 h-13 px-8 text-base"
               onClick={() => {
                 const el = document.getElementById("audit-form");
                 if (el) el.scrollIntoView({ behavior: "smooth" });

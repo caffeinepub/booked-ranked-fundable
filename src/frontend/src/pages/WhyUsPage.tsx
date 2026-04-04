@@ -415,7 +415,7 @@ export default function WhyUsPage() {
                   data-ocid="why_us_page.free_audit.secondary_button"
                   size="lg"
                   variant="outline"
-                  className="border-white/30 text-white hover:bg-white/10 h-12 px-8 text-base"
+                  className="bg-transparent border-white/30 text-white hover:bg-white/10 h-12 px-8 text-base"
                 >
                   Get Free Audit
                 </Button>

@@ -155,6 +155,13 @@ interface AppContextType {
   // Demo mode
   isDemoMode: boolean;
   demoInfo: DemoInfo | null;
+  // Onboarding
+  onboardingComplete: Record<string, boolean>;
+  markOnboardingComplete: (tenantId: string) => void;
+  resetOnboarding: (tenantId: string) => void;
+  agencyOnboardingComplete: boolean;
+  markAgencyOnboardingComplete: () => void;
+  resetAgencyOnboarding: () => void;
 }
 
 const AppContext = createContext<AppContextType | null>(null);
@@ -223,6 +230,13 @@ export function AppProvider({ children }: { children: ReactNode }) {
     loadFromSession<DemoInfo | null>("brfDemo", null),
   );
 
+  // Onboarding state
+  const [onboardingComplete, setOnboardingComplete] = useState<
+    Record<string, boolean>
+  >(() => loadFromLocal("brfOnboarding", {}));
+  const [agencyOnboardingComplete, setAgencyOnboardingComplete] =
+    useState<boolean>(() => loadFromLocal("brfAgencyOnboarding", false));
+
   useEffect(() => {
     sessionStorage.setItem("brfUser", JSON.stringify(currentUser));
   }, [currentUser]);
@@ -241,10 +255,19 @@ export function AppProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     sessionStorage.setItem("brfDemo", JSON.stringify(demoInfo));
   }, [demoInfo]);
-
   useEffect(() => {
     localStorage.setItem("brfCampaignToggles", JSON.stringify(campaignToggles));
   }, [campaignToggles]);
+  useEffect(() => {
+    localStorage.setItem("brfOnboarding", JSON.stringify(onboardingComplete));
+  }, [onboardingComplete]);
+  useEffect(() => {
+    localStorage.setItem(
+      "brfAgencyOnboarding",
+      JSON.stringify(agencyOnboardingComplete),
+    );
+  }, [agencyOnboardingComplete]);
+
   const setCampaignToggle = (
     tenantId: string,
     campaignId: string,
@@ -360,6 +383,24 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setListingConfigsState((prev) => ({ ...prev, [tenantId]: config }));
   };
 
+  // Onboarding handlers
+  const markOnboardingComplete = (tenantId: string) => {
+    setOnboardingComplete((prev) => ({ ...prev, [tenantId]: true }));
+  };
+  const resetOnboarding = (tenantId: string) => {
+    setOnboardingComplete((prev) => {
+      const next = { ...prev };
+      delete next[tenantId];
+      return next;
+    });
+  };
+  const markAgencyOnboardingComplete = () => {
+    setAgencyOnboardingComplete(true);
+  };
+  const resetAgencyOnboarding = () => {
+    setAgencyOnboardingComplete(false);
+  };
+
   const isDemoMode = demoInfo !== null && currentTenantId === "tenant-demo";
 
   return (
@@ -397,6 +438,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
         setCampaignToggle,
         isDemoMode,
         demoInfo,
+        onboardingComplete,
+        markOnboardingComplete,
+        resetOnboarding,
+        agencyOnboardingComplete,
+        markAgencyOnboardingComplete,
+        resetAgencyOnboarding,
       }}
     >
       {children}

@@ -141,6 +141,7 @@ function VoiceAgentDemo() {
   const [showTyping, setShowTyping] = useState(false);
   const [showLead, setShowLead] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const simulationRef = useRef<HTMLDivElement>(null);
 
   const reset = () => {
     setStatus("idle");
@@ -188,6 +189,19 @@ function VoiceAgentDemo() {
     }
   }, [visibleLines, showTyping]);
 
+  // Scroll simulation container into view when scenario is selected
+  // biome-ignore lint/correctness/useExhaustiveDependencies: simulationRef.current is intentionally excluded
+  useEffect(() => {
+    if (selected && simulationRef.current) {
+      setTimeout(() => {
+        simulationRef.current?.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      }, 100);
+    }
+  }, [selected]);
+
   const lines = selected ? SCRIPTS[selected] : [];
   const lead = selected ? LEAD_DATA[selected] : null;
 
@@ -222,6 +236,7 @@ function VoiceAgentDemo() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             className="flex flex-col items-center gap-4 w-full"
+            ref={simulationRef}
           >
             {/* Phone mockup */}
             <div className="w-[340px] rounded-[2.5rem] bg-slate-900 border-2 border-white/10 shadow-2xl overflow-hidden">
@@ -1080,6 +1095,18 @@ function FundabilitySnapshot() {
   const [progress, setProgress] = useState(0);
   const [statusMsg, setStatusMsg] = useState(SCORE_STATUS_MESSAGES[0]);
   const [result, setResult] = useState<FundResult | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // Scroll to top of snapshot container whenever phase changes
+  // biome-ignore lint/correctness/useExhaustiveDependencies: containerRef.current is intentionally excluded
+  useEffect(() => {
+    if (containerRef.current) {
+      containerRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }
+  }, [phase]);
 
   const isValid =
     form.businessName &&
@@ -1121,7 +1148,10 @@ function FundabilitySnapshot() {
 
   if (phase === "loading") {
     return (
-      <div className="max-w-lg mx-auto flex flex-col items-center gap-6 py-12">
+      <div
+        ref={containerRef}
+        className="max-w-lg mx-auto flex flex-col items-center gap-6 py-12"
+      >
         <div className="w-16 h-16 rounded-full bg-indigo-600/20 flex items-center justify-center">
           <TrendingUp size={28} className="text-indigo-400 animate-pulse" />
         </div>
@@ -1137,6 +1167,7 @@ function FundabilitySnapshot() {
   if (phase === "result" && result) {
     return (
       <motion.div
+        ref={containerRef}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         className="max-w-xl mx-auto space-y-6"
@@ -1221,6 +1252,7 @@ function FundabilitySnapshot() {
 
   return (
     <div
+      ref={containerRef}
       className="max-w-lg mx-auto space-y-5"
       data-ocid="demo.fundability.form"
     >
@@ -1408,6 +1440,19 @@ type TabId = (typeof TABS)[number]["id"];
 
 export default function DemoPage() {
   const [activeTab, setActiveTab] = useState<TabId>("voice");
+  const tabContentRef = useRef<HTMLElement>(null);
+
+  const handleTabChange = (id: TabId) => {
+    setActiveTab(id);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    // Also scroll the tab section into view after a brief delay for the animation
+    setTimeout(() => {
+      tabContentRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }, 50);
+  };
 
   return (
     <div className="min-h-screen bg-slate-950 flex flex-col">
@@ -1443,7 +1488,7 @@ export default function DemoPage() {
         </section>
 
         {/* Tab section */}
-        <section className="max-w-6xl mx-auto px-4 pb-20">
+        <section ref={tabContentRef} className="max-w-6xl mx-auto px-4 pb-20">
           {/* Pill tabs */}
           <div className="flex justify-center mb-10">
             <div className="flex gap-1 bg-slate-900 border border-white/10 rounded-2xl p-1.5">
@@ -1452,7 +1497,7 @@ export default function DemoPage() {
                   key={id}
                   type="button"
                   data-ocid={`demo.${id}.tab`}
-                  onClick={() => setActiveTab(id)}
+                  onClick={() => handleTabChange(id)}
                   className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-medium transition-all ${
                     activeTab === id
                       ? "bg-indigo-600 text-white shadow-lg shadow-indigo-900/40"
@@ -1545,7 +1590,7 @@ export default function DemoPage() {
                 <Button
                   data-ocid="demo.cta.book_demo.button"
                   variant="outline"
-                  className="border-white/20 text-white hover:bg-white/10 font-semibold px-8 py-3 text-base w-full sm:w-auto"
+                  className="bg-transparent border-white/20 text-white hover:bg-white/10 font-semibold px-8 py-3 text-base w-full sm:w-auto"
                 >
                   Book a Demo
                 </Button>

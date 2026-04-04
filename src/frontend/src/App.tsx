@@ -25,6 +25,7 @@ import LeadsPage from "./pages/LeadsPage";
 import ListingsPage from "./pages/ListingsPage";
 import LoginPage from "./pages/LoginPage";
 import MedSpaPage from "./pages/MedSpaPage";
+import OnboardingWizardPage from "./pages/OnboardingWizardPage";
 import PlumbingPage from "./pages/PlumbingPage";
 import PricingPage from "./pages/PricingPage";
 import ReportsPage from "./pages/ReportsPage";
@@ -74,6 +75,11 @@ const loginRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/login",
   component: LoginPage,
+});
+const onboardingRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/onboarding",
+  component: OnboardingWizardPage,
 });
 const demoLoginRoute = createRoute({
   getParentRoute: () => rootRoute,
@@ -271,6 +277,7 @@ const socialMediaRoute = createRoute({
 const routeTree = rootRoute.addChildren([
   indexRoute,
   loginRoute,
+  onboardingRoute,
   demoLoginRoute,
   freeAuditRoute,
   demoRoute,

@@ -23,7 +23,7 @@ import {
   Users,
   X,
 } from "lucide-react";
-import { type ReactNode, useEffect, useState } from "react";
+import { type ReactNode, useEffect, useRef, useState } from "react";
 import { useApp } from "../context/AppContext";
 import type { Notification } from "../context/AppContext";
 import AiBusinessManagerPanel from "./AiBusinessManagerPanel";
@@ -125,10 +125,15 @@ export default function AppLayout({ children }: { children: ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [demoBannerDismissed, setDemoBannerDismissed] = useState(false);
   const unreadCount = notifications.filter((n) => !n.read).length;
+  const mainScrollRef = useRef<HTMLElement>(null);
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: close sidebar on navigation
   useEffect(() => {
     setSidebarOpen(false);
+    // Scroll main content to top on every route change
+    if (mainScrollRef.current) {
+      mainScrollRef.current.scrollTop = 0;
+    }
   }, [pathname]);
 
   useEffect(() => {
@@ -445,7 +450,12 @@ export default function AppLayout({ children }: { children: ReactNode }) {
             </div>
           </header>
 
-          <main className="flex-1 overflow-y-auto p-4 md:p-6">{children}</main>
+          <main
+            ref={mainScrollRef}
+            className="flex-1 overflow-y-auto p-4 md:p-6"
+          >
+            {children}
+          </main>
         </div>
       </div>
 

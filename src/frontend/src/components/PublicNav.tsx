@@ -313,7 +313,7 @@ export default function PublicNav() {
                   <Link to="/login" onClick={closeMobile}>
                     <Button
                       variant="outline"
-                      className="w-full border-white/20 text-white hover:bg-white/10"
+                      className="w-full bg-transparent border-white/20 text-white hover:bg-white/10"
                     >
                       Login
                     </Button>

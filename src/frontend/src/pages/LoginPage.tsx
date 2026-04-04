@@ -8,7 +8,7 @@ import { useApp } from "../context/AppContext";
 
 const ADMIN_USERNAME = "Admin333";
 const ADMIN_EMAIL = "daree1933@gmail.com";
-const ADMIN_PASSWORD = "Admin333";
+const ADMIN_PASSWORD = "admin123";
 
 const CLIENT_CREDS: Record<string, { tenantId: string }> = {
   "plumbing@demo.com": { tenantId: "tenant-plumbing" },
@@ -28,7 +28,7 @@ export default function LoginPage() {
   const [clientPass, setClientPass] = useState("");
   const [clientError, setClientError] = useState("");
 
-  const { login } = useApp();
+  const { login, onboardingComplete, agencyOnboardingComplete } = useApp();
   const navigate = useNavigate();
 
   const handleAdminLogin = () => {
@@ -38,7 +38,11 @@ export default function LoginPage() {
       adminPass === ADMIN_PASSWORD
     ) {
       login("agency", "tenant-oceanside", true);
-      navigate({ to: "/dashboard" });
+      if (!agencyOnboardingComplete) {
+        navigate({ to: "/onboarding" });
+      } else {
+        navigate({ to: "/dashboard" });
+      }
     } else {
       setAdminError("Invalid admin credentials.");
     }
@@ -48,7 +52,11 @@ export default function LoginPage() {
     const match = CLIENT_CREDS[clientEmail.toLowerCase()];
     if (match && clientPass === "demo123") {
       login("client", match.tenantId, false);
-      navigate({ to: "/dashboard" });
+      if (!onboardingComplete[match.tenantId]) {
+        navigate({ to: "/onboarding" });
+      } else {
+        navigate({ to: "/dashboard" });
+      }
     } else {
       setClientError("Invalid email or password.");
     }
@@ -109,6 +117,7 @@ export default function LoginPage() {
                   }}
                   placeholder="Admin username"
                   className="bg-slate-700/60 border-slate-600 text-white placeholder:text-slate-500 focus:border-amber-500 h-9 text-sm"
+                  data-ocid="admin.username.input"
                 />
               </div>
               <div>
@@ -124,6 +133,7 @@ export default function LoginPage() {
                   }}
                   placeholder="Admin email"
                   className="bg-slate-700/60 border-slate-600 text-white placeholder:text-slate-500 focus:border-amber-500 h-9 text-sm"
+                  data-ocid="admin.email.input"
                 />
               </div>
               <div>
@@ -140,14 +150,21 @@ export default function LoginPage() {
                   placeholder="Password"
                   className="bg-slate-700/60 border-slate-600 text-white placeholder:text-slate-500 focus:border-amber-500 h-9 text-sm"
                   onKeyDown={(e) => e.key === "Enter" && handleAdminLogin()}
+                  data-ocid="admin.password.input"
                 />
               </div>
               {adminError && (
-                <p className="text-red-400 text-xs">{adminError}</p>
+                <p
+                  className="text-red-400 text-xs"
+                  data-ocid="admin.login.error_state"
+                >
+                  {adminError}
+                </p>
               )}
               <Button
                 onClick={handleAdminLogin}
                 className="w-full bg-amber-500 hover:bg-amber-400 text-slate-900 font-semibold h-9 text-sm"
+                data-ocid="admin.login.submit_button"
               >
                 Sign In as Admin
               </Button>
@@ -198,6 +215,7 @@ export default function LoginPage() {
                   }}
                   placeholder="your@email.com"
                   className="bg-slate-700/60 border-slate-600 text-white placeholder:text-slate-500 focus:border-indigo-500 h-9 text-sm"
+                  data-ocid="client.email.input"
                 />
               </div>
               <div>
@@ -214,14 +232,21 @@ export default function LoginPage() {
                   placeholder="Password"
                   className="bg-slate-700/60 border-slate-600 text-white placeholder:text-slate-500 focus:border-indigo-500 h-9 text-sm"
                   onKeyDown={(e) => e.key === "Enter" && handleClientLogin()}
+                  data-ocid="client.password.input"
                 />
               </div>
               {clientError && (
-                <p className="text-red-400 text-xs">{clientError}</p>
+                <p
+                  className="text-red-400 text-xs"
+                  data-ocid="client.login.error_state"
+                >
+                  {clientError}
+                </p>
               )}
               <Button
                 onClick={handleClientLogin}
                 className="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-semibold h-9 text-sm"
+                data-ocid="client.login.submit_button"
               >
                 Sign In
               </Button>
@@ -266,7 +291,10 @@ export default function LoginPage() {
             in 60 seconds.
           </p>
           <Link to="/demo-login">
-            <Button className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-semibold h-10 text-sm shadow-lg shadow-purple-700/30">
+            <Button
+              className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-semibold h-10 text-sm shadow-lg shadow-purple-700/30"
+              data-ocid="demo.launch.button"
+            >
               Launch My Demo →
             </Button>
           </Link>
