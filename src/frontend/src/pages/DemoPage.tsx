@@ -476,82 +476,424 @@ const NICHE_CONFIGS: Record<Niche, { business: string; greeting: string }> = {
   },
 };
 
-// Returns only the informational part of the response — no name/number asks.
-// Qualification is handled separately via qualificationStep.
-function getChatResponse(niche: Niche, message: string): string {
-  const m = message.toLowerCase();
-  if (niche === "Plumbing") {
-    if (/price|cost|how much/.test(m))
-      return "Most drain clears run $149–$299, and water heater installs start at $899. I can get you a free quote — just need a couple quick details.";
-    if (/emergency|burst|flooding|urgent/.test(m))
-      return "We handle plumbing emergencies 24/7. I'm alerting our on-call tech now. What's your address?";
-    if (/hours|open|available|schedule/.test(m))
-      return "We're available Monday–Saturday 7am–7pm, with 24/7 emergency service. Let me get you set up!";
-    if (/hello|hi|hey/.test(m))
-      return "Hi there! Welcome to North County Plumbing Pros. What can I help you with today — a repair, estimate, or emergency?";
-    return "Thanks for reaching out! Let me connect you with the right person to help.";
-  }
-  if (niche === "HVAC") {
-    if (/price|cost/.test(m))
-      return "AC tune-ups start at $89, and new system installs start at $2,400. I can get you a free no-obligation estimate.";
-    if (/emergency|not cooling|broken|out/.test(m))
-      return "Sorry to hear that — especially in this heat! Our same-day emergency HVAC service is available now. What's your address?";
-    if (/hello|hi/.test(m))
-      return "Hi! Welcome to your HVAC comfort experts. Heating, cooling, or maintenance — what can I help you with?";
-    return "I'd love to help! Can you tell me more about what's going on with your system?";
-  }
-  if (niche === "Restoration") {
-    if (/water|flood|leak|damage/.test(m))
-      return "Water damage is time-sensitive — every hour matters. Our emergency response team is on standby 24/7. What's your address so I can dispatch immediately?";
-    if (/price|cost|insurance/.test(m))
-      return "Most restoration work is covered by homeowner's insurance and we work directly with adjusters. I can arrange a free damage assessment.";
-    if (/hello|hi/.test(m))
-      return "Hi — you've reached Oceanside Clean & Restore. Are you dealing with an emergency or looking to schedule a service?";
-    return "We're here to help. Can you describe what happened so I can connect you with the right team?";
-  }
-  if (niche === "Carpet Cleaning") {
-    if (/price|cost|quote/.test(m))
-      return "Whole-home carpet cleaning starts at $149 for up to 3 rooms. We also offer stain treatment and deodorizer add-ons.";
-    if (/schedule|book|appointment/.test(m))
-      return "We have openings as early as tomorrow! Let me get your details to lock in a time.";
-    if (/hello|hi/.test(m))
-      return "Hi! Welcome to Fresh Step Carpet Care. Looking for a quote, scheduling, or have an urgent spill situation? I'm here to help!";
-    return "Happy to help! What's the situation — routine cleaning or something more urgent?";
-  }
-  if (niche === "Roofing") {
-    if (/price|cost|quote/.test(m))
-      return "Roof inspections are free. Repairs can range from $300–$1,500 and full replacements from $8,000–$20,000+ depending on size and material.";
-    if (/storm|leak|damage|emergency/.test(m))
-      return "Storm damage? We offer 24-hour emergency tarping and rapid assessment. I can get a crew out today. What's your address?";
-    if (/hello|hi/.test(m))
-      return "Hello! Welcome to Summit Roofing Solutions. Inspection, repair, or full replacement — what brings you in today?";
-    return "I can help with that! What type of roofing concern do you have — repair, inspection, or something else?";
-  }
-  if (niche === "Med Spa") {
-    if (/price|cost|how much/.test(m))
-      return "Pricing varies by treatment. Botox starts at $12/unit, facials from $89, and laser services from $199. We offer free consultations!";
-    if (/appointment|book|schedule/.test(m))
-      return "We'd love to see you! We have openings this week.";
-    if (/hello|hi/.test(m))
-      return "Welcome to Revive Med Spa! Looking to book a consultation, learn about treatments, or have a question? I'm happy to help.";
-    return "Great question! Our team of licensed professionals can walk you through all options. What area are you most interested in improving?";
-  }
-  return "Thanks for reaching out! How can I help you today?";
-}
-
-function hasPhoneNumber(text: string): boolean {
-  return /\d{3}[-.]?\d{3}[-.]?\d{4}|\(\d{3}\)\s?\d{3}[-.]?\d{4}/.test(text);
-}
+// ─────────────────────────────────────────────
+// Chat Widget Demo — Enhanced Lead Qualification
+// ─────────────────────────────────────────────
 
 type ChatMessage = { role: "user" | "bot"; text: string; id: number };
 
-type QualificationStep =
-  | "initial"
-  | "asked_service"
-  | "asked_name"
-  | "asked_phone"
-  | "captured"
-  | "done";
+type LeadData = {
+  name: string;
+  phone: string;
+  email: string;
+  address: string;
+  serviceType: string;
+  appointmentDay: string;
+  appointmentTime: string;
+};
+
+type FlowStep = {
+  key: string;
+  botMessage: string;
+  storeAs: keyof LeadData | null;
+  options?: string[];
+};
+
+const NICHE_FLOWS: Record<Niche, FlowStep[]> = {
+  Plumbing: [
+    {
+      key: "service_type",
+      botMessage: "What type of plumbing issue are you experiencing?",
+      storeAs: "serviceType",
+      options: [
+        "Drain clog",
+        "Leak / burst pipe",
+        "Water heater",
+        "Toilet issue",
+        "Other repair",
+      ],
+    },
+    {
+      key: "duration",
+      botMessage: "How long has this been going on?",
+      storeAs: null,
+      options: [
+        "Just started",
+        "A few hours",
+        "1–2 days",
+        "Longer than 2 days",
+      ],
+    },
+    {
+      key: "flooding",
+      botMessage: "Is there any water damage or active flooding right now?",
+      storeAs: null,
+      options: ["Yes, active flooding", "Minor drip/leak", "No flooding"],
+    },
+    {
+      key: "name",
+      botMessage: "Got it — let's get someone out to you. What's your name?",
+      storeAs: "name",
+    },
+    {
+      key: "address",
+      botMessage: "What's the service address where we'll be coming out?",
+      storeAs: "address",
+    },
+    {
+      key: "phone",
+      botMessage: "Best phone number to reach you?",
+      storeAs: "phone",
+    },
+    {
+      key: "email",
+      botMessage: "And your best email address?",
+      storeAs: "email",
+    },
+    {
+      key: "appt_day",
+      botMessage: "When is the best day for us to come out and take a look?",
+      storeAs: "appointmentDay",
+      options: ["Today", "Tomorrow", "This week", "Flexible — any day"],
+    },
+    {
+      key: "appt_time",
+      botMessage: "What time works best for you?",
+      storeAs: "appointmentTime",
+      options: ["Morning (8am–12pm)", "Afternoon (12–5pm)", "Evening (5–8pm)"],
+    },
+  ],
+  HVAC: [
+    {
+      key: "service_type",
+      botMessage:
+        "Are you having an issue with heating, cooling, or is this routine maintenance?",
+      storeAs: "serviceType",
+      options: [
+        "AC not cooling",
+        "Heater not working",
+        "Strange noise/smell",
+        "Routine tune-up",
+      ],
+    },
+    {
+      key: "urgency",
+      botMessage: "How urgent is this for you?",
+      storeAs: null,
+      options: [
+        "Emergency — need help today",
+        "Within a few days",
+        "Just scheduling ahead",
+      ],
+    },
+    {
+      key: "system_age",
+      botMessage: "Roughly how old is your current HVAC system?",
+      storeAs: null,
+      options: [
+        "Less than 5 years",
+        "5–10 years",
+        "10–15 years",
+        "Over 15 years / unsure",
+      ],
+    },
+    {
+      key: "name",
+      botMessage: "Great — let's get a technician scheduled. What's your name?",
+      storeAs: "name",
+    },
+    {
+      key: "address",
+      botMessage: "What's the service address?",
+      storeAs: "address",
+    },
+    {
+      key: "phone",
+      botMessage: "Best phone number to reach you?",
+      storeAs: "phone",
+    },
+    {
+      key: "email",
+      botMessage: "And your best email address for confirmation?",
+      storeAs: "email",
+    },
+    {
+      key: "appt_day",
+      botMessage: "What day works best for our technician to come out?",
+      storeAs: "appointmentDay",
+      options: ["Today", "Tomorrow", "This week", "Flexible"],
+    },
+    {
+      key: "appt_time",
+      botMessage: "What time window works for you?",
+      storeAs: "appointmentTime",
+      options: ["Morning (8am–12pm)", "Afternoon (12–5pm)", "Evening (5–8pm)"],
+    },
+  ],
+  Restoration: [
+    {
+      key: "service_type",
+      botMessage: "What type of damage are you dealing with?",
+      storeAs: "serviceType",
+      options: [
+        "Water / flood damage",
+        "Fire / smoke damage",
+        "Mold remediation",
+        "Storm damage",
+      ],
+    },
+    {
+      key: "timeline",
+      botMessage: "When did this happen?",
+      storeAs: null,
+      options: [
+        "Just now / ongoing",
+        "Within the last 24 hours",
+        "A few days ago",
+        "Over a week ago",
+      ],
+    },
+    {
+      key: "insurance",
+      botMessage: "Will you be filing an insurance claim?",
+      storeAs: null,
+      options: [
+        "Yes, filing a claim",
+        "Not sure yet",
+        "No, paying out of pocket",
+      ],
+    },
+    {
+      key: "name",
+      botMessage: "Understood — we're here to help. What's your name?",
+      storeAs: "name",
+    },
+    {
+      key: "address",
+      botMessage: "What's the property address that needs restoration?",
+      storeAs: "address",
+    },
+    {
+      key: "phone",
+      botMessage: "Best phone number to reach you at?",
+      storeAs: "phone",
+    },
+    {
+      key: "email",
+      botMessage: "And your best email address?",
+      storeAs: "email",
+    },
+    {
+      key: "appt_day",
+      botMessage: "When can we send our assessment team out?",
+      storeAs: "appointmentDay",
+      options: ["Today — urgent", "Tomorrow", "This week", "Flexible"],
+    },
+    {
+      key: "appt_time",
+      botMessage: "What time works best for the assessment?",
+      storeAs: "appointmentTime",
+      options: ["Morning (8am–12pm)", "Afternoon (12–5pm)", "Evening (5–8pm)"],
+    },
+  ],
+  "Carpet Cleaning": [
+    {
+      key: "service_type",
+      botMessage: "What type of carpet cleaning are you looking for?",
+      storeAs: "serviceType",
+      options: [
+        "Routine deep clean",
+        "Stain / spill emergency",
+        "Pet odor treatment",
+        "Post-move clean",
+      ],
+    },
+    {
+      key: "rooms",
+      botMessage: "Roughly how many rooms need cleaning?",
+      storeAs: null,
+      options: ["1–2 rooms", "3–4 rooms", "5+ rooms", "Whole home"],
+    },
+    {
+      key: "material",
+      botMessage: "What type of flooring or carpet?",
+      storeAs: null,
+      options: [
+        "Standard carpet",
+        "Berber / loop pile",
+        "Area rugs",
+        "Mixed / unsure",
+      ],
+    },
+    {
+      key: "name",
+      botMessage: "Awesome — let's get you booked. What's your name?",
+      storeAs: "name",
+    },
+    {
+      key: "address",
+      botMessage: "What's the address where you need service?",
+      storeAs: "address",
+    },
+    {
+      key: "phone",
+      botMessage: "Best phone number to reach you?",
+      storeAs: "phone",
+    },
+    {
+      key: "email",
+      botMessage: "And your email for your booking confirmation?",
+      storeAs: "email",
+    },
+    {
+      key: "appt_day",
+      botMessage: "What day works best for our crew to come out?",
+      storeAs: "appointmentDay",
+      options: ["Today", "Tomorrow", "This week", "Flexible"],
+    },
+    {
+      key: "appt_time",
+      botMessage: "What time window works best?",
+      storeAs: "appointmentTime",
+      options: ["Morning (8am–12pm)", "Afternoon (12–5pm)", "Evening (5–8pm)"],
+    },
+  ],
+  Roofing: [
+    {
+      key: "service_type",
+      botMessage: "What's the main reason you're reaching out about your roof?",
+      storeAs: "serviceType",
+      options: [
+        "Repair / fix a leak",
+        "Free inspection",
+        "Full replacement quote",
+        "Storm damage",
+      ],
+    },
+    {
+      key: "leaking",
+      botMessage: "Is there any active leaking inside the home right now?",
+      storeAs: null,
+      options: [
+        "Yes, actively leaking",
+        "Intermittent / after rain",
+        "No leak, just damage",
+      ],
+    },
+    {
+      key: "roof_age",
+      botMessage: "Do you know roughly how old your roof is?",
+      storeAs: null,
+      options: [
+        "Less than 10 years",
+        "10–20 years",
+        "Over 20 years",
+        "Not sure",
+      ],
+    },
+    {
+      key: "name",
+      botMessage: "We can get someone out to take a look. What's your name?",
+      storeAs: "name",
+    },
+    {
+      key: "address",
+      botMessage: "What's the property address?",
+      storeAs: "address",
+    },
+    {
+      key: "phone",
+      botMessage: "Best phone number to reach you?",
+      storeAs: "phone",
+    },
+    {
+      key: "email",
+      botMessage: "And your best email address?",
+      storeAs: "email",
+    },
+    {
+      key: "appt_day",
+      botMessage: "When would you like us to come out for the inspection?",
+      storeAs: "appointmentDay",
+      options: ["Today", "Tomorrow", "This week", "Flexible"],
+    },
+    {
+      key: "appt_time",
+      botMessage: "What time works best for you?",
+      storeAs: "appointmentTime",
+      options: ["Morning (8am–12pm)", "Afternoon (12–5pm)", "Evening (5–8pm)"],
+    },
+  ],
+  "Med Spa": [
+    {
+      key: "service_type",
+      botMessage: "What type of treatment are you most interested in?",
+      storeAs: "serviceType",
+      options: [
+        "Botox / fillers",
+        "Laser treatments",
+        "Facial / skincare",
+        "Body contouring",
+        "Consultation",
+      ],
+    },
+    {
+      key: "prior_treatment",
+      botMessage: "Have you had this type of treatment before?",
+      storeAs: null,
+      options: [
+        "Yes, I'm a returning patient",
+        "Yes, at a different spa",
+        "No, this is my first time",
+      ],
+    },
+    {
+      key: "goal",
+      botMessage: "What's your main goal for this visit?",
+      storeAs: null,
+      options: [
+        "Anti-aging / wrinkle reduction",
+        "Skin rejuvenation",
+        "Body sculpting",
+        "Just exploring options",
+      ],
+    },
+    {
+      key: "name",
+      botMessage:
+        "Wonderful! Let's get you booked for a consultation. What's your name?",
+      storeAs: "name",
+    },
+    {
+      key: "address",
+      botMessage:
+        "What city are you located in? (So we can confirm the nearest location)",
+      storeAs: "address",
+    },
+    {
+      key: "phone",
+      botMessage: "Best phone number to reach you?",
+      storeAs: "phone",
+    },
+    {
+      key: "email",
+      botMessage: "And your best email for your appointment confirmation?",
+      storeAs: "email",
+    },
+    {
+      key: "appt_day",
+      botMessage: "What day works best for your consultation?",
+      storeAs: "appointmentDay",
+      options: ["This week", "Next week", "Within the month", "Flexible"],
+    },
+    {
+      key: "appt_time",
+      botMessage: "What time of day works best for you?",
+      storeAs: "appointmentTime",
+      options: ["Morning (9am–12pm)", "Afternoon (12–5pm)", "Evening (5–7pm)"],
+    },
+  ],
+};
 
 function ChatWidgetDemo() {
   const [niche, setNiche] = useState<Niche>("Plumbing");
@@ -559,13 +901,18 @@ function ChatWidgetDemo() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
-  const [leadCapture, setLeadCapture] = useState<{
-    name: string;
-    phone: string;
-  } | null>(null);
-  const qualificationStep = useRef<QualificationStep>("initial");
-  const collectedName = useRef("");
-  const phoneRetries = useRef(0);
+  const [leadCaptured, setLeadCaptured] = useState<LeadData | null>(null);
+  const [currentOptions, setCurrentOptions] = useState<string[]>([]);
+  const stepIndex = useRef(0);
+  const leadData = useRef<LeadData>({
+    name: "",
+    phone: "",
+    email: "",
+    address: "",
+    serviceType: "",
+    appointmentDay: "",
+    appointmentTime: "",
+  });
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -575,10 +922,18 @@ function ChatWidgetDemo() {
     setMessages([]);
     setInput("");
     setIsTyping(false);
-    setLeadCapture(null);
-    qualificationStep.current = "initial";
-    collectedName.current = "";
-    phoneRetries.current = 0;
+    setLeadCaptured(null);
+    setCurrentOptions([]);
+    stepIndex.current = 0;
+    leadData.current = {
+      name: "",
+      phone: "",
+      email: "",
+      address: "",
+      serviceType: "",
+      appointmentDay: "",
+      appointmentTime: "",
+    };
     setNiche(n);
   };
 
@@ -586,105 +941,66 @@ function ChatWidgetDemo() {
     setOpen(true);
     if (messages.length === 0) {
       setTimeout(() => {
-        setMessages([
-          { role: "bot", text: NICHE_CONFIGS[niche].greeting, id: Date.now() },
-        ]);
+        const greeting = NICHE_CONFIGS[niche].greeting;
+        const firstStep = NICHE_FLOWS[niche][0];
+        setMessages([{ role: "bot", text: greeting, id: Date.now() }]);
+        setTimeout(() => {
+          setMessages((prev) => [
+            ...prev,
+            { role: "bot", text: firstStep.botMessage, id: Date.now() + 1 },
+          ]);
+          setCurrentOptions(firstStep.options ?? []);
+        }, 800);
       }, 500);
     }
   };
 
-  const sendMessage = () => {
-    if (!input.trim() || isTyping) return;
-    const userMsg: ChatMessage = {
-      role: "user",
-      text: input.trim(),
-      id: Date.now(),
-    };
+  const sendMessage = (overrideText?: string) => {
+    const text = (overrideText ?? input).trim();
+    if (!text || isTyping) return;
+
+    const userMsg: ChatMessage = { role: "user", text, id: Date.now() };
     setMessages((prev) => [...prev, userMsg]);
-    const userText = input.trim();
     setInput("");
+    setCurrentOptions([]);
     setIsTyping(true);
 
-    const delay = 900 + Math.random() * 400;
+    const flow = NICHE_FLOWS[niche];
+    const currentStepIdx = stepIndex.current;
+    const currentStep = flow[currentStepIdx];
+
+    // Store the answer
+    if (currentStep?.storeAs) {
+      leadData.current[currentStep.storeAs] = text;
+    }
+
+    const nextStepIdx = currentStepIdx + 1;
+    stepIndex.current = nextStepIdx;
+
+    const delay = 800 + Math.random() * 300;
     setTimeout(() => {
       setIsTyping(false);
-      const step = qualificationStep.current;
 
-      if (step === "initial") {
-        const infoResponse = getChatResponse(niche, userText);
+      if (nextStepIdx < flow.length) {
+        // More steps remaining
+        const nextStep = flow[nextStepIdx];
         setMessages((prev) => [
           ...prev,
-          { role: "bot", text: infoResponse, id: Date.now() },
+          { role: "bot", text: nextStep.botMessage, id: Date.now() },
         ]);
-        qualificationStep.current = "asked_name";
-        setTimeout(() => {
-          setMessages((prev) => [
-            ...prev,
-            {
-              role: "bot",
-              text: "To get you connected quickly — what's your name?",
-              id: Date.now(),
-            },
-          ]);
-        }, 600);
-      } else if (step === "asked_name") {
-        const name = userText.split(" ")[0] || userText;
-        collectedName.current = name;
-        setMessages((prev) => [
-          ...prev,
-          {
-            role: "bot",
-            text: `Nice to meet you, ${name}! What's the best phone number to reach you?`,
-            id: Date.now(),
-          },
-        ]);
-        qualificationStep.current = "asked_phone";
-      } else if (step === "asked_phone") {
-        if (hasPhoneNumber(userText)) {
-          const phone =
-            userText.match(
-              /(\d{3}[-.]?\d{3}[-.]?\d{4}|\(\d{3}\)\s?\d{3}[-.]?\d{4})/,
-            )?.[0] ?? userText;
-          const name = collectedName.current || "there";
-          setLeadCapture({ name, phone });
-          setMessages((prev) => [
-            ...prev,
-            {
-              role: "bot",
-              text: `Perfect, ${name}! I've notified our team and someone will reach out shortly. Is there anything else I can help with?`,
-              id: Date.now(),
-            },
-          ]);
-          qualificationStep.current = "captured";
-        } else {
-          if (phoneRetries.current < 2) {
-            phoneRetries.current += 1;
-            setMessages((prev) => [
-              ...prev,
-              {
-                role: "bot",
-                text: "I didn't catch a number — could you share your phone number so we can follow up?",
-                id: Date.now(),
-              },
-            ]);
-          } else {
-            setMessages((prev) => [
-              ...prev,
-              {
-                role: "bot",
-                text: "No worries! Our team will follow up via the info you've shared. Is there anything else I can help with?",
-                id: Date.now(),
-              },
-            ]);
-            qualificationStep.current = "done";
-          }
-        }
+        setCurrentOptions(nextStep.options ?? []);
       } else {
-        const helpfulResponse = getChatResponse(niche, userText);
+        // All steps complete — show confirmation
+        const ld = leadData.current;
+        const confirmMsg = `Perfect, ${ld.name}! 🎉 We have all your information and our team will be contacting you immediately to confirm your ${ld.appointmentDay} ${ld.appointmentTime} appointment. We\'re looking forward to helping you!`;
         setMessages((prev) => [
           ...prev,
-          { role: "bot", text: helpfulResponse, id: Date.now() },
+          { role: "bot", text: confirmMsg, id: Date.now() },
         ]);
+        // Trigger the notification panel after a short delay
+        setTimeout(() => {
+          setLeadCaptured({ ...leadData.current });
+        }, 600);
       }
     }, delay);
   };
@@ -694,6 +1010,15 @@ function ChatWidgetDemo() {
     if (scrollRef.current)
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
   }, [messages, isTyping]);
+
+  const nicheEmailDomain: Record<Niche, string> = {
+    Plumbing: "plumbing",
+    HVAC: "hvac",
+    Restoration: "restoration",
+    "Carpet Cleaning": "carpetcleaning",
+    Roofing: "roofing",
+    "Med Spa": "medspa",
+  };
 
   return (
     <div className="grid lg:grid-cols-5 gap-6 items-start">
@@ -820,6 +1145,22 @@ function ChatWidgetDemo() {
                     )}
                   </div>
 
+                  {/* Quick-reply chips */}
+                  {currentOptions.length > 0 && (
+                    <div className="px-2 pb-1 pt-1 bg-white border-t border-slate-100 flex flex-wrap gap-1">
+                      {currentOptions.map((opt) => (
+                        <button
+                          key={opt}
+                          type="button"
+                          onClick={() => sendMessage(opt)}
+                          className="bg-indigo-50 border border-indigo-200 text-indigo-700 text-xs px-3 py-1 rounded-full hover:bg-indigo-100 transition-colors"
+                        >
+                          {opt}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+
                   {/* Input */}
                   <div className="p-2 border-t border-slate-200 bg-white flex gap-2">
                     <input
@@ -835,7 +1176,7 @@ function ChatWidgetDemo() {
                     <button
                       type="button"
                       data-ocid="demo.chat.send.button"
-                      onClick={sendMessage}
+                      onClick={() => sendMessage()}
                       className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center text-white hover:bg-indigo-500 transition-colors flex-shrink-0"
                     >
                       <Send size={12} />
@@ -900,67 +1241,6 @@ function ChatWidgetDemo() {
           </Select>
         </div>
 
-        <div className="bg-slate-800 rounded-xl p-4 border border-white/5 space-y-3">
-          <p className="text-xs font-semibold text-slate-200 uppercase tracking-widest">
-            What your visitors experience
-          </p>
-          <ul className="space-y-2">
-            {[
-              "Niche-aware AI answers instantly",
-              "Captures leads before they leave",
-              "Works 24/7 without staff",
-              "Syncs directly to your CRM",
-            ].map((item) => (
-              <li key={item} className="flex items-start gap-2">
-                <CheckCircle
-                  size={14}
-                  className="text-indigo-400 mt-0.5 flex-shrink-0"
-                />
-                <span className="text-sm text-slate-200">{item}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        {/* Lead notification */}
-        <AnimatePresence>
-          {leadCapture && (
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              className="bg-slate-800 border border-green-500/30 rounded-xl p-4"
-              data-ocid="demo.chat.lead_card"
-            >
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-xs font-semibold text-green-400 uppercase tracking-wide">
-                  Lead Captured!
-                </span>
-                <Badge className="bg-green-500/20 text-green-400 border-green-500/30 text-xs">
-                  New
-                </Badge>
-              </div>
-              <div className="space-y-1 text-sm">
-                <div className="flex gap-2">
-                  <User size={12} className="text-slate-200 mt-0.5" />
-                  <span className="text-white">{leadCapture.name}</span>
-                </div>
-                <div className="flex gap-2">
-                  <Phone size={12} className="text-slate-200 mt-0.5" />
-                  <span className="text-slate-200">{leadCapture.phone}</span>
-                </div>
-                <div className="flex gap-2">
-                  <Zap size={12} className="text-slate-200 mt-0.5" />
-                  <span className="text-slate-200">Niche: {niche}</span>
-                </div>
-                <div className="flex gap-2">
-                  <MessageSquare size={12} className="text-slate-200 mt-0.5" />
-                  <span className="text-slate-200">Source: Chat Widget</span>
-                </div>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
         <button
           type="button"
           data-ocid="demo.chat.open_widget.button"
@@ -969,6 +1249,162 @@ function ChatWidgetDemo() {
         >
           {open ? "Widget is open ↙" : "Click the chat bubble to try it →"}
         </button>
+
+        {/* Business owner notifications — shown after lead captured */}
+        <AnimatePresence>
+          {leadCaptured && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.35 }}
+              className="space-y-4"
+              data-ocid="demo.chat.lead_card"
+            >
+              {/* Green badge */}
+              <div className="flex items-center gap-2">
+                <span className="inline-flex items-center gap-1.5 bg-green-500/15 text-green-400 border border-green-500/30 text-xs font-semibold px-3 py-1.5 rounded-full">
+                  ✅ Sent in real-time — both notifications delivered in under 3
+                  seconds
+                </span>
+              </div>
+
+              <p className="text-xs font-semibold text-slate-200 uppercase tracking-widest">
+                What the Business Owner Receives Instantly
+              </p>
+
+              {/* SMS Notification Card */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.15, duration: 0.4 }}
+                className="bg-slate-900 rounded-2xl p-4 border border-slate-700"
+              >
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-xs font-semibold text-slate-200 flex items-center gap-1.5">
+                    📱 Text Message
+                  </span>
+                  <span className="text-xs text-slate-400">
+                    To: Business Owner
+                  </span>
+                </div>
+                {/* iMessage-style bubble */}
+                <div className="flex justify-end">
+                  <div className="bg-green-500 text-white text-xs rounded-2xl rounded-br-sm px-4 py-3 max-w-[90%] leading-relaxed whitespace-pre-line">
+                    {`🔔 NEW LEAD — ${leadCaptured.serviceType}
+Name: ${leadCaptured.name}
+Phone: ${leadCaptured.phone}
+Address: ${leadCaptured.address}
+Appt: ${leadCaptured.appointmentDay} ${leadCaptured.appointmentTime}
+Sent via Booked, Ranked & Fundable`}
+                  </div>
+                </div>
+                <div className="flex justify-end mt-1">
+                  <span className="text-xs text-slate-500">Delivered ✓✓</span>
+                </div>
+              </motion.div>
+
+              {/* Email Notification Card */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3, duration: 0.4 }}
+                className="bg-white rounded-2xl p-4 border border-slate-200 shadow-sm"
+              >
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="text-sm">📧</span>
+                  <span className="text-xs font-semibold text-slate-800">
+                    Email Notification
+                  </span>
+                  <span className="ml-auto text-xs text-green-600 font-medium">
+                    ● Sent
+                  </span>
+                </div>
+                <div className="space-y-1 text-xs text-slate-600 mb-3 pb-3 border-b border-slate-100">
+                  <div>
+                    <span className="font-medium text-slate-700">From:</span>{" "}
+                    noreply@bookedrankedfundable.com
+                  </div>
+                  <div>
+                    <span className="font-medium text-slate-700">To:</span>{" "}
+                    businessowner@{nicheEmailDomain[niche]}.com
+                  </div>
+                  <div>
+                    <span className="font-medium text-slate-700">Subject:</span>{" "}
+                    <span className="text-slate-800 font-medium">
+                      New Lead: {leadCaptured.serviceType} — {leadCaptured.name}
+                    </span>
+                  </div>
+                </div>
+                <div className="text-xs text-slate-700 leading-relaxed space-y-2">
+                  <p>
+                    A new lead has been qualified through your AI chat widget.
+                  </p>
+                  <div className="bg-slate-50 rounded-lg p-3 space-y-1 text-slate-700">
+                    <div>
+                      <span className="font-semibold">Customer:</span>{" "}
+                      {leadCaptured.name}
+                    </div>
+                    <div>
+                      <span className="font-semibold">Service Requested:</span>{" "}
+                      {leadCaptured.serviceType}
+                    </div>
+                    <div>
+                      <span className="font-semibold">Address:</span>{" "}
+                      {leadCaptured.address}
+                    </div>
+                    <div>
+                      <span className="font-semibold">Phone:</span>{" "}
+                      {leadCaptured.phone}
+                    </div>
+                    <div>
+                      <span className="font-semibold">Email:</span>{" "}
+                      {leadCaptured.email}
+                    </div>
+                    <div>
+                      <span className="font-semibold">
+                        Preferred Appointment:
+                      </span>{" "}
+                      {leadCaptured.appointmentDay},{" "}
+                      {leadCaptured.appointmentTime}
+                    </div>
+                  </div>
+                  <p className="text-slate-600">
+                    This lead has been added to your CRM dashboard. Reply to
+                    this email or log in to follow up.
+                  </p>
+                  <p className="text-slate-500 text-xs pt-1 border-t border-slate-100">
+                    — Booked, Ranked &amp; Fundable
+                  </p>
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Feature list — shown when no lead captured yet */}
+        {!leadCaptured && (
+          <div className="bg-slate-800 rounded-xl p-4 border border-white/5 space-y-3">
+            <p className="text-xs font-semibold text-slate-200 uppercase tracking-widest">
+              What your visitors experience
+            </p>
+            <ul className="space-y-2">
+              {[
+                "Niche-aware qualifying questions",
+                "Captures name, phone, email & address",
+                "Schedules appointments automatically",
+                "Instant SMS + email to business owner",
+              ].map((item) => (
+                <li key={item} className="flex items-start gap-2">
+                  <CheckCircle
+                    size={14}
+                    className="text-indigo-400 mt-0.5 flex-shrink-0"
+                  />
+                  <span className="text-sm text-slate-200">{item}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
       </div>
     </div>
   );

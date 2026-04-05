@@ -1,50 +1,36 @@
-# Booked Ranked Fundable — Campaigns Module (Phase 2 & 3)
+# Booked Ranked Fundable
 
 ## Current State
-- App has Admin, Client, and Demo login paths
-- AdminPage has tenant management, score overrides, module access control
-- AppContext manages tenants, socialMediaEnabled, and demo mode
-- No Campaigns page or route exists yet
-- AppLayout sidebar has no Campaigns link
+The `/demo` page has a ChatWidgetDemo component with a basic 3-step qualification flow: initial response → ask name → ask phone → captured. It collects only name and phone. There is no niche-specific branching, no address or email collection, no appointment scheduling, and no simulated business owner notification panel.
 
 ## Requested Changes (Diff)
 
 ### Add
-- `CampaignsPage.tsx` — full campaigns module with two tabs: Admin Prospect Outreach (Phase 2) and Client Niche Campaigns (Phase 3)
-- Admin Prospect Outreach tab:
-  - Prospect list manager: manual add form (business name, owner name, email, phone, niche, city) + CSV upload with column mapping preview
-  - Unified prospect list with filters by niche and campaign stage
-  - Two prebuilt outreach sequences: Plumbing (5 emails + 1 SMS) and Med Spa (5 emails + 1 SMS) — fully written copy with personalization tokens
-  - Sequence step viewer: preview every step, edit copy, set delays
-  - Sender identity config: default agency email, per-campaign sender name/reply-to override
-  - Per-prospect tracking: opened, clicked, replied, current sequence step
-  - Convert to Client button on each prospect record
-  - Performance metrics: sent, opens, clicks, replies, conversions
-- Client Niche Campaigns tab:
-  - Auto-matched campaign packs (Plumbing: 3 campaigns, Med Spa: 3 campaigns)
-  - Plumbing pack: Missed Call Rescue, Estimate Recovery, Completed Job Review + Referral
-  - Med Spa pack: Consultation Booking Nurture, No-Show Recovery, Post-Visit Rebook + Membership Upsell
-  - Pre-activated by default, with toggle on/off per campaign
-  - Admin toggle override visible in AdminPage
-  - Campaign dashboard: contacts in sequence, current step, metrics (opens, clicks, bookings, conversions)
-  - Journey viewer: card-based step sequence with delays and exit rules
-- `/campaigns` route in App.tsx (protected, accessible to both admin and client)
-- Campaigns link in AppLayout sidebar
-- `campaignToggles` state in AppContext (per-tenant, per-campaign enabled/disabled)
-- Campaign data: sequences, steps, copy all stored as frontend data constants
+- Full niche-specific qualifying question sequences for all 6 niches (Plumbing, HVAC, Restoration, Carpet Cleaning, Roofing, Med Spa)
+- Each niche flow covers: problem description → niche-specific follow-ups (2-3 questions) → contact capture (name, address, phone, email) → appointment scheduling (day + time preference) → confirmation message
+- After lead captured: show a simulated Business Owner Notification panel on the right side of the demo (same screen, not a separate page) with two sections:
+  1. Mock SMS notification — styled as a phone text message bubble, showing the lead summary (name, phone, service type, address, appointment time)
+  2. Mock email notification — styled as an email client card showing To/Subject/Body with the same lead details
+- Both notifications animate in (slide up / fade) after the chat confirmation message is sent
+- The panel should make it clear these go to the BUSINESS OWNER watching the demo
+- Label the panel: "What the Business Owner Receives Instantly"
 
 ### Modify
-- `AppContext.tsx` — add `campaignToggles` state and `setCampaignToggle` function
-- `App.tsx` — add `/campaigns` route
-- `AppLayout.tsx` — add Campaigns to sidebar nav
-- `AdminPage.tsx` — add per-tenant campaign toggle controls in Module Access Control table
+- Replace the existing `QualificationStep` type and `sendMessage` state machine with a richer multi-step flow engine
+- `leadCapture` state expands to store: name, phone, email, address, serviceType, appointmentDay, appointmentTime
+- The right-panel "Lead Captured" section is replaced by the new notification panel once lead is complete
+- All niches should have a confirmation message: "Thank you [name]! We have all your information and will be contacting you immediately. Our team will reach out to confirm your [day] appointment."
 
 ### Remove
-- Nothing removed
+- The old minimal 3-step flow (initial → asked_name → asked_phone → captured)
+- The simple green "Lead Captured" card (replaced by the notification panel)
 
 ## Implementation Plan
-1. Add campaign data constants (sequences, steps, full copy) in `src/frontend/src/data/campaignData.ts`
-2. Add `campaignToggles` to AppContext
-3. Create `CampaignsPage.tsx` with two-tab layout (Admin Outreach / Client Campaigns), full prospect list manager, sequence viewers, and client campaign dashboards
-4. Wire up route in App.tsx and sidebar link in AppLayout.tsx
-5. Add campaign toggles to AdminPage Module Access Control
+1. Define a `QualifyFlow` type that is an ordered array of step objects: `{ key: string, botMessage: string, inputHint: string, storeAs: keyof LeadData | null, options?: string[] }`
+2. Build niche flow arrays for all 6 niches — each with 2-3 niche-specific questions, then name → address → phone → email → appointment day → appointment time
+3. Rewrite `sendMessage` to walk through the current niche's flow array using a step index ref
+4. After the last step, fire the confirmation message and set `leadCaptured = true`
+5. When `leadCaptured` is true, animate in the Business Owner Notification panel in the right column
+6. SMS panel: phone mockup showing a text thread with lead summary
+7. Email panel: email card mockup with To/From/Subject/Body
+8. Both panels should look like real device/app UI (dark phone for SMS, white email card for email)
