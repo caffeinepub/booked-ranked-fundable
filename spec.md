@@ -1,36 +1,70 @@
-# Booked Ranked Fundable
+# Booked Ranked Fundable — Agent Services Layer
 
 ## Current State
-The `/demo` page has a ChatWidgetDemo component with a basic 3-step qualification flow: initial response → ask name → ask phone → captured. It collects only name and phone. There is no niche-specific branching, no address or email collection, no appointment scheduling, and no simulated business owner notification panel.
+
+The app is a fully built multi-tenant SaaS platform (Version 24) with:
+- React + TypeScript + Tailwind frontend, Motoko ICP backend
+- AppContext managing auth, tenants, notifications, campaigns, onboarding state
+- AppLayout with sidebar navigation (NAV_GROUPS), admin panel at /admin
+- Pages: Dashboard, Leads, Reviews, Audit, Fundability, Reports, Analytics, Settings, Admin, ChatWidget, VoiceAgent, ReviewRequests, Listings, SocialMedia, Campaigns
+- Demo mode, three login paths, white-label agency support
+- demoData.ts has TENANTS, LEADS, REVIEWS, AUDIT_SCORES, FUNDABILITY_SCORES
 
 ## Requested Changes (Diff)
 
 ### Add
-- Full niche-specific qualifying question sequences for all 6 niches (Plumbing, HVAC, Restoration, Carpet Cleaning, Roofing, Med Spa)
-- Each niche flow covers: problem description → niche-specific follow-ups (2-3 questions) → contact capture (name, address, phone, email) → appointment scheduling (day + time preference) → confirmation message
-- After lead captured: show a simulated Business Owner Notification panel on the right side of the demo (same screen, not a separate page) with two sections:
-  1. Mock SMS notification — styled as a phone text message bubble, showing the lead summary (name, phone, service type, address, appointment time)
-  2. Mock email notification — styled as an email client card showing To/Subject/Body with the same lead details
-- Both notifications animate in (slide up / fade) after the chat confirmation message is sent
-- The panel should make it clear these go to the BUSINESS OWNER watching the demo
-- Label the panel: "What the Business Owner Receives Instantly"
+- `src/frontend/src/data/agentData.ts` — all agent data models: agent products, subscriptions, tasks, deliverables, service requests, performance snapshots
+- `src/frontend/src/pages/AgentServicesPage.tsx` — client-facing "My Agents" page with tabs: Store, Active, Requests, Deliverables, Performance
+- `src/frontend/src/pages/AdminAgentServicesPage.tsx` — admin-facing Agent Services page with tabs: Overview, Catalog, Subscriptions, Fulfillment Queue, Deliverables, Performance, Settings
+- AppContext extensions: agentSubscriptions state, agentRequests state, agentTasks state, helpers
+- Route `/agent-services` in App.tsx (protected, all authenticated users)
+- Route `/admin-agents` in App.tsx (protected, admin only)
+- Nav group entry "Agent Services" in AppLayout for non-admin users
+- Admin nav entry "Agent Services" in AppLayout for admin users
 
 ### Modify
-- Replace the existing `QualificationStep` type and `sendMessage` state machine with a richer multi-step flow engine
-- `leadCapture` state expands to store: name, phone, email, address, serviceType, appointmentDay, appointmentTime
-- The right-panel "Lead Captured" section is replaced by the new notification panel once lead is complete
-- All niches should have a confirmation message: "Thank you [name]! We have all your information and will be contacting you immediately. Our team will reach out to confirm your [day] appointment."
+- `AppContext.tsx` — add agent-related state: agentSubscriptions (per tenant), agentRequests, agentTasks, agentPricing overrides, helpers to activate/deactivate/request
+- `AppLayout.tsx` — add "Agent Services" to client nav group; add "Agent Services" to admin nav section
+- `App.tsx` — add two new routes
 
 ### Remove
-- The old minimal 3-step flow (initial → asked_name → asked_phone → captured)
-- The simple green "Lead Captured" card (replaced by the notification panel)
+- Nothing removed
 
 ## Implementation Plan
-1. Define a `QualifyFlow` type that is an ordered array of step objects: `{ key: string, botMessage: string, inputHint: string, storeAs: keyof LeadData | null, options?: string[] }`
-2. Build niche flow arrays for all 6 niches — each with 2-3 niche-specific questions, then name → address → phone → email → appointment day → appointment time
-3. Rewrite `sendMessage` to walk through the current niche's flow array using a step index ref
-4. After the last step, fire the confirmation message and set `leadCaptured = true`
-5. When `leadCaptured` is true, animate in the Business Owner Notification panel in the right column
-6. SMS panel: phone mockup showing a text thread with lead summary
-7. Email panel: email card mockup with To/From/Subject/Body
-8. Both panels should look like real device/app UI (dark phone for SMS, white email card for email)
+
+1. Create `agentData.ts` with:
+   - AGENT_PRODUCTS (5 products: SEO&GEO, Paid Ads, Website, Bundle, Human Oversight)
+   - AGENT_FEATURES per product
+   - DEMO_AGENT_SUBSCRIPTIONS per tenant
+   - DEMO_AGENT_TASKS (fulfillment queue items)
+   - DEMO_AGENT_DELIVERABLES per tenant
+   - DEMO_AGENT_REQUESTS (service requests from clients)
+   - DEMO_AGENT_PERFORMANCE snapshots
+   - TypeScript interfaces for all entities
+
+2. Extend AppContext with:
+   - agentSubscriptions: Record<tenantId, AgentSubscription[]>
+   - agentRequests: AgentServiceRequest[]
+   - agentTasks: AgentTask[]
+   - agentPricingOverrides: Record<productId, number>
+   - activateAgent(tenantId, productId) / deactivateAgent(tenantId, subscriptionId)
+   - submitAgentRequest(req) / updateTaskStatus(taskId, status)
+   - setAgentPriceOverride(productId, price)
+
+3. Build AdminAgentServicesPage with tabs:
+   - Overview: stats cards (MRR, active subs, pending tasks), subscriptions by type chart, upsell table
+   - Catalog: editable product cards, price editor, feature lists, enable/disable toggles
+   - Client Subscriptions: table of all clients + their active agents, add/remove/pause controls
+   - Fulfillment Queue: filterable task list with status, assignee, due date, notes
+   - Deliverables: per-client deliverable history with monthly breakdown
+   - Performance: per-client impact metrics, SEO scores, lead changes
+   - Settings: pricing editor, visibility rules, niche enablement, human oversight config
+
+4. Build AgentServicesPage (client) with tabs:
+   - Store: premium agent cards showing price, features, active state, activate/request buttons
+   - Active Agents: subscribed services with current work, next deliverables, recent completions
+   - Request Queue: form to submit requests routing to admin fulfillment queue
+   - Deliverables: completed work history
+   - Performance Snapshot: client-friendly metrics and next best actions
+
+5. Wire routing and navigation in App.tsx and AppLayout.tsx

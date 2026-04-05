@@ -8,7 +8,9 @@ import {
 import AppLayout from "./components/AppLayout";
 import { Toaster } from "./components/ui/sonner";
 import { AppProvider, useApp } from "./context/AppContext";
+import AdminAgentServicesPage from "./pages/AdminAgentServicesPage";
 import AdminPage from "./pages/AdminPage";
+import AgentServicesPage from "./pages/AgentServicesPage";
 import AnalyticsPage from "./pages/AnalyticsPage";
 import AuditPage from "./pages/AuditPage";
 import CampaignsPage from "./pages/CampaignsPage";
@@ -218,6 +220,24 @@ const adminRoute = createRoute({
     </ProtectedRoute>
   ),
 });
+const adminAgentsRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/admin-agents",
+  component: () => (
+    <ProtectedRoute adminOnly>
+      <AdminAgentServicesPage />
+    </ProtectedRoute>
+  ),
+});
+const agentServicesRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/agent-services",
+  component: () => (
+    <ProtectedRoute>
+      <AgentServicesPage />
+    </ProtectedRoute>
+  ),
+});
 const chatWidgetRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/chat-widget",
@@ -298,6 +318,8 @@ const routeTree = rootRoute.addChildren([
   analyticsRoute,
   settingsRoute,
   adminRoute,
+  adminAgentsRoute,
+  agentServicesRoute,
   chatWidgetRoute,
   voiceAgentRoute,
   reviewRequestsRoute,

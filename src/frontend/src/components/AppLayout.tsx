@@ -3,6 +3,7 @@ import {
   Activity,
   BarChart2,
   Bell,
+  Bot,
   ChevronDown,
   LayoutDashboard,
   LogOut,
@@ -55,6 +56,10 @@ const NAV_GROUPS = [
     ],
   },
   {
+    label: "AGENT SERVICES",
+    items: [{ label: "My Agents", path: "/agent-services", icon: Bot }],
+  },
+  {
     label: "LISTINGS & SOCIAL",
     items: [
       { label: "Listings", path: "/listings", icon: MapPin },
@@ -84,6 +89,8 @@ const PAGE_TITLES: Record<string, string> = {
   "/analytics": "Analytics",
   "/settings": "Settings",
   "/admin": "Admin Panel",
+  "/admin-agents": "Agent Services — Admin",
+  "/agent-services": "Agent Services",
   "/chat-widget": "Chat Widget",
   "/voice-agent": "Voice Agent",
   "/review-requests": "Review Requests",
@@ -130,7 +137,6 @@ export default function AppLayout({ children }: { children: ReactNode }) {
   // biome-ignore lint/correctness/useExhaustiveDependencies: close sidebar on navigation
   useEffect(() => {
     setSidebarOpen(false);
-    // Scroll main content to top on every route change
     if (mainScrollRef.current) {
       mainScrollRef.current.scrollTop = 0;
     }
@@ -201,6 +207,18 @@ export default function AppLayout({ children }: { children: ReactNode }) {
             >
               <ShieldCheck size={16} />
               Admin Panel
+            </Link>
+            <Link
+              to="/admin-agents"
+              data-ocid="nav.adminagents.link"
+              className={`flex items-center gap-2 px-3 py-2 rounded-md text-sm mb-0.5 transition-colors ${
+                pathname === "/admin-agents"
+                  ? "bg-amber-500 text-white"
+                  : "text-amber-400 hover:bg-amber-500/10 hover:text-amber-300"
+              }`}
+            >
+              <Bot size={16} />
+              Agent Services
             </Link>
           </div>
         )}
@@ -279,7 +297,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
             <Rocket size={14} className="text-purple-200 shrink-0" />
             <span className="font-medium">Demo Mode</span>
             <span className="text-purple-200 hidden sm:inline">
-              — You're exploring a live simulation for{" "}
+              — You’re exploring a live simulation for{" "}
               <strong className="text-white">{demoInfo?.businessName}</strong>
             </span>
           </div>

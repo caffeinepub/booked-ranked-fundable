@@ -5,6 +5,15 @@ import {
   useEffect,
   useState,
 } from "react";
+import {
+  AGENT_PRODUCTS,
+  type AgentServiceRequest,
+  type AgentSubscription,
+  type AgentTask,
+  DEMO_AGENT_REQUESTS,
+  DEMO_AGENT_SUBSCRIPTIONS,
+  DEMO_AGENT_TASKS,
+} from "../data/agentData";
 import { TENANTS } from "../data/demoData";
 
 interface AppUser {
@@ -162,6 +171,25 @@ interface AppContextType {
   agencyOnboardingComplete: boolean;
   markAgencyOnboardingComplete: () => void;
   resetAgencyOnboarding: () => void;
+  // Agent Services
+  agentSubscriptions: AgentSubscription[];
+  agentRequests: AgentServiceRequest[];
+  agentTasks: AgentTask[];
+  agentPricingOverrides: Record<string, number>;
+  activateAgent: (
+    tenantId: string,
+    productId: string,
+    withOversight?: boolean,
+  ) => void;
+  deactivateAgent: (subscriptionId: string) => void;
+  pauseAgent: (subscriptionId: string) => void;
+  resumeAgent: (subscriptionId: string) => void;
+  submitAgentRequest: (
+    req: Omit<AgentServiceRequest, "id" | "submittedAt" | "status">,
+  ) => void;
+  updateAgentTaskStatus: (taskId: string, status: AgentTask["status"]) => void;
+  setAgentPriceOverride: (productId: string, price: number) => void;
+  addAgentSubscriptionNote: (subscriptionId: string, note: string) => void;
 }
 
 const AppContext = createContext<AppContextType | null>(null);
@@ -237,6 +265,20 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [agencyOnboardingComplete, setAgencyOnboardingComplete] =
     useState<boolean>(() => loadFromLocal("brfAgencyOnboarding", false));
 
+  // Agent Services state
+  const [agentSubscriptions, setAgentSubscriptions] = useState<
+    AgentSubscription[]
+  >(() => loadFromLocal("brfAgentSubscriptions", DEMO_AGENT_SUBSCRIPTIONS));
+  const [agentRequests, setAgentRequests] = useState<AgentServiceRequest[]>(
+    () => loadFromLocal("brfAgentRequests", DEMO_AGENT_REQUESTS),
+  );
+  const [agentTasks, setAgentTasks] = useState<AgentTask[]>(() =>
+    loadFromLocal("brfAgentTasks", DEMO_AGENT_TASKS),
+  );
+  const [agentPricingOverrides, setAgentPricingOverridesState] = useState<
+    Record<string, number>
+  >(() => loadFromLocal("brfAgentPricing", {}));
+
   useEffect(() => {
     sessionStorage.setItem("brfUser", JSON.stringify(currentUser));
   }, [currentUser]);
@@ -267,6 +309,24 @@ export function AppProvider({ children }: { children: ReactNode }) {
       JSON.stringify(agencyOnboardingComplete),
     );
   }, [agencyOnboardingComplete]);
+  useEffect(() => {
+    localStorage.setItem(
+      "brfAgentSubscriptions",
+      JSON.stringify(agentSubscriptions),
+    );
+  }, [agentSubscriptions]);
+  useEffect(() => {
+    localStorage.setItem("brfAgentRequests", JSON.stringify(agentRequests));
+  }, [agentRequests]);
+  useEffect(() => {
+    localStorage.setItem("brfAgentTasks", JSON.stringify(agentTasks));
+  }, [agentTasks]);
+  useEffect(() => {
+    localStorage.setItem(
+      "brfAgentPricing",
+      JSON.stringify(agentPricingOverrides),
+    );
+  }, [agentPricingOverrides]);
 
   const setCampaignToggle = (
     tenantId: string,
@@ -301,7 +361,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   const loginDemo = (info: DemoInfo) => {
     setDemoInfo(info);
-    // Update the tenant-demo entry with their business name
     setTenants((prev) =>
       prev.map((t) =>
         t.id === "tenant-demo"
@@ -401,6 +460,100 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setAgencyOnboardingComplete(false);
   };
 
+  // Agent Services handlers
+  const activateAgent = (
+    tenantId: string,
+    productId: string,
+    withOversight = false,
+  ) => {
+    const product = AGENT_PRODUCTS.find((p) => p.id === productId);
+    const tenant = tenants.find((t) => t.id === tenantId);
+    const newSub: AgentSubscription = {
+      id: `sub-${Date.now()}`,
+      tenantId,
+      productId,
+      status: "active",
+      activatedAt: Date.now(),
+      hasOversight: withOversight,
+      notes: "",
+      nextDeliverable: "Initial setup and onboarding",
+      currentWork: "Getting started — initial audit in progress",
+    };
+    setAgentSubscriptions((prev) => [...prev, newSub]);
+    const notification = {
+      id: `notif-agent-${Date.now()}`,
+      type: "general" as const,
+      title: "Agent Activated",
+      message: `${product?.name ?? productId} activated for ${tenant?.name ?? tenantId}`,
+      time: "Just now",
+      read: false,
+    };
+    setNotifications((prev) => [notification, ...prev]);
+  };
+
+  const deactivateAgent = (subscriptionId: string) => {
+    setAgentSubscriptions((prev) =>
+      prev.map((s) =>
+        s.id === subscriptionId ? { ...s, status: "cancelled" as const } : s,
+      ),
+    );
+  };
+
+  const pauseAgent = (subscriptionId: string) => {
+    setAgentSubscriptions((prev) =>
+      prev.map((s) =>
+        s.id === subscriptionId ? { ...s, status: "paused" as const } : s,
+      ),
+    );
+  };
+
+  const resumeAgent = (subscriptionId: string) => {
+    setAgentSubscriptions((prev) =>
+      prev.map((s) =>
+        s.id === subscriptionId ? { ...s, status: "active" as const } : s,
+      ),
+    );
+  };
+
+  const submitAgentRequest = (
+    req: Omit<AgentServiceRequest, "id" | "submittedAt" | "status">,
+  ) => {
+    const newReq: AgentServiceRequest = {
+      ...req,
+      id: `req-${Date.now()}`,
+      submittedAt: Date.now(),
+      status: "submitted",
+    };
+    setAgentRequests((prev) => [newReq, ...prev]);
+  };
+
+  const updateAgentTaskStatus = (
+    taskId: string,
+    status: AgentTask["status"],
+  ) => {
+    setAgentTasks((prev) =>
+      prev.map((t) =>
+        t.id === taskId
+          ? {
+              ...t,
+              status,
+              completedAt: status === "complete" ? Date.now() : t.completedAt,
+            }
+          : t,
+      ),
+    );
+  };
+
+  const setAgentPriceOverride = (productId: string, price: number) => {
+    setAgentPricingOverridesState((prev) => ({ ...prev, [productId]: price }));
+  };
+
+  const addAgentSubscriptionNote = (subscriptionId: string, note: string) => {
+    setAgentSubscriptions((prev) =>
+      prev.map((s) => (s.id === subscriptionId ? { ...s, notes: note } : s)),
+    );
+  };
+
   const isDemoMode = demoInfo !== null && currentTenantId === "tenant-demo";
 
   return (
@@ -444,6 +597,18 @@ export function AppProvider({ children }: { children: ReactNode }) {
         agencyOnboardingComplete,
         markAgencyOnboardingComplete,
         resetAgencyOnboarding,
+        agentSubscriptions,
+        agentRequests,
+        agentTasks,
+        agentPricingOverrides,
+        activateAgent,
+        deactivateAgent,
+        pauseAgent,
+        resumeAgent,
+        submitAgentRequest,
+        updateAgentTaskStatus,
+        setAgentPriceOverride,
+        addAgentSubscriptionNote,
       }}
     >
       {children}
