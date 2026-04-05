@@ -635,7 +635,7 @@ function ChatWidgetDemo() {
               <div className="w-3 h-3 rounded-full bg-yellow-400" />
               <div className="w-3 h-3 rounded-full bg-green-400" />
             </div>
-            <div className="flex-1 bg-white rounded px-3 py-1 text-xs text-slate-200 mx-2">
+            <div className="flex-1 bg-white rounded px-3 py-1 text-xs text-slate-600 mx-2">
               {config.business.toLowerCase().replace(/\s+/g, "")}.com
             </div>
           </div>
@@ -647,7 +647,7 @@ function ChatWidgetDemo() {
               </span>
             </div>
             <div className="h-24 bg-slate-100 rounded-xl mb-4 flex items-center justify-center">
-              <span className="text-slate-200 text-sm">Hero Banner Area</span>
+              <span className="text-slate-600 text-sm">Hero Banner Area</span>
             </div>
             <div className="grid grid-cols-3 gap-3 mb-4">
               {["Our Services", "About Us", "Contact"].map((t) => (
@@ -655,7 +655,9 @@ function ChatWidgetDemo() {
                   key={t}
                   className="h-16 bg-slate-50 rounded-lg border border-slate-200 flex items-center justify-center"
                 >
-                  <span className="text-slate-200 text-xs">{t}</span>
+                  <span className="text-slate-600 text-xs font-medium">
+                    {t}
+                  </span>
                 </div>
               ))}
             </div>
