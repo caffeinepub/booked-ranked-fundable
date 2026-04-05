@@ -103,17 +103,55 @@ interface WidgetState {
   embedToken: string;
 }
 
-type ChatStep = "greeting" | "name" | "phone" | "done";
+type ChatStep =
+  | "greeting"
+  | "qualify_service"
+  | "name"
+  | "phone"
+  | "booking"
+  | "done";
+
+function getNicheServiceResponse(niche: string, message: string): string {
+  const m = message.toLowerCase();
+  const n = niche.toLowerCase();
+
+  if (/price|cost|how much|quote/.test(m)) {
+    if (n.includes("plumb"))
+      return "Most drain clears run $149–$299, and water heater installs start at $899. Happy to get you a free quote!";
+    if (n.includes("hvac") || n.includes("heat") || n.includes("cool"))
+      return "AC tune-ups start at $89, and new system installs from $2,400. We offer free no-obligation estimates.";
+    if (n.includes("clean") || n.includes("carpet"))
+      return "Whole-home carpet cleaning starts at $149 for up to 3 rooms — stain treatment and deodorizer add-ons available.";
+    if (n.includes("roof"))
+      return "Roof inspections are free. Repairs range $300–$1,500 and full replacements from $8,000+.";
+    if (n.includes("spa") || n.includes("med") || n.includes("beauty"))
+      return "Botox starts at $12/unit, facials from $89, and laser services from $199. Free consultations available!";
+    return "Pricing depends on the specific job. I can get you a free estimate — let me grab your details.";
+  }
+
+  if (/emergency|urgent|burst|flood|leak|broken/.test(m)) {
+    return "We handle emergencies 24/7. What's your address so I can alert our on-call team right away?";
+  }
+
+  if (/hours|open|available|schedule|book|appointment/.test(m)) {
+    return "We're available most days and offer flexible scheduling. Let me get you set up with the right team.";
+  }
+
+  const nicheKeyword = n.split(/[^a-z]/)[0] || "service";
+  return `Thanks for reaching out about your ${nicheKeyword} needs! We'd love to help. Let me connect you with the right person.`;
+}
 
 function WidgetPreview({ config }: { config: WidgetState }) {
   const [open, setOpen] = useState(false);
   const [step, setStep] = useState<ChatStep>("greeting");
   const [inputVal, setInputVal] = useState("");
+  const [collectedName, setCollectedName] = useState("");
   const [messages, setMessages] = useState<
     { role: "bot" | "user"; text: string }[]
   >([]);
   const bottomRef = useRef<HTMLDivElement>(null);
 
+  // Only initialize on first open; don't reset a completed or in-progress conversation
   // biome-ignore lint/correctness/useExhaustiveDependencies: messages.length is sufficient
   useEffect(() => {
     if (open && messages.length === 0) {
@@ -122,11 +160,20 @@ function WidgetPreview({ config }: { config: WidgetState }) {
       ]);
       setStep("greeting");
     }
-    if (!open) {
-      setMessages([]);
+    // When widget is closed, only reset if we haven't started the flow yet
+    // This preserves completed or in-progress conversations across close/reopen
+    if (!open && step === "greeting" && messages.length === 0) {
       setStep("greeting");
     }
   }, [open, config.greeting]);
+
+  // Reset conversation when niche changes
+  // biome-ignore lint/correctness/useExhaustiveDependencies: intentional niche-change reset
+  useEffect(() => {
+    setMessages([]);
+    setStep("greeting");
+    setCollectedName("");
+  }, [config.niche]);
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: scroll on message change
   useEffect(() => {
@@ -138,14 +185,14 @@ function WidgetPreview({ config }: { config: WidgetState }) {
     const userMsg = inputVal.trim();
     setInputVal("");
     setMessages((prev) => [...prev, { role: "user", text: userMsg }]);
+
     setTimeout(() => {
       if (step === "greeting") {
+        // Respond to the opening message with a niche-aware reply
+        const serviceReply = getNicheServiceResponse(config.niche, userMsg);
         if (config.leadCaptureEnabled) {
-          setMessages((prev) => [
-            ...prev,
-            { role: "bot", text: "Great! May I have your name?" },
-          ]);
-          setStep("name");
+          setMessages((prev) => [...prev, { role: "bot", text: serviceReply }]);
+          setStep("qualify_service");
         } else {
           setMessages((prev) => [
             ...prev,
@@ -156,34 +203,60 @@ function WidgetPreview({ config }: { config: WidgetState }) {
           ]);
           setStep("done");
         }
-      } else if (step === "name") {
+      } else if (step === "qualify_service") {
+        // Ask for name after learning the service need
         setMessages((prev) => [
           ...prev,
           {
             role: "bot",
-            text: `Nice to meet you, ${userMsg}! What's your phone number?`,
+            text: "Got it! To get someone out to you quickly, what's your name?",
+          },
+        ]);
+        setStep("name");
+      } else if (step === "name") {
+        const name = userMsg.split(" ")[0];
+        setCollectedName(name);
+        setMessages((prev) => [
+          ...prev,
+          {
+            role: "bot",
+            text: `Nice to meet you, ${name}! What's the best phone number to reach you?`,
           },
         ]);
         setStep("phone");
       } else if (step === "phone") {
+        if (config.bookingEnabled) {
+          setMessages((prev) => [
+            ...prev,
+            {
+              role: "bot",
+              text: `Perfect${collectedName ? `, ${collectedName}` : ""}! We'll call you at ${userMsg} shortly. Would you like to schedule a specific time?`,
+            },
+          ]);
+          setStep("booking");
+        } else {
+          setMessages((prev) => [
+            ...prev,
+            {
+              role: "bot",
+              text: `Perfect! Our team will call ${collectedName || "you"} at ${userMsg} within the hour. You're all set! 🎉`,
+            },
+          ]);
+          setStep("done");
+        }
+      } else if (step === "booking") {
         setMessages((prev) => [
           ...prev,
           {
             role: "bot",
-            text: config.bookingEnabled
-              ? "Perfect! Would you like to schedule an appointment? Reply with your preferred time."
-              : "Thanks! We'll be in touch soon. 🎉",
+            text: "Great! You're booked. We'll confirm via text. Is there anything else I can help with?",
           },
         ]);
         setStep("done");
       } else {
-        setMessages((prev) => [
-          ...prev,
-          {
-            role: "bot",
-            text: "Thanks! Is there anything else I can help with?",
-          },
-        ]);
+        // "done" step — helpful replies, never re-ask for name/phone
+        const doneReply = getNicheServiceResponse(config.niche, userMsg);
+        setMessages((prev) => [...prev, { role: "bot", text: doneReply }]);
       }
     }, 500);
   };
@@ -191,7 +264,7 @@ function WidgetPreview({ config }: { config: WidgetState }) {
   return (
     <div className="relative w-full h-[520px] bg-gray-100 rounded-xl border border-gray-200 overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-br from-gray-50 to-gray-100" />
-      <p className="absolute top-3 left-1/2 -translate-x-1/2 text-xs text-gray-200 font-medium">
+      <p className="absolute top-3 left-1/2 -translate-x-1/2 text-xs text-gray-500 font-medium">
         Widget Preview
       </p>
 
@@ -250,13 +323,23 @@ function WidgetPreview({ config }: { config: WidgetState }) {
                           { role: "user", text: faq },
                         ]);
                         setTimeout(() => {
+                          // Give a niche-aware response and advance to qualify_service
+                          const serviceReply = getNicheServiceResponse(
+                            config.niche,
+                            faq,
+                          );
                           setMessages((prev) => [
                             ...prev,
                             {
                               role: "bot",
-                              text: "Great question! Let me connect you with our team.",
+                              text: serviceReply,
                             },
                           ]);
+                          if (config.leadCaptureEnabled) {
+                            setStep("qualify_service");
+                          } else {
+                            setStep("done");
+                          }
                         }, 400);
                       }}
                       className="w-full text-left text-xs px-3 py-1.5 rounded-lg border border-indigo-200 text-indigo-700 hover:bg-indigo-50 transition-colors"
@@ -534,7 +617,7 @@ export default function ChatWidgetPage() {
                 <div key={key} className="flex items-center justify-between">
                   <div>
                     <p className="text-sm font-medium text-gray-800">{label}</p>
-                    <p className="text-xs text-gray-200">{desc}</p>
+                    <p className="text-xs text-gray-500">{desc}</p>
                   </div>
                   <Switch
                     checked={config[key]}
@@ -573,7 +656,7 @@ export default function ChatWidgetPage() {
                 <Copy size={13} /> Copy
               </Button>
             </div>
-            <p className="text-xs text-gray-200 mb-3">
+            <p className="text-xs text-gray-500 mb-3">
               Paste this into your website's{" "}
               <code className="bg-gray-100 px-1 rounded">&lt;body&gt;</code>{" "}
               tag.
@@ -591,7 +674,7 @@ export default function ChatWidgetPage() {
               Live Preview
             </h3>
             <WidgetPreview config={config} />
-            <p className="text-xs text-gray-200 text-center mt-3">
+            <p className="text-xs text-gray-500 text-center mt-3">
               Click the chat bubble to test the widget experience
             </p>
           </div>

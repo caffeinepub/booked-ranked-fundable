@@ -190,7 +190,6 @@ function VoiceAgentDemo() {
   }, [visibleLines, showTyping]);
 
   // Scroll simulation container into view when scenario is selected
-  // biome-ignore lint/correctness/useExhaustiveDependencies: simulationRef.current is intentionally excluded
   useEffect(() => {
     if (selected && simulationRef.current) {
       setTimeout(() => {
@@ -277,10 +276,18 @@ function VoiceAgentDemo() {
                   {(status === "active" || status === "done") && (
                     <>
                       <div
-                        className={`w-1.5 h-1.5 rounded-full ${status === "active" ? "bg-green-400 animate-pulse" : "bg-slate-500"}`}
+                        className={`w-1.5 h-1.5 rounded-full ${
+                          status === "active"
+                            ? "bg-green-400 animate-pulse"
+                            : "bg-slate-500"
+                        }`}
                       />
                       <span
-                        className={`text-xs ${status === "active" ? "text-green-400" : "text-slate-200"}`}
+                        className={`text-xs ${
+                          status === "active"
+                            ? "text-green-400"
+                            : "text-slate-200"
+                        }`}
                       >
                         {status === "active" ? "Call Connected" : "Call Ended"}
                       </span>
@@ -302,7 +309,11 @@ function VoiceAgentDemo() {
                     key={`${line.speaker}-${i}-${line.text.slice(0, 10)}`}
                     initial={{ opacity: 0, y: 6 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className={`flex ${line.speaker === "AI Agent" ? "justify-end" : "justify-start"}`}
+                    className={`flex ${
+                      line.speaker === "AI Agent"
+                        ? "justify-end"
+                        : "justify-start"
+                    }`}
                   >
                     <div
                       className={`max-w-[80%] px-3 py-2 rounded-2xl text-xs leading-relaxed ${
@@ -465,22 +476,24 @@ const NICHE_CONFIGS: Record<Niche, { business: string; greeting: string }> = {
   },
 };
 
+// Returns only the informational part of the response — no name/number asks.
+// Qualification is handled separately via qualificationStep.
 function getChatResponse(niche: Niche, message: string): string {
   const m = message.toLowerCase();
   if (niche === "Plumbing") {
     if (/price|cost|how much/.test(m))
-      return "Great question! Pricing depends on the job. Most drain clears run $149–$299, and water heater installs start at $899. Want a free quote? I just need your name and number.";
+      return "Most drain clears run $149–$299, and water heater installs start at $899. I can get you a free quote — just need a couple quick details.";
     if (/emergency|burst|flooding|urgent/.test(m))
       return "We handle plumbing emergencies 24/7. I'm alerting our on-call tech now. What's your address?";
     if (/hours|open|available|schedule/.test(m))
-      return "We're available Monday–Saturday 7am–7pm, with 24/7 emergency service. Want to book an appointment?";
+      return "We're available Monday–Saturday 7am–7pm, with 24/7 emergency service. Let me get you set up!";
     if (/hello|hi|hey/.test(m))
-      return "Hi there! Welcome to North County Plumbing Pros. I'm your AI assistant. What can I help you with today — a repair, estimate, or emergency?";
-    return "Thanks for reaching out! To get you the right help fast, can I grab your name and what service you need?";
+      return "Hi there! Welcome to North County Plumbing Pros. What can I help you with today — a repair, estimate, or emergency?";
+    return "Thanks for reaching out! Let me connect you with the right person to help.";
   }
   if (niche === "HVAC") {
     if (/price|cost/.test(m))
-      return "AC tune-ups start at $89, and new system installs start at $2,400. I can get you a free no-obligation estimate. What's your name?";
+      return "AC tune-ups start at $89, and new system installs start at $2,400. I can get you a free no-obligation estimate.";
     if (/emergency|not cooling|broken|out/.test(m))
       return "Sorry to hear that — especially in this heat! Our same-day emergency HVAC service is available now. What's your address?";
     if (/hello|hi/.test(m))
@@ -491,23 +504,23 @@ function getChatResponse(niche: Niche, message: string): string {
     if (/water|flood|leak|damage/.test(m))
       return "Water damage is time-sensitive — every hour matters. Our emergency response team is on standby 24/7. What's your address so I can dispatch immediately?";
     if (/price|cost|insurance/.test(m))
-      return "Most restoration work is covered by homeowner's insurance and we work directly with adjusters. Want us to do a free damage assessment?";
+      return "Most restoration work is covered by homeowner's insurance and we work directly with adjusters. I can arrange a free damage assessment.";
     if (/hello|hi/.test(m))
       return "Hi — you've reached Oceanside Clean & Restore. Are you dealing with an emergency or looking to schedule a service?";
     return "We're here to help. Can you describe what happened so I can connect you with the right team?";
   }
   if (niche === "Carpet Cleaning") {
     if (/price|cost|quote/.test(m))
-      return "Whole-home carpet cleaning starts at $149 for up to 3 rooms. We also offer stain treatment and deodorizer add-ons. Want a fast quote?";
+      return "Whole-home carpet cleaning starts at $149 for up to 3 rooms. We also offer stain treatment and deodorizer add-ons.";
     if (/schedule|book|appointment/.test(m))
-      return "We have openings as early as tomorrow! Can I get your name, address, and best contact number?";
+      return "We have openings as early as tomorrow! Let me get your details to lock in a time.";
     if (/hello|hi/.test(m))
       return "Hi! Welcome to Fresh Step Carpet Care. Looking for a quote, scheduling, or have an urgent spill situation? I'm here to help!";
     return "Happy to help! What's the situation — routine cleaning or something more urgent?";
   }
   if (niche === "Roofing") {
     if (/price|cost|quote/.test(m))
-      return "Roof inspections are free. Repairs can range from $300–$1,500 and full replacements from $8,000–$20,000+ depending on size and material. Want a free inspection?";
+      return "Roof inspections are free. Repairs can range from $300–$1,500 and full replacements from $8,000–$20,000+ depending on size and material.";
     if (/storm|leak|damage|emergency/.test(m))
       return "Storm damage? We offer 24-hour emergency tarping and rapid assessment. I can get a crew out today. What's your address?";
     if (/hello|hi/.test(m))
@@ -516,9 +529,9 @@ function getChatResponse(niche: Niche, message: string): string {
   }
   if (niche === "Med Spa") {
     if (/price|cost|how much/.test(m))
-      return "Pricing varies by treatment. Botox starts at $12/unit, facials from $89, and laser services from $199. Want to book a free consultation to discuss your goals?";
+      return "Pricing varies by treatment. Botox starts at $12/unit, facials from $89, and laser services from $199. We offer free consultations!";
     if (/appointment|book|schedule/.test(m))
-      return "We'd love to see you! We have openings this week. Can I get your name, preferred date, and contact number?";
+      return "We'd love to see you! We have openings this week.";
     if (/hello|hi/.test(m))
       return "Welcome to Revive Med Spa! Looking to book a consultation, learn about treatments, or have a question? I'm happy to help.";
     return "Great question! Our team of licensed professionals can walk you through all options. What area are you most interested in improving?";
@@ -532,6 +545,14 @@ function hasPhoneNumber(text: string): boolean {
 
 type ChatMessage = { role: "user" | "bot"; text: string; id: number };
 
+type QualificationStep =
+  | "initial"
+  | "asked_service"
+  | "asked_name"
+  | "asked_phone"
+  | "captured"
+  | "done";
+
 function ChatWidgetDemo() {
   const [niche, setNiche] = useState<Niche>("Plumbing");
   const [open, setOpen] = useState(false);
@@ -542,8 +563,9 @@ function ChatWidgetDemo() {
     name: string;
     phone: string;
   } | null>(null);
-  const [exchangeCount, setExchangeCount] = useState(0);
-  const [leadShown, setLeadShown] = useState(false);
+  const qualificationStep = useRef<QualificationStep>("initial");
+  const collectedName = useRef("");
+  const phoneRetries = useRef(0);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -554,8 +576,9 @@ function ChatWidgetDemo() {
     setInput("");
     setIsTyping(false);
     setLeadCapture(null);
-    setExchangeCount(0);
-    setLeadShown(false);
+    qualificationStep.current = "initial";
+    collectedName.current = "";
+    phoneRetries.current = 0;
     setNiche(n);
   };
 
@@ -580,37 +603,89 @@ function ChatWidgetDemo() {
     setMessages((prev) => [...prev, userMsg]);
     const userText = input.trim();
     setInput("");
-    setExchangeCount((c) => c + 1);
     setIsTyping(true);
 
-    const delay = 1000 + Math.random() * 500;
+    const delay = 900 + Math.random() * 400;
     setTimeout(() => {
       setIsTyping(false);
-      let response = getChatResponse(niche, userText);
+      const step = qualificationStep.current;
 
-      // Lead capture prompt after 2 exchanges
-      if (exchangeCount >= 2 && !leadCapture && !leadShown) {
-        response =
-          "To get you taken care of quickly, can I grab your name and best phone number?";
-        setLeadShown(true);
+      if (step === "initial") {
+        const infoResponse = getChatResponse(niche, userText);
+        setMessages((prev) => [
+          ...prev,
+          { role: "bot", text: infoResponse, id: Date.now() },
+        ]);
+        qualificationStep.current = "asked_name";
+        setTimeout(() => {
+          setMessages((prev) => [
+            ...prev,
+            {
+              role: "bot",
+              text: "To get you connected quickly — what's your name?",
+              id: Date.now(),
+            },
+          ]);
+        }, 600);
+      } else if (step === "asked_name") {
+        const name = userText.split(" ")[0] || userText;
+        collectedName.current = name;
+        setMessages((prev) => [
+          ...prev,
+          {
+            role: "bot",
+            text: `Nice to meet you, ${name}! What's the best phone number to reach you?`,
+            id: Date.now(),
+          },
+        ]);
+        qualificationStep.current = "asked_phone";
+      } else if (step === "asked_phone") {
+        if (hasPhoneNumber(userText)) {
+          const phone =
+            userText.match(
+              /(\d{3}[-.]?\d{3}[-.]?\d{4}|\(\d{3}\)\s?\d{3}[-.]?\d{4})/,
+            )?.[0] ?? userText;
+          const name = collectedName.current || "there";
+          setLeadCapture({ name, phone });
+          setMessages((prev) => [
+            ...prev,
+            {
+              role: "bot",
+              text: `Perfect, ${name}! I've notified our team and someone will reach out shortly. Is there anything else I can help with?`,
+              id: Date.now(),
+            },
+          ]);
+          qualificationStep.current = "captured";
+        } else {
+          if (phoneRetries.current < 2) {
+            phoneRetries.current += 1;
+            setMessages((prev) => [
+              ...prev,
+              {
+                role: "bot",
+                text: "I didn't catch a number — could you share your phone number so we can follow up?",
+                id: Date.now(),
+              },
+            ]);
+          } else {
+            setMessages((prev) => [
+              ...prev,
+              {
+                role: "bot",
+                text: "No worries! Our team will follow up via the info you've shared. Is there anything else I can help with?",
+                id: Date.now(),
+              },
+            ]);
+            qualificationStep.current = "done";
+          }
+        }
+      } else {
+        const helpfulResponse = getChatResponse(niche, userText);
+        setMessages((prev) => [
+          ...prev,
+          { role: "bot", text: helpfulResponse, id: Date.now() },
+        ]);
       }
-
-      // Detect lead info
-      if (hasPhoneNumber(userText) && !leadCapture) {
-        const phone =
-          userText.match(
-            /(\d{3}[-.]?\d{3}[-.]?\d{4}|\(\d{3}\)\s?\d{3}[-.]?\d{4})/,
-          )?.[0] ?? "";
-        const name =
-          userText.replace(phone, "").replace(/[,.-]/g, "").trim() || "Visitor";
-        setLeadCapture({ name, phone });
-        response = `Perfect${name !== "Visitor" ? `, ${name}` : ""}! I've notified our team and someone will reach out shortly. Is there anything else I can help with?`;
-      }
-
-      setMessages((prev) => [
-        ...prev,
-        { role: "bot", text: response, id: Date.now() },
-      ]);
     }, delay);
   };
 
@@ -713,7 +788,9 @@ function ChatWidgetDemo() {
                     {messages.map((msg) => (
                       <div
                         key={msg.id}
-                        className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
+                        className={`flex ${
+                          msg.role === "user" ? "justify-end" : "justify-start"
+                        }`}
                       >
                         <div
                           className={`max-w-[85%] px-3 py-2 rounded-xl text-xs leading-relaxed ${
@@ -1370,7 +1447,7 @@ function FundabilitySnapshot() {
       </div>
 
       <div className="space-y-2">
-        <p className="text-sm font-medium text-slate-200">Business Type</p>
+        <p className="text-sm font-medium text-slate-200">Business Structure</p>
         <Select
           value={form.businessType}
           onValueChange={(v) => setForm((f) => ({ ...f, businessType: v }))}
