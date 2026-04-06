@@ -20,6 +20,12 @@ export interface NicheSEO {
   ogDescription: string;
 }
 
+export interface NicheImagineLine {
+  text: string;
+  image: string;
+  alt: string;
+}
+
 export interface NicheData {
   key: string;
   name: string;
@@ -39,7 +45,7 @@ export interface NicheData {
   finalCTAHeadline: string;
   finalCTASubtext: string;
   seo: NicheSEO;
-  imagineLines: string[];
+  imagineLines: NicheImagineLine[];
   icon: string;
   tagline: string;
 }
@@ -170,10 +176,26 @@ const niches: Record<string, NicheData> = {
     icon: "🔧",
     tagline: "Stop losing emergency calls to faster competitors.",
     imagineLines: [
-      "your phone answered at 2am when the pipe bursts — every caller booked, no voicemail.",
-      "every satisfied customer automatically asked for a review the moment the job is done.",
-      "your Google Maps ranking climbing while you focus on the work.",
-      "having the capital ready to add a second truck when the time is right.",
+      {
+        text: "your phone answered at 2am when the pipe bursts — every caller booked, no voicemail.",
+        image: "/assets/generated/niche-plumbing-imagine-1.dim_800x500.jpg",
+        alt: "AI booking notification on a plumber's phone at 2am during a burst pipe emergency",
+      },
+      {
+        text: "every satisfied customer automatically asked for a review the moment the job is done.",
+        image: "/assets/generated/niche-plumbing-imagine-2.dim_800x500.jpg",
+        alt: "Homeowner receiving a 5-star review request after a plumbing job",
+      },
+      {
+        text: "your Google Maps ranking climbing while you focus on the work.",
+        image: "/assets/generated/niche-plumbing-imagine-3.dim_800x500.jpg",
+        alt: "Plumbing company ranked #1 on Google Maps with rising SEO chart",
+      },
+      {
+        text: "having the capital ready to add a second truck when the time is right.",
+        image: "/assets/generated/niche-plumbing-imagine-4.dim_800x500.jpg",
+        alt: "Plumbing business owner reviewing approved equipment loan dashboard",
+      },
     ],
   },
 
@@ -307,10 +329,26 @@ const niches: Record<string, NicheData> = {
     icon: "💧",
     tagline: "Win high-ticket jobs before competitors even answer.",
     imagineLines: [
-      "every emergency inquiry responded to in seconds — before any competitor even sees the notification.",
-      "high-ticket water damage jobs captured automatically, 24/7.",
-      "your review profile building trust while you focus on restoring homes.",
-      "the funding in place to scale your crew when storm season hits.",
+      {
+        text: "every emergency inquiry responded to in seconds — before any competitor even sees the notification.",
+        image: "/assets/generated/niche-restoration-imagine-1.dim_800x500.jpg",
+        alt: "Restoration technician receiving AI-dispatched emergency water damage lead at night",
+      },
+      {
+        text: "high-ticket water damage jobs captured automatically, 24/7.",
+        image: "/assets/generated/niche-restoration-imagine-2.dim_800x500.jpg",
+        alt: "Before and after water damage restoration with automatic review request notification",
+      },
+      {
+        text: "your review profile building trust while you focus on restoring homes.",
+        image: "/assets/generated/niche-restoration-imagine-3.dim_800x500.jpg",
+        alt: "Restoration company ranked #1 on Google during storm alert",
+      },
+      {
+        text: "the funding in place to scale your crew when storm season hits.",
+        image: "/assets/generated/niche-restoration-imagine-4.dim_800x500.jpg",
+        alt: "Restoration company owner reviewing approved equipment loan with fleet of vans",
+      },
     ],
   },
 
@@ -440,10 +478,26 @@ const niches: Record<string, NicheData> = {
     icon: "❄️",
     tagline: "Never miss a call during peak heating and cooling season.",
     imagineLines: [
-      "your phones handled automatically during the summer heat wave — every call booked.",
-      "maintenance plan offers going out automatically after every completed job.",
-      "your Google ranking at the top when homeowners search for HVAC help in peak season.",
-      "the capital ready to add a technician or buy new equipment when demand spikes.",
+      {
+        text: "your phones handled automatically during the summer heat wave — every call booked.",
+        image: "/assets/generated/niche-hvac-imagine-1.dim_800x500.jpg",
+        alt: "HVAC truck at a home in summer heat with AI booking system showing 12 calls handled",
+      },
+      {
+        text: "maintenance plan offers going out automatically after every completed job.",
+        image: "/assets/generated/niche-hvac-imagine-2.dim_800x500.jpg",
+        alt: "HVAC technician finishing a job while homeowner receives maintenance plan offer on phone",
+      },
+      {
+        text: "your Google ranking at the top when homeowners search for HVAC help in peak season.",
+        image: "/assets/generated/niche-hvac-imagine-3.dim_800x500.jpg",
+        alt: "HVAC company ranked #1 on Google Maps in local search during peak season",
+      },
+      {
+        text: "the capital ready to add a technician or buy new equipment when demand spikes.",
+        image: "/assets/generated/niche-hvac-imagine-4.dim_800x500.jpg",
+        alt: "HVAC business owner reviewing approved equipment loan with fleet of service vans",
+      },
     ],
   },
 
@@ -572,10 +626,26 @@ const niches: Record<string, NicheData> = {
     icon: "✨",
     tagline: "Turn more local searches into booked appointments.",
     imagineLines: [
-      "every quote request followed up instantly — no more lost leads from slow response.",
-      "5-star review requests going out automatically after every cleaning.",
-      "local customers finding you first when they search for carpet cleaning near them.",
-      "the fundability in place to add a second truck or expand into commercial accounts.",
+      {
+        text: "every quote request followed up instantly — no more lost leads from slow response.",
+        image: "/assets/generated/niche-carpet-imagine-1.dim_800x500.jpg",
+        alt: "Carpet cleaning van at a home with AI booking confirmation notification on phone",
+      },
+      {
+        text: "5-star review requests going out automatically after every cleaning.",
+        image: "/assets/generated/niche-carpet-imagine-2.dim_800x500.jpg",
+        alt: "Homeowner receiving 5-star review request with freshly cleaned white carpets in background",
+      },
+      {
+        text: "local customers finding you first when they search for carpet cleaning near them.",
+        image: "/assets/generated/niche-carpet-imagine-3.dim_800x500.jpg",
+        alt: "Carpet cleaning company ranked #1 in Google local search results",
+      },
+      {
+        text: "the fundability in place to add a second truck or expand into commercial accounts.",
+        image: "/assets/generated/niche-carpet-imagine-4.dim_800x500.jpg",
+        alt: "Carpet cleaning business owner reviewing commercial expansion loan approval",
+      },
     ],
   },
 
@@ -707,10 +777,26 @@ const niches: Record<string, NicheData> = {
     icon: "🏠",
     tagline: "Capture storm leads before competitors saturate your market.",
     imagineLines: [
-      "capturing storm leads before out-of-town crews even know the weather event happened.",
-      "high-value roofing inquiries responded to within seconds — every single one.",
-      "your Google presence so dominant that local homeowners choose you without question.",
-      "having the capital to hire crews and buy materials when a major storm event hits.",
+      {
+        text: "capturing storm leads before out-of-town crews even know the weather event happened.",
+        image: "/assets/generated/niche-roofing-imagine-1.dim_800x500.jpg",
+        alt: "Roofing crew on a storm-damaged roof with AI lead capture notification on phone",
+      },
+      {
+        text: "high-value roofing inquiries responded to within seconds — every single one.",
+        image: "/assets/generated/niche-roofing-imagine-2.dim_800x500.jpg",
+        alt: "Homeowner and roofing contractor handshake after job completion with 5-star review notification",
+      },
+      {
+        text: "your Google presence so dominant that local homeowners choose you without question.",
+        image: "/assets/generated/niche-roofing-imagine-3.dim_800x500.jpg",
+        alt: "Roofing company ranked #1 on Google with storm weather radar visible",
+      },
+      {
+        text: "having the capital to hire crews and buy materials when a major storm event hits.",
+        image: "/assets/generated/niche-roofing-imagine-4.dim_800x500.jpg",
+        alt: "Roofing business owner reviewing crew expansion capital approval with fleet of trucks",
+      },
     ],
   },
 
@@ -842,10 +928,26 @@ const niches: Record<string, NicheData> = {
     icon: "💆",
     tagline: "Turn more inquiries into booked consultations.",
     imagineLines: [
-      "every after-hours inquiry getting a professional, branded response within seconds.",
-      "potential clients converting into booked consultations without manual follow-up.",
-      "your review profile building the trust that premium clients require before booking.",
-      "the funding in place to add a provider or open a second location when you're ready.",
+      {
+        text: "every after-hours inquiry getting a professional, branded response within seconds.",
+        image: "/assets/generated/niche-medspa-imagine-1.dim_800x500.jpg",
+        alt: "Luxury med spa reception at night with AI consultation request notification on phone",
+      },
+      {
+        text: "potential clients converting into booked consultations without manual follow-up.",
+        image: "/assets/generated/niche-medspa-imagine-2.dim_800x500.jpg",
+        alt: "Med spa client smiling at consultation booking confirmation on her phone",
+      },
+      {
+        text: "your review profile building the trust that premium clients require before booking.",
+        image: "/assets/generated/niche-medspa-imagine-3.dim_800x500.jpg",
+        alt: "Med spa ranked #1 on Google with glowing client reviews visible",
+      },
+      {
+        text: "the funding in place to add a provider or open a second location when you're ready.",
+        image: "/assets/generated/niche-medspa-imagine-4.dim_800x500.jpg",
+        alt: "Med spa owner in white coat reviewing second location expansion funding approval",
+      },
     ],
   },
 };

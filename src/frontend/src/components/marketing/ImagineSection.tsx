@@ -8,7 +8,7 @@ interface ImagineLine {
 
 const DEFAULT_LINES: ImagineLine[] = [
   {
-    text: "every inbound call, text, and inquiry automatically booked on your calendar — without you lifting a finger.",
+    text: "every inbound call, text, and inquiry automatically booked on your calendar \u2014 without you lifting a finger.",
     image: "/assets/generated/imagine-auto-booking.dim_800x500.jpg",
     alt: "Automatic call booking on a digital calendar",
   },
@@ -18,19 +18,19 @@ const DEFAULT_LINES: ImagineLine[] = [
     alt: "5-star review notification on phone screen",
   },
   {
-    text: "your Google rankings always protected, monitored, and climbing — on autopilot.",
+    text: "your Google rankings always protected, monitored, and climbing \u2014 on autopilot.",
     image: "/assets/generated/imagine-google-rankings.dim_800x500.jpg",
     alt: "Google local business ranking #1 with upward trend",
   },
   {
-    text: "having the business credit and fundability that 97% of businesses never build — and the financing options that come with it.",
+    text: "having the business credit and fundability that 97% of businesses never build \u2014 and the financing options that come with it.",
     image: "/assets/generated/imagine-fundability.dim_800x500.jpg",
     alt: "Business credit score dashboard with approved financing",
   },
 ];
 
 interface ImagineSectionProps {
-  lines?: string[] | ImagineLine[];
+  lines?: (string | ImagineLine)[];
 }
 
 function normalizeLine(line: string | ImagineLine): ImagineLine {
@@ -43,7 +43,7 @@ function normalizeLine(line: string | ImagineLine): ImagineLine {
 export default function ImagineSection({
   lines = DEFAULT_LINES,
 }: ImagineSectionProps) {
-  const normalized = (lines as (string | ImagineLine)[]).map(normalizeLine);
+  const normalized = lines.map(normalizeLine);
 
   return (
     <section className="py-20 px-6 bg-slate-950">
@@ -108,9 +108,9 @@ export default function ImagineSection({
           className="mt-14 pt-10 border-t border-white/10 text-center"
         >
           <p className="text-xl md:text-2xl font-bold text-white">
-            That's not a vision.{" "}
+            That&apos;s not a vision.{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">
-              That's what Booked, Ranked &amp; Fundable turns on for your
+              That&apos;s what Booked, Ranked &amp; Fundable turns on for your
               business.
             </span>
           </p>
