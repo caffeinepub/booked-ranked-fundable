@@ -6,6 +6,7 @@ import {
   createRouter,
 } from "@tanstack/react-router";
 import AppLayout from "./components/AppLayout";
+import WeeklyReportPanel from "./components/WeeklyReportPanel";
 import { Toaster } from "./components/ui/sonner";
 import { AppProvider, useApp } from "./context/AppContext";
 import AdminAgentServicesPage from "./pages/AdminAgentServicesPage";
@@ -38,6 +39,7 @@ import RoofingPage from "./pages/RoofingPage";
 import SettingsPage from "./pages/SettingsPage";
 import SocialMediaPage from "./pages/SocialMediaPage";
 import VoiceAgentPage from "./pages/VoiceAgentPage";
+import WhiteLabelHubPage from "./pages/WhiteLabelHubPage";
 import WhyUsPage from "./pages/WhyUsPage";
 
 function ProtectedRoute({
@@ -63,6 +65,7 @@ const rootRoute = createRootRoute({
   component: () => (
     <AppProvider>
       <Outlet />
+      <WeeklyReportPanel />
       <Toaster />
     </AppProvider>
   ),
@@ -294,6 +297,16 @@ const socialMediaRoute = createRoute({
   ),
 });
 
+const whiteLabelHubRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/white-label-hub",
+  component: () => (
+    <ProtectedRoute adminOnly>
+      <WhiteLabelHubPage />
+    </ProtectedRoute>
+  ),
+});
+
 const routeTree = rootRoute.addChildren([
   indexRoute,
   loginRoute,
@@ -326,6 +339,7 @@ const routeTree = rootRoute.addChildren([
   listingsRoute,
   socialMediaRoute,
   campaignsRoute,
+  whiteLabelHubRoute,
 ]);
 
 const router = createRouter({ routeTree });

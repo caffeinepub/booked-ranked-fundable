@@ -1,3 +1,4 @@
+import { BookDemoTrigger } from "@/components/BookDemoModal";
 import PublicFooter from "@/components/PublicFooter";
 import PublicNav from "@/components/PublicNav";
 import ImagineSection from "@/components/marketing/ImagineSection";
@@ -171,7 +172,7 @@ export default function HomePage() {
                 Get Fundable.
               </span>
             </h1>
-            <p className="text-lg text-slate-200 mb-10 max-w-2xl mx-auto leading-relaxed">
+            <p className="text-lg text-slate-300 mb-10 max-w-2xl mx-auto leading-relaxed">
               One platform for bookings, rankings, reputation, and fundability —
               built for local service businesses that want to grow without
               juggling five different tools.
@@ -187,16 +188,12 @@ export default function HomePage() {
                   <ArrowRight size={16} className="ml-2" />
                 </Button>
               </Link>
-              <Link to="/demo-login">
-                <Button
-                  data-ocid="home.secondary_button"
-                  size="lg"
-                  variant="outline"
-                  className="bg-transparent border-white/30 text-white hover:bg-white/10 h-12 px-7 text-base"
-                >
-                  See It Live →
-                </Button>
-              </Link>
+              <BookDemoTrigger
+                label="Book a Strategy Call"
+                variant="outline"
+                size="lg"
+                className="bg-transparent border-white/30 text-white hover:bg-white/10 h-12 px-7 text-base"
+              />
             </div>
           </motion.div>
 
@@ -214,7 +211,7 @@ export default function HomePage() {
             ].map(({ icon: Icon, text }) => (
               <div
                 key={text}
-                className="flex items-center gap-2 text-slate-200 text-sm"
+                className="flex items-center gap-2 text-slate-300 text-sm"
               >
                 <Icon size={14} className="text-indigo-400" />
                 <span>{text}</span>
@@ -377,7 +374,7 @@ export default function HomePage() {
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
               Why Local Businesses Choose BRF
             </h2>
-            <p className="text-slate-200 max-w-xl mx-auto">
+            <p className="text-slate-300 max-w-xl mx-auto">
               Most platforms solve one problem. We built the only system that
               solves all three — bookings, rankings, and fundability — in one
               place.
@@ -388,10 +385,10 @@ export default function HomePage() {
             <table className="w-full">
               <thead>
                 <tr className="border-b border-white/10">
-                  <th className="text-left py-4 pr-6 text-sm font-semibold text-slate-200 w-1/3">
+                  <th className="text-left py-4 pr-6 text-sm font-semibold text-slate-300 w-1/3">
                     What You're Dealing With
                   </th>
-                  <th className="text-center py-4 px-4 text-sm font-semibold text-slate-200">
+                  <th className="text-center py-4 px-4 text-sm font-semibold text-slate-300">
                     Typical Tools
                   </th>
                   <th className="text-center py-4 pl-4 text-sm font-semibold text-indigo-300">
@@ -405,10 +402,10 @@ export default function HomePage() {
                     key={row.aspect}
                     className={`border-b border-white/5 ${i % 2 === 0 ? "" : "bg-white/2"}`}
                   >
-                    <td className="py-4 pr-6 text-sm font-medium text-slate-200">
+                    <td className="py-4 pr-6 text-sm font-medium text-slate-300">
                       {row.aspect}
                     </td>
-                    <td className="py-4 px-4 text-sm text-slate-200 text-center">
+                    <td className="py-4 px-4 text-sm text-slate-300 text-center">
                       <div className="flex items-start gap-2 justify-center">
                         <XCircle
                           size={14}
@@ -417,7 +414,7 @@ export default function HomePage() {
                         <span>{row.others}</span>
                       </div>
                     </td>
-                    <td className="py-4 pl-4 text-sm text-slate-200 text-center">
+                    <td className="py-4 pl-4 text-sm text-slate-300 text-center">
                       <div className="flex items-start gap-2 justify-center">
                         <CheckCircle2
                           size={14}
@@ -456,7 +453,7 @@ export default function HomePage() {
                 Ready to Stop Losing Jobs to Competitors?
               </span>
             </h2>
-            <p className="text-slate-200 mb-10 text-lg max-w-xl mx-auto">
+            <p className="text-slate-300 mb-10 text-lg max-w-xl mx-auto">
               Get your free growth audit today. See exactly where leads are
               being lost and what it takes to fix it.
             </p>
@@ -471,16 +468,12 @@ export default function HomePage() {
                   <ArrowRight size={16} className="ml-2" />
                 </Button>
               </Link>
-              <Link to="/demo-login">
-                <Button
-                  data-ocid="home.cta.secondary_button"
-                  size="lg"
-                  variant="outline"
-                  className="bg-transparent border-white/30 text-white hover:bg-white/10 h-12 px-8 text-base"
-                >
-                  Try Live Demo →
-                </Button>
-              </Link>
+              <BookDemoTrigger
+                label="Book a Live Demo"
+                variant="outline"
+                size="lg"
+                className="bg-transparent border-white/30 text-white hover:bg-white/10 h-12 px-8 text-base"
+              />
             </div>
           </motion.div>
         </div>

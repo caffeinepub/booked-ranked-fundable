@@ -1,4 +1,4 @@
-import { Bot, Send, Sparkles, X } from "lucide-react";
+import { BarChart2, Bot, Send, Sparkles, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useApp } from "../context/AppContext";
 import { AGENT_PRODUCTS } from "../data/agentData";
@@ -72,6 +72,7 @@ const QUICK_PROMPTS = [
   { label: "What should I focus on this week?", key: "focus" },
   { label: "How do I improve my fundability?", key: "fundability" },
   { label: "What's my review velocity?", key: "reviews" },
+  { label: "View Weekly Report", key: "weekly_report" },
 ];
 
 function getAiResponse(
@@ -100,6 +101,7 @@ export default function AiBusinessManagerPanel() {
   const {
     aiPanelOpen,
     setAiPanelOpen,
+    setWeeklyReportOpen,
     isAdminUser,
     agentSubscriptions,
     currentTenantId,
@@ -175,6 +177,12 @@ export default function AiBusinessManagerPanel() {
   };
 
   const handlePrompt = (prompt: { label: string; key: string }) => {
+    // Special case: weekly report opens the report panel
+    if (prompt.key === "weekly_report") {
+      setAiPanelOpen(false);
+      setTimeout(() => setWeeklyReportOpen(true), 200);
+      return;
+    }
     sendMessage(prompt.label, prompt.key);
   };
 
@@ -225,7 +233,7 @@ export default function AiBusinessManagerPanel() {
               <h2 className="text-sm font-semibold text-white">
                 AI Business Manager
               </h2>
-              <p className="text-xs text-gray-200">
+              <p className="text-xs text-gray-400">
                 Your intelligent growth advisor
               </p>
             </div>
@@ -234,7 +242,7 @@ export default function AiBusinessManagerPanel() {
             type="button"
             onClick={() => setAiPanelOpen(false)}
             data-ocid="ai.panel.close_button"
-            className="p-1.5 rounded-lg hover:bg-gray-800 text-gray-200 hover:text-white transition-colors"
+            className="p-1.5 rounded-lg hover:bg-gray-800 text-gray-400 hover:text-white transition-colors"
           >
             <X size={16} />
           </button>
@@ -286,7 +294,7 @@ export default function AiBusinessManagerPanel() {
 
         {/* Quick Prompts */}
         <div className="px-4 pb-2">
-          <p className="text-[10px] text-gray-200 uppercase tracking-wider mb-2">
+          <p className="text-[10px] text-gray-400 uppercase tracking-wider mb-2">
             Quick prompts
           </p>
           <div className="flex flex-wrap gap-1.5">
@@ -296,8 +304,13 @@ export default function AiBusinessManagerPanel() {
                 type="button"
                 onClick={() => handlePrompt(p)}
                 data-ocid={`ai.panel.${p.key}.button`}
-                className="text-xs bg-gray-800 hover:bg-indigo-700 text-gray-200 hover:text-white px-3 py-1.5 rounded-full transition-colors border border-gray-700 hover:border-indigo-500"
+                className={`text-xs px-3 py-1.5 rounded-full transition-colors border ${
+                  p.key === "weekly_report"
+                    ? "bg-indigo-600/20 hover:bg-indigo-600/40 text-indigo-300 hover:text-indigo-200 border-indigo-500/40 hover:border-indigo-400 flex items-center gap-1.5"
+                    : "bg-gray-800 hover:bg-indigo-700 text-gray-300 hover:text-white border-gray-700 hover:border-indigo-500"
+                }`}
               >
+                {p.key === "weekly_report" && <BarChart2 size={10} />}
                 {p.label}
               </button>
             ))}
@@ -318,7 +331,7 @@ export default function AiBusinessManagerPanel() {
                 }
               }}
               placeholder="Ask me anything about your business..."
-              className="flex-1 min-h-[44px] max-h-[120px] bg-gray-800 border-gray-700 text-gray-100 placeholder:text-gray-200 resize-none text-sm focus-visible:ring-indigo-500"
+              className="flex-1 min-h-[44px] max-h-[120px] bg-gray-800 border-gray-700 text-gray-100 placeholder:text-gray-500 resize-none text-sm focus-visible:ring-indigo-500"
               rows={1}
             />
             <Button

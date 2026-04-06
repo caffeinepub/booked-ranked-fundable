@@ -1,3 +1,4 @@
+import { BookDemoModal, BookDemoTrigger } from "@/components/BookDemoModal";
 import PublicFooter from "@/components/PublicFooter";
 import PublicNav from "@/components/PublicNav";
 import AuditFormSection from "@/components/marketing/AuditFormSection";
@@ -13,7 +14,7 @@ import StatCallout from "@/components/marketing/StatCallout";
 import ThreeEnginesSection from "@/components/marketing/ThreeEnginesSection";
 import TrustInfrastructureSection from "@/components/marketing/TrustInfrastructureSection";
 import { getNiche } from "@/data/nicheData";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 interface NichePageProps {
   nicheKey: string;
@@ -21,6 +22,7 @@ interface NichePageProps {
 
 export default function NichePage({ nicheKey }: NichePageProps) {
   const niche = getNiche(nicheKey);
+  const [bookDemoOpen, setBookDemoOpen] = useState(false);
 
   useEffect(() => {
     if (niche?.seo.title) {
@@ -49,6 +51,25 @@ export default function NichePage({ nicheKey }: NichePageProps) {
         nicheKey={niche.key}
         nicheName={niche.name}
       />
+
+      {/* Book a Strategy Call strip */}
+      <div className="bg-indigo-950/60 border-y border-indigo-800/40 py-5 px-6">
+        <div className="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+          <p className="text-white/80 text-sm text-center sm:text-left">
+            Want to see exactly how this works for{" "}
+            <span className="text-white font-medium">{niche.name}</span>{" "}
+            businesses?
+          </p>
+          <BookDemoTrigger
+            label="Book a Strategy Call"
+            variant="outline"
+            size="sm"
+            defaultNiche={niche.name}
+            className="bg-transparent border-white/30 text-white hover:bg-white/10 whitespace-nowrap"
+          />
+        </div>
+      </div>
+
       <ImagineSection lines={niche.imagineLines} />
       <NichePainSection nicheName={niche.name} painPoints={niche.painPoints} />
       <ThreeEnginesSection engines={niche.engines} />
@@ -69,6 +90,14 @@ export default function NichePage({ nicheKey }: NichePageProps) {
         subtext={niche.finalCTASubtext}
         nicheKey={niche.key}
       />
+
+      {/* Book Demo Modal — controlled from this page */}
+      <BookDemoModal
+        open={bookDemoOpen}
+        onOpenChange={setBookDemoOpen}
+        defaultNiche={niche.name}
+      />
+
       <PublicFooter />
     </div>
   );

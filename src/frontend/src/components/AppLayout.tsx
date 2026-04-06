@@ -11,6 +11,7 @@ import {
   Megaphone,
   Menu,
   MessageSquare,
+  Palette,
   Phone,
   Rocket,
   Search,
@@ -97,6 +98,7 @@ const PAGE_TITLES: Record<string, string> = {
   "/listings": "Listings Monitor",
   "/social-media": "Social Media",
   "/campaigns": "Campaigns",
+  "/white-label-hub": "White-Label Hub",
 };
 
 const TYPE_ICONS: Record<Notification["type"], ReactNode> = {
@@ -219,6 +221,18 @@ export default function AppLayout({ children }: { children: ReactNode }) {
             >
               <Bot size={16} />
               Agent Services
+            </Link>
+            <Link
+              to="/white-label-hub"
+              data-ocid="nav.whitelabel.link"
+              className={`flex items-center gap-2 px-3 py-2 rounded-md text-sm mb-0.5 transition-colors ${
+                pathname === "/white-label-hub"
+                  ? "bg-amber-500 text-white"
+                  : "text-amber-400 hover:bg-amber-500/10 hover:text-amber-300"
+              }`}
+            >
+              <Palette size={16} />
+              White-Label Hub
             </Link>
           </div>
         )}

@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import {
   Activity,
   ArrowRight,
+  BarChart2,
   Building,
   MessageSquare,
   Plus,
@@ -36,6 +37,10 @@ function getGreeting() {
   return "Good evening";
 }
 
+function getTodayName() {
+  return new Date().toLocaleDateString("en-US", { weekday: "long" });
+}
+
 export default function DashboardPage() {
   const {
     currentTenantId,
@@ -45,6 +50,7 @@ export default function DashboardPage() {
     tenants,
     isDemoMode,
     demoInfo,
+    setWeeklyReportOpen,
   } = useApp();
   const [greetingDismissed, setGreetingDismissed] = useState(false);
 
@@ -158,7 +164,7 @@ export default function DashboardPage() {
           <button
             type="button"
             onClick={() => setGreetingDismissed(true)}
-            className="absolute top-3 right-3 text-gray-200 hover:text-gray-600"
+            className="absolute top-3 right-3 text-gray-400 hover:text-gray-600"
             aria-label="Dismiss"
           >
             <X size={16} />
@@ -208,7 +214,7 @@ export default function DashboardPage() {
         <h2 className="text-2xl font-bold text-gray-900">
           {isDemoMode && demoInfo ? demoInfo.businessName : "Dashboard"}
         </h2>
-        <p className="text-gray-200 text-sm mt-1">
+        <p className="text-gray-500 text-sm mt-1">
           {isDemoMode
             ? `${demoInfo?.niche} business simulation — ${demoInfo?.city}`
             : "Here's what's happening with your business today."}
@@ -219,23 +225,56 @@ export default function DashboardPage() {
         {KPI_CARDS.map(({ title, value, icon: Icon, color, sub }) => (
           <Card key={title} className={`border-t-4 ${color} shadow-sm`}>
             <CardHeader className="pb-1 pt-4 px-4">
-              <CardTitle className="text-xs font-medium text-gray-200 flex items-center justify-between">
+              <CardTitle className="text-xs font-medium text-gray-500 flex items-center justify-between">
                 {title}
-                <Icon size={16} className="text-gray-200" />
+                <Icon size={16} className="text-gray-400" />
               </CardTitle>
             </CardHeader>
             <CardContent className="px-4 pb-4">
               <p className="text-2xl font-bold text-gray-900">{value}</p>
-              <p className="text-xs text-gray-200 mt-1">{sub}</p>
+              <p className="text-xs text-gray-500 mt-1">{sub}</p>
             </CardContent>
           </Card>
         ))}
       </div>
 
+      {/* Weekly Report Card */}
+      <Card
+        className="shadow-sm border border-indigo-200 bg-gradient-to-r from-indigo-50 to-purple-50/50 cursor-pointer hover:border-indigo-300 transition-colors"
+        data-ocid="weekly_report.card"
+      >
+        <CardContent className="px-5 py-4">
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-indigo-600/15 border border-indigo-200 flex items-center justify-center flex-shrink-0">
+                <BarChart2 size={18} className="text-indigo-600" />
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-gray-900">
+                  Weekly Report
+                </p>
+                <p className="text-xs text-gray-500 mt-0.5">
+                  Your performance summary is ready. Last updated{" "}
+                  {getTodayName()}.
+                </p>
+              </div>
+            </div>
+            <Button
+              size="sm"
+              onClick={() => setWeeklyReportOpen(true)}
+              data-ocid="weekly_report.view.primary_button"
+              className="bg-indigo-600 hover:bg-indigo-700 text-white whitespace-nowrap flex-shrink-0"
+            >
+              View Report <ArrowRight size={13} className="ml-1" />
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Quick Stats Row */}
       <div className="flex flex-wrap gap-2">
         <span className="inline-flex items-center gap-1.5 bg-gray-100 text-gray-600 text-xs font-medium px-3 py-1.5 rounded-full">
-          <Activity size={12} className="text-gray-200" />
+          <Activity size={12} className="text-gray-400" />
           Last audit: 3 days ago
         </span>
         <span className="inline-flex items-center gap-1.5 bg-amber-50 text-amber-700 text-xs font-medium px-3 py-1.5 rounded-full">
@@ -315,9 +354,9 @@ export default function DashboardPage() {
                   <p className="text-sm font-medium text-gray-900">
                     {item.name}
                   </p>
-                  <p className="text-xs text-gray-200">{item.action}</p>
+                  <p className="text-xs text-gray-500">{item.action}</p>
                 </div>
-                <span className="text-xs text-gray-200">{item.time}</span>
+                <span className="text-xs text-gray-400">{item.time}</span>
               </div>
             ))}
           </div>

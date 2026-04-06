@@ -46,6 +46,35 @@ export interface Notification {
   read: boolean;
 }
 
+export interface WhiteLabelSettings {
+  agencyName: string;
+  tagline: string;
+  heroHeadline: string;
+  logoDataUrl: string;
+  primaryColor: string;
+  secondaryColor: string;
+  welcomeHeadline: string;
+  welcomeMessage: string;
+  customDomain: string;
+  emailSenderName: string;
+  emailSenderAddress: string;
+}
+
+const DEFAULT_WHITE_LABEL: WhiteLabelSettings = {
+  agencyName: "Your Agency Name",
+  tagline: "AI-Powered Growth for Local Businesses",
+  heroHeadline: "The Platform That Books, Ranks & Funds Your Clients",
+  logoDataUrl: "",
+  primaryColor: "#7c3aed",
+  secondaryColor: "#4f46e5",
+  welcomeHeadline: "Welcome to Your Growth Platform",
+  welcomeMessage:
+    "Everything you need to book more jobs, rank higher, and build business credit — in one place.",
+  customDomain: "",
+  emailSenderName: "",
+  emailSenderAddress: "",
+};
+
 const DEMO_NOTIFICATIONS: Notification[] = [
   {
     id: "n1",
@@ -86,6 +115,14 @@ const DEMO_NOTIFICATIONS: Notification[] = [
     message: "Review request sent to 3 customers via SMS",
     time: "3 days ago",
     read: true,
+  },
+  {
+    id: "n6",
+    type: "general",
+    title: "Weekly Report Ready",
+    message: "Your weekly performance summary is available",
+    time: "1 hour ago",
+    read: false,
   },
 ];
 
@@ -149,6 +186,8 @@ interface AppContextType {
   markRead: (id: string) => void;
   aiPanelOpen: boolean;
   setAiPanelOpen: (v: boolean) => void;
+  weeklyReportOpen: boolean;
+  setWeeklyReportOpen: (v: boolean) => void;
   socialMediaEnabled: Record<string, boolean>;
   setSocialMediaEnabledForTenant: (tenantId: string, enabled: boolean) => void;
   aiProviderConfig: AiProviderConfig;
@@ -191,6 +230,9 @@ interface AppContextType {
   setAgentPriceOverride: (productId: string, price: number) => void;
   addAgentSubscriptionNote: (subscriptionId: string, note: string) => void;
   addOversight: (subscriptionId: string) => void;
+  // White-Label
+  whiteLabelSettings: WhiteLabelSettings;
+  setWhiteLabelSettings: (settings: WhiteLabelSettings) => void;
 }
 
 const AppContext = createContext<AppContextType | null>(null);
@@ -232,6 +274,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [notifications, setNotifications] =
     useState<Notification[]>(DEMO_NOTIFICATIONS);
   const [aiPanelOpen, setAiPanelOpen] = useState(false);
+  const [weeklyReportOpen, setWeeklyReportOpen] = useState(false);
   const [socialMediaEnabled, setSocialMediaEnabled] = useState<
     Record<string, boolean>
   >(() => loadFromLocal("brfSocialMedia", {}));
@@ -279,6 +322,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [agentPricingOverrides, setAgentPricingOverridesState] = useState<
     Record<string, number>
   >(() => loadFromLocal("brfAgentPricing", {}));
+
+  // White-Label state
+  const [whiteLabelSettings, setWhiteLabelSettingsState] =
+    useState<WhiteLabelSettings>(() =>
+      loadFromLocal("brfWhiteLabel", DEFAULT_WHITE_LABEL),
+    );
 
   useEffect(() => {
     sessionStorage.setItem("brfUser", JSON.stringify(currentUser));
@@ -328,6 +377,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
       JSON.stringify(agentPricingOverrides),
     );
   }, [agentPricingOverrides]);
+  useEffect(() => {
+    localStorage.setItem("brfWhiteLabel", JSON.stringify(whiteLabelSettings));
+  }, [whiteLabelSettings]);
 
   const setCampaignToggle = (
     tenantId: string,
@@ -606,6 +658,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
     );
   };
 
+  const setWhiteLabelSettings = (settings: WhiteLabelSettings) => {
+    setWhiteLabelSettingsState(settings);
+  };
+
   const isDemoMode = demoInfo !== null && currentTenantId === "tenant-demo";
 
   return (
@@ -633,6 +689,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
         markRead,
         aiPanelOpen,
         setAiPanelOpen,
+        weeklyReportOpen,
+        setWeeklyReportOpen,
         socialMediaEnabled,
         setSocialMediaEnabledForTenant,
         aiProviderConfig,
@@ -662,6 +720,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
         setAgentPriceOverride,
         addAgentSubscriptionNote,
         addOversight,
+        whiteLabelSettings,
+        setWhiteLabelSettings,
       }}
     >
       {children}

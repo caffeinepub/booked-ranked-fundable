@@ -1,42 +1,46 @@
-# Booked Ranked Fundable — Agent Services Phase 4
+# Booked Ranked Fundable — White-Label Hub
 
 ## Current State
 
-- Agent Services layer is live on both admin (`/admin-agents`) and client (`/agent-services`) sides
-- `agentData.ts` contains all models: AgentProduct, AgentSubscription, AgentTask, AgentDeliverable, AgentServiceRequest, AgentPerformanceSnapshot
-- AppContext manages agent state: activateAgent, deactivateAgent, pauseAgent, resumeAgent, submitAgentRequest, updateAgentTaskStatus, setAgentPriceOverride, addAgentSubscriptionNote
-- `activateAgent(tenantId, productId, withOversight?)` exists but Human Oversight add-on from active agent cards only shows a toast pointing to "account manager" — not wired
-- Bundle logic exists as a product card but no guard against double-subscription (e.g., buying SEO + Ads separately when bundle is available)
-- Performance snapshots exist in DEMO_AGENT_PERFORMANCE but the dashboard is static month-by-month cards with no trend visualization or historical comparison
-- AiBusinessManagerPanel has no agent-aware recommendations — it only references SEO/fundability/reviews generically
-- No `addOversight` function exists in AppContext
+The platform (Version 28) has:
+- Three login paths: Super Admin (`/admin`), Client (`/dashboard`), Demo (`/demo-login`)
+- Agency onboarding wizard (7-step) at `/onboarding` for agency-role users
+- Step 2 of the AgencyOnboardingWizard already collects agency name, logo, tagline, and a color — but this data is ephemeral (wizard-only, not persisted in a dedicated hub)
+- No dedicated White-Label Hub page exists
+- Admin sidebar has: Admin Panel (`/admin`) and Agent Services (`/admin-agents`)
+- Protected routes include all dashboard features; admin-only routes: `/admin` and `/admin-agents`
+- AppContext tracks `currentUser`, `isLoggedIn`, `isAdminUser`, tenants, notifications, and onboarding state
 
 ## Requested Changes (Diff)
 
 ### Add
-- `addOversight(subscriptionId)` function in AppContext that sets `hasOversight: true` on the subscription, creates a high-priority task in the fulfillment queue (type: "review"), and fires a notification
-- Human Oversight add button on active agent cards that calls `addOversight` directly — no toast redirect
-- Bundle savings callout: when user has SEO Agent AND Ads Agent active separately, show a persistent upgrade nudge to the bundle with visible savings amount
-- Bundle activation guard: when activating the bundle, auto-cancel any individual SEO or Ads subscriptions to prevent double-billing
-- Agent-aware AI Business Manager responses — when the client has active agent subscriptions, surface recommendations specifically tied to those agents (e.g., "Your SEO Agent found 3 GBP improvements ready for review")
-- Performance trend visualization: month-over-month sparkline/trend indicator on each metric card (up/down arrows with delta vs previous month)
-- "Next Best Action" panel on Performance tab driven by active agents and latest performance data
-- Admin performance dashboard: per-agent MRR contribution and subscription count on the Overview tab
+- New page: `WhiteLabelHubPage.tsx` at route `/white-label-hub` (admin-only protected route)
+- 5 tabs inside the hub:
+  1. **Brand Settings** — agency name, logo upload (image file), primary + secondary brand colors (color pickers), tagline, hero headline, custom domain field
+  2. **Onboarding Link** — branded welcome screen customization (headline, welcome message, agency logo preview), shareable link generator with copy-to-clipboard, QR code display, link stats (simulated clicks/signups)
+  3. **Client Portal Preview** — live simulation of what an agency client sees: branded login page mockup, branded dashboard header, branded onboarding wizard welcome screen — all updating in real-time from Brand Settings
+  4. **Domain & Access** — custom domain instructions, subdomain config, SSL status indicator, white-label email sender name/address
+  5. **Client Branding Controls** — per-client overrides: custom greeting text, help text override, CTA label customization, hide/show specific nav items
+- Navigation: add "White-Label Hub" as a top-level item in the admin sidebar (appears only for admin/agency users)
+- App.tsx: register `/white-label-hub` as an admin-only protected route
+- AppContext: add `whiteLabelSettings` state (agencyName, logoUrl, primaryColor, secondaryColor, tagline, heroHeadline, customDomain, welcomeHeadline, welcomeMessage, emailSenderName, emailSenderAddress) with get/set
 
 ### Modify
-- `activateAgent` in AppContext: when productId is a bundle (`agent-bundle`), auto-cancel any active `agent-seo` or `agent-ads` subscriptions
-- AgentServicesPage Active Agents tab: Human Oversight "Add" button calls `addOversight` and shows success toast (not info toast)
-- AgentServicesPage Performance tab: add trend arrows and delta vs previous month on metric cards
-- AiBusinessManagerPanel CLIENT_RESPONSES: inject agent-specific recommendations based on `agentSubscriptions` state
-- AdminAgentServicesPage Overview tab: pull live MRR from active subscriptions using actual pricing overrides
+- `App.tsx` — add `/white-label-hub` route pointing to `WhiteLabelHubPage`
+- `AppLayout.tsx` or wherever admin sidebar nav items are defined — add White-Label Hub nav link for admin users
+- `AppContext.tsx` — add `whiteLabelSettings` state and setter
 
 ### Remove
-- Toast redirect to "contact account manager" for Human Oversight — replaced with direct wiring
+- Nothing removed
 
 ## Implementation Plan
 
-1. **AppContext**: Add `addOversight(subscriptionId)` function — sets hasOversight, creates high-priority oversight task, fires notification. Update `activateAgent` to auto-cancel conflicting individual subs when bundle activated.
-2. **agentData.ts**: Export a helper to generate the oversight task object for a given subscription.
-3. **AgentServicesPage**: Wire "Add" button on oversight upsell panel to call `addOversight`. Add bundle upgrade nudge when both SEO + Ads active individually. Enhance Performance tab with trend arrows comparing latest vs previous month snapshot.
-4. **AiBusinessManagerPanel**: Add agent-aware response set — when client has active subscriptions, inject 2-3 recommendations referencing specific active agents and their current work/deliverables.
-5. **AdminAgentServicesPage Overview**: Replace hardcoded MRR with computed value from actual subscriptions × pricing overrides.
+1. Update `AppContext.tsx` to add `whiteLabelSettings` state with defaults
+2. Create `WhiteLabelHubPage.tsx` with 5-tab layout matching the existing premium dark/purple aesthetic
+3. Tab 1 (Brand Settings): form fields for all brand config, logo upload (FileReader base64 preview), two color pickers, save to context
+4. Tab 2 (Onboarding Link): welcome screen customizer, shareable URL display with copy button, simulated QR code block, link stats cards
+5. Tab 3 (Client Portal Preview): live preview panel that reads from context whiteLabelSettings and renders branded mockups of the login page header, dashboard top bar, and onboarding wizard welcome — updates as user edits Brand Settings
+6. Tab 4 (Domain & Access): custom domain input, subdomain display, SSL badge, email sender fields
+7. Tab 5 (Client Branding Controls): table of clients with per-row greeting text override, help text, CTA label, nav visibility toggles
+8. Register route in `App.tsx` as admin-only
+9. Add nav link in sidebar (admin-only visibility)
