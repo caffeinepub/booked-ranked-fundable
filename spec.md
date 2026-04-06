@@ -1,70 +1,42 @@
-# Booked Ranked Fundable — Agent Services Layer
+# Booked Ranked Fundable — Agent Services Phase 4
 
 ## Current State
 
-The app is a fully built multi-tenant SaaS platform (Version 24) with:
-- React + TypeScript + Tailwind frontend, Motoko ICP backend
-- AppContext managing auth, tenants, notifications, campaigns, onboarding state
-- AppLayout with sidebar navigation (NAV_GROUPS), admin panel at /admin
-- Pages: Dashboard, Leads, Reviews, Audit, Fundability, Reports, Analytics, Settings, Admin, ChatWidget, VoiceAgent, ReviewRequests, Listings, SocialMedia, Campaigns
-- Demo mode, three login paths, white-label agency support
-- demoData.ts has TENANTS, LEADS, REVIEWS, AUDIT_SCORES, FUNDABILITY_SCORES
+- Agent Services layer is live on both admin (`/admin-agents`) and client (`/agent-services`) sides
+- `agentData.ts` contains all models: AgentProduct, AgentSubscription, AgentTask, AgentDeliverable, AgentServiceRequest, AgentPerformanceSnapshot
+- AppContext manages agent state: activateAgent, deactivateAgent, pauseAgent, resumeAgent, submitAgentRequest, updateAgentTaskStatus, setAgentPriceOverride, addAgentSubscriptionNote
+- `activateAgent(tenantId, productId, withOversight?)` exists but Human Oversight add-on from active agent cards only shows a toast pointing to "account manager" — not wired
+- Bundle logic exists as a product card but no guard against double-subscription (e.g., buying SEO + Ads separately when bundle is available)
+- Performance snapshots exist in DEMO_AGENT_PERFORMANCE but the dashboard is static month-by-month cards with no trend visualization or historical comparison
+- AiBusinessManagerPanel has no agent-aware recommendations — it only references SEO/fundability/reviews generically
+- No `addOversight` function exists in AppContext
 
 ## Requested Changes (Diff)
 
 ### Add
-- `src/frontend/src/data/agentData.ts` — all agent data models: agent products, subscriptions, tasks, deliverables, service requests, performance snapshots
-- `src/frontend/src/pages/AgentServicesPage.tsx` — client-facing "My Agents" page with tabs: Store, Active, Requests, Deliverables, Performance
-- `src/frontend/src/pages/AdminAgentServicesPage.tsx` — admin-facing Agent Services page with tabs: Overview, Catalog, Subscriptions, Fulfillment Queue, Deliverables, Performance, Settings
-- AppContext extensions: agentSubscriptions state, agentRequests state, agentTasks state, helpers
-- Route `/agent-services` in App.tsx (protected, all authenticated users)
-- Route `/admin-agents` in App.tsx (protected, admin only)
-- Nav group entry "Agent Services" in AppLayout for non-admin users
-- Admin nav entry "Agent Services" in AppLayout for admin users
+- `addOversight(subscriptionId)` function in AppContext that sets `hasOversight: true` on the subscription, creates a high-priority task in the fulfillment queue (type: "review"), and fires a notification
+- Human Oversight add button on active agent cards that calls `addOversight` directly — no toast redirect
+- Bundle savings callout: when user has SEO Agent AND Ads Agent active separately, show a persistent upgrade nudge to the bundle with visible savings amount
+- Bundle activation guard: when activating the bundle, auto-cancel any individual SEO or Ads subscriptions to prevent double-billing
+- Agent-aware AI Business Manager responses — when the client has active agent subscriptions, surface recommendations specifically tied to those agents (e.g., "Your SEO Agent found 3 GBP improvements ready for review")
+- Performance trend visualization: month-over-month sparkline/trend indicator on each metric card (up/down arrows with delta vs previous month)
+- "Next Best Action" panel on Performance tab driven by active agents and latest performance data
+- Admin performance dashboard: per-agent MRR contribution and subscription count on the Overview tab
 
 ### Modify
-- `AppContext.tsx` — add agent-related state: agentSubscriptions (per tenant), agentRequests, agentTasks, agentPricing overrides, helpers to activate/deactivate/request
-- `AppLayout.tsx` — add "Agent Services" to client nav group; add "Agent Services" to admin nav section
-- `App.tsx` — add two new routes
+- `activateAgent` in AppContext: when productId is a bundle (`agent-bundle`), auto-cancel any active `agent-seo` or `agent-ads` subscriptions
+- AgentServicesPage Active Agents tab: Human Oversight "Add" button calls `addOversight` and shows success toast (not info toast)
+- AgentServicesPage Performance tab: add trend arrows and delta vs previous month on metric cards
+- AiBusinessManagerPanel CLIENT_RESPONSES: inject agent-specific recommendations based on `agentSubscriptions` state
+- AdminAgentServicesPage Overview tab: pull live MRR from active subscriptions using actual pricing overrides
 
 ### Remove
-- Nothing removed
+- Toast redirect to "contact account manager" for Human Oversight — replaced with direct wiring
 
 ## Implementation Plan
 
-1. Create `agentData.ts` with:
-   - AGENT_PRODUCTS (5 products: SEO&GEO, Paid Ads, Website, Bundle, Human Oversight)
-   - AGENT_FEATURES per product
-   - DEMO_AGENT_SUBSCRIPTIONS per tenant
-   - DEMO_AGENT_TASKS (fulfillment queue items)
-   - DEMO_AGENT_DELIVERABLES per tenant
-   - DEMO_AGENT_REQUESTS (service requests from clients)
-   - DEMO_AGENT_PERFORMANCE snapshots
-   - TypeScript interfaces for all entities
-
-2. Extend AppContext with:
-   - agentSubscriptions: Record<tenantId, AgentSubscription[]>
-   - agentRequests: AgentServiceRequest[]
-   - agentTasks: AgentTask[]
-   - agentPricingOverrides: Record<productId, number>
-   - activateAgent(tenantId, productId) / deactivateAgent(tenantId, subscriptionId)
-   - submitAgentRequest(req) / updateTaskStatus(taskId, status)
-   - setAgentPriceOverride(productId, price)
-
-3. Build AdminAgentServicesPage with tabs:
-   - Overview: stats cards (MRR, active subs, pending tasks), subscriptions by type chart, upsell table
-   - Catalog: editable product cards, price editor, feature lists, enable/disable toggles
-   - Client Subscriptions: table of all clients + their active agents, add/remove/pause controls
-   - Fulfillment Queue: filterable task list with status, assignee, due date, notes
-   - Deliverables: per-client deliverable history with monthly breakdown
-   - Performance: per-client impact metrics, SEO scores, lead changes
-   - Settings: pricing editor, visibility rules, niche enablement, human oversight config
-
-4. Build AgentServicesPage (client) with tabs:
-   - Store: premium agent cards showing price, features, active state, activate/request buttons
-   - Active Agents: subscribed services with current work, next deliverables, recent completions
-   - Request Queue: form to submit requests routing to admin fulfillment queue
-   - Deliverables: completed work history
-   - Performance Snapshot: client-friendly metrics and next best actions
-
-5. Wire routing and navigation in App.tsx and AppLayout.tsx
+1. **AppContext**: Add `addOversight(subscriptionId)` function — sets hasOversight, creates high-priority oversight task, fires notification. Update `activateAgent` to auto-cancel conflicting individual subs when bundle activated.
+2. **agentData.ts**: Export a helper to generate the oversight task object for a given subscription.
+3. **AgentServicesPage**: Wire "Add" button on oversight upsell panel to call `addOversight`. Add bundle upgrade nudge when both SEO + Ads active individually. Enhance Performance tab with trend arrows comparing latest vs previous month snapshot.
+4. **AiBusinessManagerPanel**: Add agent-aware response set — when client has active subscriptions, inject 2-3 recommendations referencing specific active agents and their current work/deliverables.
+5. **AdminAgentServicesPage Overview**: Replace hardcoded MRR with computed value from actual subscriptions × pricing overrides.

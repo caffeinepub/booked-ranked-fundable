@@ -190,6 +190,7 @@ interface AppContextType {
   updateAgentTaskStatus: (taskId: string, status: AgentTask["status"]) => void;
   setAgentPriceOverride: (productId: string, price: number) => void;
   addAgentSubscriptionNote: (subscriptionId: string, note: string) => void;
+  addOversight: (subscriptionId: string) => void;
 }
 
 const AppContext = createContext<AppContextType | null>(null);
@@ -466,6 +467,18 @@ export function AppProvider({ children }: { children: ReactNode }) {
     productId: string,
     withOversight = false,
   ) => {
+    // Bundle guard: auto-cancel individual seo/ads subs if activating bundle
+    if (productId === "agent-bundle") {
+      setAgentSubscriptions((prev) =>
+        prev.map((s) =>
+          s.tenantId === tenantId &&
+          (s.productId === "agent-seo" || s.productId === "agent-ads") &&
+          s.status !== "cancelled"
+            ? { ...s, status: "cancelled" as const }
+            : s,
+        ),
+      );
+    }
     const product = AGENT_PRODUCTS.find((p) => p.id === productId);
     const tenant = tenants.find((t) => t.id === tenantId);
     const newSub: AgentSubscription = {
@@ -548,6 +561,45 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setAgentPricingOverridesState((prev) => ({ ...prev, [productId]: price }));
   };
 
+  const addOversight = (subscriptionId: string) => {
+    setAgentSubscriptions((prev) =>
+      prev.map((s) =>
+        s.id === subscriptionId ? { ...s, hasOversight: true } : s,
+      ),
+    );
+    const sub = agentSubscriptions.find((s) => s.id === subscriptionId);
+    const product = AGENT_PRODUCTS.find((p) => p.id === sub?.productId);
+    const tenant = tenants.find((t) => t.id === sub?.tenantId);
+    const newTask: AgentTask = {
+      id: `task-oversight-${Date.now()}`,
+      tenantId: sub?.tenantId ?? "",
+      productId: sub?.productId ?? "",
+      subscriptionId,
+      title: `Human Oversight Upgrade — ${product?.name ?? "Agent"}`,
+      description: `Client requested Human Oversight add-on for ${product?.name}. Schedule strategy onboarding call and assign dedicated strategist.`,
+      type: "review",
+      status: "pending",
+      priority: "high",
+      assignee: "Unassigned",
+      dueDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000)
+        .toISOString()
+        .split("T")[0],
+      createdAt: Date.now(),
+      notes: "Auto-created from client Human Oversight activation",
+      isClientRequest: true,
+    };
+    setAgentTasks((prev) => [newTask, ...prev]);
+    const notification = {
+      id: `notif-oversight-${Date.now()}`,
+      type: "general" as const,
+      title: "Human Oversight Activated",
+      message: `${tenant?.name ?? "A client"} added Human Oversight to ${product?.name ?? "their agent"}`,
+      time: "Just now",
+      read: false,
+    };
+    setNotifications((prev) => [notification, ...prev]);
+  };
+
   const addAgentSubscriptionNote = (subscriptionId: string, note: string) => {
     setAgentSubscriptions((prev) =>
       prev.map((s) => (s.id === subscriptionId ? { ...s, notes: note } : s)),
@@ -609,6 +661,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         updateAgentTaskStatus,
         setAgentPriceOverride,
         addAgentSubscriptionNote,
+        addOversight,
       }}
     >
       {children}

@@ -1,6 +1,7 @@
 import { Bot, Send, Sparkles, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useApp } from "../context/AppContext";
+import { AGENT_PRODUCTS } from "../data/agentData";
 import { Button } from "./ui/button";
 import { ScrollArea } from "./ui/scroll-area";
 import { Sheet, SheetContent } from "./ui/sheet";
@@ -43,6 +44,11 @@ const CLIENT_RESPONSES: Record<string, string[]> = {
     "Good news: your Google reviews are trending up this week with 3 new 5-star reviews. Your review velocity is 4.1/month — above average for your niche. Keep the momentum going with your automated request cadence.",
     "Your SEO audit score improved 6 points since last month. The biggest remaining gap is mobile page speed — your site loads in 4.2 seconds on mobile. Getting that under 2.5 seconds could boost your local ranking noticeably.",
   ],
+  agents: [
+    "Your SEO Agent completed 3 tasks this week — GBP categories updated, 5 new citations built, and technical crawl errors resolved. I'd recommend approving the GBP photo refresh queued for next steps.",
+    "Your Paid Ads Agent has 2 ad variants in A/B testing right now. Early data shows Variant B is outperforming by 18% CTR — expect a recommendation to pause Variant A within 48 hours.",
+    "Based on your active agents, here's your growth summary: SEO score +4 this month, 3 new leads from organic search, and your GBP visibility is up 28%. Your next highest-impact move is approving the landing page request in your queue.",
+  ],
   seo: [
     "Your current SEO score is 72/100. The three things holding you back: (1) Your Google Business Profile is missing service descriptions — add detailed descriptions for your top 5 services. (2) Your website has no schema markup. (3) You have 14 missing alt tags on images.",
     "To improve your local ranking this week: respond to your 2 unanswered Google reviews, add a FAQ section to your homepage, and make sure your business hours are consistent across Google, Yelp, and Facebook.",
@@ -72,22 +78,57 @@ function getAiResponse(
   key: string,
   isAdminUser: boolean,
   usedIndex: Record<string, number>,
+  hasActiveAgents = false,
 ): string {
   const map = isAdminUser ? ADMIN_RESPONSES : CLIENT_RESPONSES;
+  // For clients with active agents on "default" key, prefer agent responses first
+  if (
+    !isAdminUser &&
+    key === "default" &&
+    hasActiveAgents &&
+    (usedIndex.default ?? 0) < CLIENT_RESPONSES.agents.length
+  ) {
+    const idx = (usedIndex[key] ?? 0) % CLIENT_RESPONSES.agents.length;
+    return CLIENT_RESPONSES.agents[idx];
+  }
   const pool = map[key] ?? map.default;
   const idx = (usedIndex[key] ?? 0) % pool.length;
   return pool[idx];
 }
 
 export default function AiBusinessManagerPanel() {
-  const { aiPanelOpen, setAiPanelOpen, isAdminUser } = useApp();
+  const {
+    aiPanelOpen,
+    setAiPanelOpen,
+    isAdminUser,
+    agentSubscriptions,
+    currentTenantId,
+  } = useApp();
+  const activeAgentSubs = agentSubscriptions.filter(
+    (s) => s.tenantId === currentTenantId && s.status === "active",
+  );
+
+  const getInitialGreeting = () => {
+    if (isAdminUser) {
+      return "Hello Admin. I'm monitoring your full client portfolio. Ask me anything about your clients' growth metrics, or use a quick prompt below.";
+    }
+    let greeting =
+      "Hi there! I'm your AI Business Manager. I'm tracking your SEO, reviews, fundability, and leads in real time. What would you like to focus on today?";
+    if (activeAgentSubs.length > 0) {
+      const agentNames = activeAgentSubs.map((s) => {
+        const p = AGENT_PRODUCTS.find((prod) => prod.id === s.productId);
+        return p?.name ?? s.productId;
+      });
+      greeting += ` Your ${agentNames.join(" and ")} ${activeAgentSubs.length === 1 ? "is" : "are"} active — I have updates for you.`;
+    }
+    return greeting;
+  };
+
   const [messages, setMessages] = useState<Message[]>(() => [
     {
       id: "init",
       role: "ai",
-      text: isAdminUser
-        ? "Hello Admin. I'm monitoring your full client portfolio. Ask me anything about your clients' growth metrics, or use a quick prompt below."
-        : "Hi there! I'm your AI Business Manager. I'm tracking your SEO, reviews, fundability, and leads in real time. What would you like to focus on today?",
+      text: getInitialGreeting(),
       ts: Date.now(),
     },
   ]);
@@ -115,7 +156,12 @@ export default function AiBusinessManagerPanel() {
 
     setTimeout(() => {
       const key = promptKey;
-      const response = getAiResponse(key, isAdminUser, usedIndex);
+      const response = getAiResponse(
+        key,
+        isAdminUser,
+        usedIndex,
+        activeAgentSubs.length > 0,
+      );
       setUsedIndex((prev) => ({ ...prev, [key]: (prev[key] ?? 0) + 1 }));
       const aiMsg: Message = {
         id: `ai-${Date.now()}`,

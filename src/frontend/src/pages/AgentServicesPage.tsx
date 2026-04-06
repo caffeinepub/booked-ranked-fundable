@@ -12,6 +12,7 @@ import {
   Pencil,
   Search,
   Sparkles,
+  TrendingDown,
   TrendingUp,
   Users,
   Zap,
@@ -177,6 +178,7 @@ export default function AgentServicesPage() {
     pauseAgent,
     resumeAgent,
     submitAgentRequest,
+    addOversight,
   } = useApp();
 
   const [requestForm, setRequestForm] = useState({
@@ -534,11 +536,14 @@ export default function AgentServicesPage() {
                               <Button
                                 size="sm"
                                 className="bg-rose-600/80 hover:bg-rose-600 text-white text-xs shrink-0"
-                                onClick={() =>
-                                  toast.info(
-                                    "Contact your account manager to add Human Oversight.",
-                                  )
-                                }
+                                onClick={() => {
+                                  if (sub) {
+                                    addOversight(sub.id);
+                                    toast.success(
+                                      "Human Oversight activated! Your strategist will reach out within 1 business day.",
+                                    );
+                                  }
+                                }}
                                 data-ocid={`agents.store.secondary_button.${i + 1}`}
                               >
                                 Add
@@ -552,6 +557,45 @@ export default function AgentServicesPage() {
               );
             })}
           </div>
+
+          {/* Bundle upgrade nudge when both SEO and Ads are individually active */}
+          {activeProductIds.has("agent-seo") &&
+            activeProductIds.has("agent-ads") &&
+            !activeProductIds.has("agent-bundle") && (
+              <div
+                className="mt-4 p-4 rounded-xl bg-amber-500/10 border border-amber-500/30"
+                data-ocid="agents.store.card"
+              >
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <div className="flex items-center gap-2 mb-1">
+                      <Package size={16} className="text-amber-400" />
+                      <p className="text-amber-400 font-semibold text-sm">
+                        Bundle Upgrade Available
+                      </p>
+                    </div>
+                    <p className="text-slate-300 text-sm">
+                      You're paying $2,998/mo for SEO & Ads separately. Switch
+                      to the SEO + Paid Ads Bundle and save{" "}
+                      <span className="text-amber-400 font-bold">$400/mo</span>.
+                    </p>
+                  </div>
+                  <Button
+                    size="sm"
+                    className="bg-amber-600 hover:bg-amber-700 text-white shrink-0"
+                    onClick={() => {
+                      activateAgent(currentTenantId, "agent-bundle");
+                      toast.success(
+                        "Upgraded to SEO + Paid Ads Bundle! Individual subscriptions cancelled. Saving $400/mo.",
+                      );
+                    }}
+                    data-ocid="agents.store.primary_button"
+                  >
+                    Upgrade to Bundle
+                  </Button>
+                </div>
+              </div>
+            )}
 
           {oversightProduct && (
             <Card
@@ -1165,64 +1209,182 @@ export default function AgentServicesPage() {
                     </CardHeader>
                     <CardContent className="space-y-4">
                       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                        {latest.seoScoreChange !== undefined && (
-                          <div className="bg-slate-900 rounded-lg p-3">
-                            <p className="text-slate-400 text-xs">SEO Score</p>
-                            <p
-                              className={`text-2xl font-bold ${latest.seoScoreChange >= 0 ? "text-emerald-400" : "text-red-400"}`}
-                            >
-                              {latest.seoScoreChange >= 0 ? "+" : ""}
-                              {latest.seoScoreChange}
-                            </p>
-                          </div>
-                        )}
-                        {latest.leadChange !== undefined && (
-                          <div className="bg-slate-900 rounded-lg p-3">
-                            <p className="text-slate-400 text-xs">New Leads</p>
-                            <p
-                              className={`text-2xl font-bold ${latest.leadChange >= 0 ? "text-emerald-400" : "text-red-400"}`}
-                            >
-                              {latest.leadChange >= 0 ? "+" : ""}
-                              {latest.leadChange}
-                            </p>
-                          </div>
-                        )}
-                        {latest.adsSpend !== undefined && (
-                          <div className="bg-slate-900 rounded-lg p-3">
-                            <p className="text-slate-400 text-xs">Ads Spend</p>
-                            <p className="text-2xl font-bold text-purple-400">
-                              ${latest.adsSpend.toLocaleString()}
-                            </p>
-                          </div>
-                        )}
-                        {latest.adsClicks !== undefined && (
-                          <div className="bg-slate-900 rounded-lg p-3">
-                            <p className="text-slate-400 text-xs">Clicks</p>
-                            <p className="text-2xl font-bold text-blue-400">
-                              {latest.adsClicks.toLocaleString()}
-                            </p>
-                          </div>
-                        )}
-                        {latest.adsImpressions !== undefined && (
-                          <div className="bg-slate-900 rounded-lg p-3">
-                            <p className="text-slate-400 text-xs">
-                              Impressions
-                            </p>
-                            <p className="text-2xl font-bold text-slate-200">
-                              {latest.adsImpressions.toLocaleString()}
-                            </p>
-                          </div>
-                        )}
-                        {latest.websitePagesUpdated !== undefined && (
-                          <div className="bg-slate-900 rounded-lg p-3">
-                            <p className="text-slate-400 text-xs">
-                              Pages Updated
-                            </p>
-                            <p className="text-2xl font-bold text-blue-400">
-                              {latest.websitePagesUpdated}
-                            </p>
-                          </div>
-                        )}
+                        {(() => {
+                          const previous = snaps[1];
+                          const seoDelta =
+                            previous?.seoScoreChange !== undefined &&
+                            latest.seoScoreChange !== undefined
+                              ? latest.seoScoreChange - previous.seoScoreChange
+                              : null;
+                          const leadDelta =
+                            previous?.leadChange !== undefined &&
+                            latest.leadChange !== undefined
+                              ? latest.leadChange - previous.leadChange
+                              : null;
+                          const clicksDelta =
+                            previous?.adsClicks !== undefined &&
+                            latest.adsClicks !== undefined
+                              ? latest.adsClicks - previous.adsClicks
+                              : null;
+                          const impressionsDelta =
+                            previous?.adsImpressions !== undefined &&
+                            latest.adsImpressions !== undefined
+                              ? latest.adsImpressions - previous.adsImpressions
+                              : null;
+                          const pagesDelta =
+                            previous?.websitePagesUpdated !== undefined &&
+                            latest.websitePagesUpdated !== undefined
+                              ? latest.websitePagesUpdated -
+                                previous.websitePagesUpdated
+                              : null;
+                          return (
+                            <>
+                              {latest.seoScoreChange !== undefined && (
+                                <div className="bg-slate-900 rounded-lg p-3">
+                                  <p className="text-slate-400 text-xs">
+                                    SEO Score
+                                  </p>
+                                  <p
+                                    className={`text-2xl font-bold ${latest.seoScoreChange >= 0 ? "text-emerald-400" : "text-red-400"}`}
+                                  >
+                                    {latest.seoScoreChange >= 0 ? "+" : ""}
+                                    {latest.seoScoreChange}
+                                  </p>
+                                  {seoDelta !== null && (
+                                    <div
+                                      className={`flex items-center gap-1 text-xs mt-1 ${seoDelta >= 0 ? "text-emerald-400" : "text-red-400"}`}
+                                    >
+                                      {seoDelta >= 0 ? (
+                                        <TrendingUp size={11} />
+                                      ) : (
+                                        <TrendingDown size={11} />
+                                      )}
+                                      <span>
+                                        {seoDelta >= 0 ? "+" : ""}
+                                        {seoDelta} vs last mo
+                                      </span>
+                                    </div>
+                                  )}
+                                </div>
+                              )}
+                              {latest.leadChange !== undefined && (
+                                <div className="bg-slate-900 rounded-lg p-3">
+                                  <p className="text-slate-400 text-xs">
+                                    New Leads
+                                  </p>
+                                  <p
+                                    className={`text-2xl font-bold ${latest.leadChange >= 0 ? "text-emerald-400" : "text-red-400"}`}
+                                  >
+                                    {latest.leadChange >= 0 ? "+" : ""}
+                                    {latest.leadChange}
+                                  </p>
+                                  {leadDelta !== null && (
+                                    <div
+                                      className={`flex items-center gap-1 text-xs mt-1 ${leadDelta >= 0 ? "text-emerald-400" : "text-red-400"}`}
+                                    >
+                                      {leadDelta >= 0 ? (
+                                        <TrendingUp size={11} />
+                                      ) : (
+                                        <TrendingDown size={11} />
+                                      )}
+                                      <span>
+                                        {leadDelta >= 0 ? "+" : ""}
+                                        {leadDelta} vs last mo
+                                      </span>
+                                    </div>
+                                  )}
+                                </div>
+                              )}
+                              {latest.adsSpend !== undefined && (
+                                <div className="bg-slate-900 rounded-lg p-3">
+                                  <p className="text-slate-400 text-xs">
+                                    Ads Spend
+                                  </p>
+                                  <p className="text-2xl font-bold text-purple-400">
+                                    ${latest.adsSpend.toLocaleString()}
+                                  </p>
+                                </div>
+                              )}
+                              {latest.adsClicks !== undefined && (
+                                <div className="bg-slate-900 rounded-lg p-3">
+                                  <p className="text-slate-400 text-xs">
+                                    Clicks
+                                  </p>
+                                  <p className="text-2xl font-bold text-blue-400">
+                                    {latest.adsClicks.toLocaleString()}
+                                  </p>
+                                  {clicksDelta !== null && (
+                                    <div
+                                      className={`flex items-center gap-1 text-xs mt-1 ${clicksDelta >= 0 ? "text-emerald-400" : "text-red-400"}`}
+                                    >
+                                      {clicksDelta >= 0 ? (
+                                        <TrendingUp size={11} />
+                                      ) : (
+                                        <TrendingDown size={11} />
+                                      )}
+                                      <span>
+                                        {clicksDelta >= 0 ? "+" : ""}
+                                        {clicksDelta.toLocaleString()} vs last
+                                        mo
+                                      </span>
+                                    </div>
+                                  )}
+                                </div>
+                              )}
+                              {latest.adsImpressions !== undefined && (
+                                <div className="bg-slate-900 rounded-lg p-3">
+                                  <p className="text-slate-400 text-xs">
+                                    Impressions
+                                  </p>
+                                  <p className="text-2xl font-bold text-slate-200">
+                                    {latest.adsImpressions.toLocaleString()}
+                                  </p>
+                                  {impressionsDelta !== null && (
+                                    <div
+                                      className={`flex items-center gap-1 text-xs mt-1 ${impressionsDelta >= 0 ? "text-emerald-400" : "text-red-400"}`}
+                                    >
+                                      {impressionsDelta >= 0 ? (
+                                        <TrendingUp size={11} />
+                                      ) : (
+                                        <TrendingDown size={11} />
+                                      )}
+                                      <span>
+                                        {impressionsDelta >= 0 ? "+" : ""}
+                                        {impressionsDelta.toLocaleString()} vs
+                                        last mo
+                                      </span>
+                                    </div>
+                                  )}
+                                </div>
+                              )}
+                              {latest.websitePagesUpdated !== undefined && (
+                                <div className="bg-slate-900 rounded-lg p-3">
+                                  <p className="text-slate-400 text-xs">
+                                    Pages Updated
+                                  </p>
+                                  <p className="text-2xl font-bold text-blue-400">
+                                    {latest.websitePagesUpdated}
+                                  </p>
+                                  {pagesDelta !== null && (
+                                    <div
+                                      className={`flex items-center gap-1 text-xs mt-1 ${pagesDelta >= 0 ? "text-emerald-400" : "text-red-400"}`}
+                                    >
+                                      {pagesDelta >= 0 ? (
+                                        <TrendingUp size={11} />
+                                      ) : (
+                                        <TrendingDown size={11} />
+                                      )}
+                                      <span>
+                                        {pagesDelta >= 0 ? "+" : ""}
+                                        {pagesDelta} vs last mo
+                                      </span>
+                                    </div>
+                                  )}
+                                </div>
+                              )}
+                            </>
+                          );
+                        })()}
                       </div>
                       <p className="text-slate-300 text-sm">{latest.summary}</p>
                     </CardContent>
@@ -1296,46 +1458,75 @@ export default function AgentServicesPage() {
                 </CardContent>
               </Card>
 
-              {/* Next Best Actions */}
-              <Card className="bg-slate-800 border border-slate-700">
-                <CardHeader className="pb-2">
-                  <div className="flex items-center gap-2">
-                    <TrendingUp size={15} className="text-amber-400" />
-                    <CardTitle className="text-white text-sm">
-                      Next Best Actions
-                    </CardTitle>
-                  </div>
-                </CardHeader>
-                <CardContent className="space-y-2">
-                  <div className="flex items-center gap-2">
-                    <span className="w-5 h-5 rounded-full bg-indigo-600/20 text-indigo-400 text-xs font-bold flex items-center justify-center shrink-0">
-                      1
-                    </span>
-                    <p className="text-slate-300 text-sm">
-                      Submit a request for seasonal content updates to stay
-                      relevant to current search intent.
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="w-5 h-5 rounded-full bg-indigo-600/20 text-indigo-400 text-xs font-bold flex items-center justify-center shrink-0">
-                      2
-                    </span>
-                    <p className="text-slate-300 text-sm">
-                      Review your latest deliverables and approve any pending
-                      changes so work can continue without delays.
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="w-5 h-5 rounded-full bg-indigo-600/20 text-indigo-400 text-xs font-bold flex items-center justify-center shrink-0">
-                      3
-                    </span>
-                    <p className="text-slate-300 text-sm">
-                      Check your Google Business Profile reviews weekly and
-                      respond to all new feedback promptly.
-                    </p>
-                  </div>
-                </CardContent>
-              </Card>
+              {/* Dynamic Next Best Actions */}
+              {(() => {
+                const nextBestActions: string[] = [];
+                for (const sub of activeSubscriptions) {
+                  const product = AGENT_PRODUCTS.find(
+                    (p) => p.id === sub.productId,
+                  );
+                  if (
+                    sub.productId === "agent-seo" ||
+                    sub.productId === "agent-bundle"
+                  ) {
+                    nextBestActions.push(
+                      "Review the latest GBP optimization tasks from your SEO Agent — approving them this week keeps your ranking momentum.",
+                    );
+                  }
+                  if (
+                    sub.productId === "agent-ads" ||
+                    sub.productId === "agent-bundle"
+                  ) {
+                    nextBestActions.push(
+                      "Your Paid Ads Agent has an A/B test running — check back in 3 days for results to approve the winning variant.",
+                    );
+                  }
+                  if (sub.productId === "agent-website") {
+                    nextBestActions.push(
+                      "Three service page CTAs are queued for your review in the Website Agent. Approving them takes 2 minutes and directly impacts conversion.",
+                    );
+                  }
+                  if (product?.allowsOversight && !sub.hasOversight) {
+                    nextBestActions.push(
+                      `Add Human Oversight to ${product.name} for dedicated strategist review and monthly check-ins — $299/mo add-on.`,
+                    );
+                  }
+                }
+                if (nextBestActions.length === 0) {
+                  nextBestActions.push(
+                    "Your agents are running smoothly. Check back next week for updated performance data.",
+                  );
+                }
+                return (
+                  <Card
+                    className="bg-slate-800 border border-indigo-500/30 border-l-4 border-l-indigo-500 mt-2"
+                    data-ocid="agents.performance.card"
+                  >
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-sm text-white flex items-center gap-2">
+                        <Sparkles size={14} className="text-indigo-400" />
+                        Next Best Actions
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-3">
+                        {nextBestActions.map((action) => (
+                          <div
+                            key={action.slice(0, 40)}
+                            className="flex items-start gap-2"
+                          >
+                            <ChevronRight
+                              size={14}
+                              className="text-indigo-400 mt-0.5 shrink-0"
+                            />
+                            <p className="text-slate-300 text-sm">{action}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              })()}
             </div>
           )}
         </TabsContent>
